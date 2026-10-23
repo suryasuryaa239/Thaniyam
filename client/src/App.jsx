@@ -1,122 +1,124 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [backendHealth, setBackendHealth] = useState({
+    loading: true,
+    data: null,
+    error: null,
+  });
+  const [lastChecked, setLastChecked] = useState(null);
+
+  const checkHealth = async () => {
+    setBackendHealth((prev) => ({ ...prev, loading: true }));
+    try {
+      const res = await fetch('/api/health');
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      const data = await res.json();
+      setBackendHealth({
+        loading: false,
+        data,
+        error: null,
+      });
+      setLastChecked(new Date().toLocaleTimeString());
+    } catch (err) {
+      setBackendHealth({
+        loading: false,
+        data: null,
+        error: err.message,
+      });
+      setLastChecked(new Date().toLocaleTimeString());
+    }
+  };
+
+  useEffect(() => {
+    checkHealth();
+  }, []);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+    <div className="container">
+      <header className="header">
+        <span className="badge-tag">STEP 2: PROJECT FOUNDATION</span>
+        <h1 className="title">Thaniyam Treats</h1>
+        <p className="subtitle">
+          Traditional Food E-Commerce MVP • Architecture & Health Verification
+        </p>
+      </header>
+
+      <main>
+        <div className="status-grid">
+          {/* Frontend Status Card */}
+          <div className="status-card">
+            <div className="card-title">
+              <span>Frontend (Client)</span>
+              <span className="pill pill-success">Running</span>
+            </div>
+            <div className="card-detail">
+              <p><strong>Stack:</strong> React + Vite</p>
+              <p><strong>URL:</strong> http://localhost:5173</p>
+              <p><strong>Proxy:</strong> /api &rarr; http://localhost:5000</p>
+            </div>
+          </div>
+
+          {/* Backend Status Card */}
+          <div className="status-card">
+            <div className="card-title">
+              <span>Backend (API Server)</span>
+              {backendHealth.loading ? (
+                <span className="pill pill-warning">Checking...</span>
+              ) : backendHealth.error ? (
+                <span className="pill pill-danger">Offline</span>
+              ) : (
+                <span className="pill pill-success">Online</span>
+              )}
+            </div>
+            <div className="card-detail">
+              <p><strong>Stack:</strong> Node.js + Express</p>
+              <p><strong>Health Route:</strong> /api/health</p>
+              <p>
+                <strong>Database:</strong>{' '}
+                {backendHealth.data?.database?.status === 'connected' ? (
+                  <span className="pill pill-success" style={{ padding: '2px 6px' }}>Connected</span>
+                ) : (
+                  <span className="pill pill-warning" style={{ padding: '2px 6px' }}>
+                    {backendHealth.data?.database?.status || 'Disconnected'}
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+
+        {/* Live API Health Payload */}
+        <div className="info-box">
+          <p style={{ marginBottom: 6 }}>
+            <strong>Backend Response from <code>/api/health</code>:</strong>
           </p>
+          {backendHealth.loading ? (
+            <p>Connecting to backend API...</p>
+          ) : backendHealth.error ? (
+            <p style={{ color: '#b91c1c' }}>⚠️ Could not reach backend: {backendHealth.error}</p>
+          ) : (
+            <div>
+              <p>• Status: <code>{backendHealth.data?.status}</code> ({backendHealth.data?.project})</p>
+              <p>• Database Status: <code>{backendHealth.data?.database?.status}</code></p>
+              <p>• Note: {backendHealth.data?.database?.message}</p>
+            </div>
+          )}
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+        <div className="action-bar">
+          <button className="btn-refresh" onClick={checkHealth}>
+            Re-check Health
+          </button>
+          {lastChecked && (
+            <span className="timestamp">Last verified: {lastChecked}</span>
+          )}
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </main>
+    </div>
+  );
 }
 
-export default App
+export default App;
