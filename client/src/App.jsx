@@ -8,6 +8,8 @@ import FeaturedProducts from './components/FeaturedProducts';
 import ShopPage from './components/ShopPage';
 import ProductDetailsPage from './components/ProductDetailsPage';
 import CartPage from './components/CartPage';
+import CheckoutPage from './components/CheckoutPage';
+import OrderConfirmationPage from './components/OrderConfirmationPage';
 import ProductQuickViewModal from './components/ProductQuickViewModal';
 import WhyUs from './components/WhyUs';
 import OurStory from './components/OurStory';
@@ -16,11 +18,13 @@ import Toast from './components/Toast';
 import { ArrowLeft, Clock, ShieldCheck, ShoppingBag } from 'lucide-react';
 
 function AppContent() {
-  const [currentView, setCurrentView] = useState('home'); // 'home' | 'shop' | 'product' | 'cart' | 'checkout'
+  const [currentView, setCurrentView] = useState('home'); // 'home' | 'shop' | 'product' | 'cart' | 'checkout' | 'order-confirmation'
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [confirmedOrderId, setConfirmedOrderId] = useState(null);
+  const [confirmedOrder, setConfirmedOrder] = useState(null);
 
   const { totalItems, addToCart, toast, closeToast } = useCart();
 
@@ -32,6 +36,21 @@ function AppContent() {
         setCurrentView('cart');
       } else if (hash.startsWith('#/checkout')) {
         setCurrentView('checkout');
+      } else if (hash.startsWith('#/order-confirmation')) {
+        setCurrentView('order-confirmation');
+        let id = null;
+        if (hash.includes('?')) {
+          const params = new URLSearchParams(hash.split('?')[1] || '');
+          id = params.get('orderId');
+        } else {
+          const parts = hash.split('/');
+          if (parts.length >= 3 && parts[2]) {
+            id = parts[2];
+          }
+        }
+        if (id) {
+          setConfirmedOrderId(id);
+        }
       } else if (hash.startsWith('#/product')) {
         setCurrentView('product');
         const params = new URLSearchParams(hash.split('?')[1] || '');
@@ -56,7 +75,7 @@ function AppContent() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const navigateTo = (view, sectionId = null, categoryId = 'all', productId = null) => {
+  const navigateTo = (view, sectionId = null, categoryId = 'all', productId = null, orderId = null) => {
     setCurrentView(view);
 
     if (view === 'cart') {
@@ -64,6 +83,11 @@ function AppContent() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (view === 'checkout') {
       window.location.hash = '#/checkout';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (view === 'order-confirmation') {
+      const targetId = orderId || confirmedOrderId;
+      if (targetId) setConfirmedOrderId(targetId);
+      window.location.hash = targetId ? `#/order-confirmation/${targetId}` : '#/order-confirmation';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (view === 'product') {
       const targetId = productId || 'prod-001';
@@ -106,41 +130,33 @@ function AppContent() {
 
       {/* 3. Main Content Router */}
       <main>
-        {currentView === 'cart' ? (
+        {currentView === 'order-confirmation' ? (
+          <OrderConfirmationPage
+            orderId={confirmedOrderId}
+            initialOrder={confirmedOrder}
+            onNavigateHome={() => navigateTo('home')}
+            onNavigateShop={(cat) => navigateTo('shop', null, cat || 'all')}
+          />
+        ) : currentView === 'checkout' ? (
+          <CheckoutPage
+            onNavigateHome={() => navigateTo('home')}
+            onNavigateShop={(cat) => navigateTo('shop', null, cat || 'all')}
+            onNavigateCart={() => navigateTo('cart')}
+            onOrderSuccess={(order) => {
+              setConfirmedOrder(order);
+              setConfirmedOrderId(order.orderId);
+              window.location.hash = `#/order-confirmation/${order.orderId}`;
+              setCurrentView('order-confirmation');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : currentView === 'cart' ? (
           <CartPage
             onNavigateHome={() => navigateTo('home')}
             onNavigateShop={(cat) => navigateTo('shop', null, cat || 'all')}
             onViewProduct={(id) => navigateTo('product', null, 'all', id)}
             onNavigateCheckout={() => navigateTo('checkout')}
           />
-        ) : currentView === 'checkout' ? (
-          /* Checkout Preparation Preview for upcoming Step 7 */
-          <div className="cart-page">
-            <div className="cart-page-container">
-              <div className="checkout-preview-card">
-                <div className="empty-cart-icon-wrap" style={{ backgroundColor: '#e8f5e9', color: '#1b4332' }}>
-                  <ShieldCheck size={48} />
-                </div>
-                <h1 className="cart-main-heading" style={{ marginTop: 16 }}>
-                  Checkout Preview (Step 7 Upcoming)
-                </h1>
-                <p className="cart-subheading" style={{ maxWidth: 540, margin: '8px auto 24px' }}>
-                  Your shopping basket is ready with {totalItems} item(s). In the next step (Step 7),
-                  we will implement the complete delivery address, contact form, Cash on Delivery, and order placement workflow!
-                </p>
-                <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <button className="btn-secondary" onClick={() => navigateTo('cart')}>
-                    <ArrowLeft size={16} />
-                    <span>Return to Shopping Basket</span>
-                  </button>
-                  <button className="btn-primary" onClick={() => navigateTo('shop')}>
-                    <ShoppingBag size={16} />
-                    <span>Continue Browsing Products</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         ) : currentView === 'product' ? (
           <ProductDetailsPage
             productId={selectedProductId}

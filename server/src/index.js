@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { connectDB, getDBStatus } from './config/db.js';
+import orderRoutes from './routes/orderRoutes.js';
 
 dotenv.config();
 
@@ -14,6 +15,9 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// API Routes
+app.use('/api/orders', orderRoutes);
 
 // Basic backend health-check route
 app.get('/api/health', (req, res) => {
