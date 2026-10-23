@@ -181,6 +181,15 @@ export default function Navbar({
             </li>
             <li>
               <a 
+                href="#cart" 
+                className={currentView === 'cart' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); handleNavClick('cart'); }}
+              >
+                Shopping Basket {cartCount > 0 && `(${cartCount})`} <ArrowRight size={16} />
+              </a>
+            </li>
+            <li>
+              <a 
                 href="#our-story" 
                 onClick={(e) => { e.preventDefault(); handleNavClick('home', 'our-story'); }}
               >
