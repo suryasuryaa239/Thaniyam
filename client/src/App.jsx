@@ -5,6 +5,7 @@ import Hero from './components/Hero';
 import Categories from './components/Categories';
 import FeaturedProducts from './components/FeaturedProducts';
 import ShopPage from './components/ShopPage';
+import ProductDetailsPage from './components/ProductDetailsPage';
 import ProductQuickViewModal from './components/ProductQuickViewModal';
 import WhyUs from './components/WhyUs';
 import OurStory from './components/OurStory';
@@ -12,23 +13,31 @@ import Footer from './components/Footer';
 import Toast from './components/Toast';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('home'); // 'home' or 'shop'
+  const [currentView, setCurrentView] = useState('home'); // 'home' | 'shop' | 'product'
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedProductId, setSelectedProductId] = useState(null);
   const [cartCount, setCartCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [toast, setToast] = useState(null);
 
-  // Sync state with URL hash on mount and hash changes
+  // Sync state with URL hash on mount and hash change events
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash.startsWith('#/shop')) {
+      if (hash.startsWith('#/product')) {
+        setCurrentView('product');
+        const params = new URLSearchParams(hash.split('?')[1] || '');
+        const id = params.get('id') || hash.split('/')[2];
+        setSelectedProductId(id || 'prod-001');
+      } else if (hash.startsWith('#/shop')) {
         setCurrentView('shop');
         const params = new URLSearchParams(hash.split('?')[1] || '');
         const cat = params.get('category');
         if (cat) {
           setSelectedCategory(cat);
+        } else {
+          setSelectedCategory('all');
         }
       } else {
         setCurrentView('home');
@@ -40,9 +49,15 @@ export default function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const navigateTo = (view, sectionId = null, categoryId = 'all') => {
+  const navigateTo = (view, sectionId = null, categoryId = 'all', productId = null) => {
     setCurrentView(view);
-    if (view === 'shop') {
+
+    if (view === 'product') {
+      const targetId = productId || 'prod-001';
+      setSelectedProductId(targetId);
+      window.location.hash = `#/product?id=${targetId}`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (view === 'shop') {
       setSelectedCategory(categoryId);
       window.location.hash = categoryId !== 'all' ? `#/shop?category=${categoryId}` : '#/shop';
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -85,7 +100,7 @@ export default function App() {
 
   return (
     <div className="thaniyam-app">
-      {/* 1. Announcement Bar */}
+      {/* 1. Top Announcement Bar */}
       <AnnouncementBar />
 
       {/* 2. Navigation Header */}
@@ -98,13 +113,23 @@ export default function App() {
         onNavigate={(view, sectionId) => navigateTo(view, sectionId)}
       />
 
-      {/* 3. Main Content: Landing Page OR Shop Page */}
+      {/* 3. Main Content: Product Details Page OR Shop Page OR Landing Page */}
       <main>
-        {currentView === 'shop' ? (
+        {currentView === 'product' ? (
+          <ProductDetailsPage
+            productId={selectedProductId}
+            onNavigateHome={() => navigateTo('home')}
+            onNavigateShop={(cat) => navigateTo('shop', null, cat || 'all')}
+            onNavigateCategory={(cat) => navigateTo('shop', null, cat)}
+            onViewProduct={(id) => navigateTo('product', null, 'all', id)}
+            onAddToCart={handleAddToCart}
+          />
+        ) : currentView === 'shop' ? (
           <ShopPage
             onNavigateHome={() => navigateTo('home')}
             initialCategory={selectedCategory}
             onQuickView={(prod) => setQuickViewProduct(prod)}
+            onViewProduct={(id) => navigateTo('product', null, 'all', id)}
             onAddToCart={handleAddToCart}
             searchQuery={searchQuery}
           />
@@ -124,6 +149,7 @@ export default function App() {
             {/* Featured Products on Landing */}
             <FeaturedProducts
               onQuickView={(prod) => setQuickViewProduct(prod)}
+              onViewProduct={(id) => navigateTo('product', null, 'all', id)}
               onAddToCart={handleAddToCart}
               searchQuery={searchQuery}
               activeCategory="all"

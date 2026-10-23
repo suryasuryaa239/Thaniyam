@@ -313,3 +313,27 @@ export const ALL_PRODUCTS = [
     ingredients: ['Raw Rice', 'Pure Jaggery', 'Dry Ginger', 'Cardamom', 'Wood-Pressed Groundnut Oil']
   }
 ];
+
+// Helper functions for Product Details Page (Step 5)
+export const getProductById = (id) => {
+  const prod = ALL_PRODUCTS.find((p) => p.id === id);
+  if (!prod) return null;
+  // Ensure images array exists for gallery thumbnails
+  return {
+    ...prod,
+    inStock: true,
+    stockStatus: 'In Stock',
+    images: prod.images || [
+      prod.image,
+      '/images/hero-banner.jpg',
+      '/images/our-story.jpg'
+    ]
+  };
+};
+
+export const getRelatedProducts = (currentProductId, categoryId, limit = 4) => {
+  return ALL_PRODUCTS
+    .filter((p) => p.category === categoryId && p.id !== currentProductId)
+    .slice(0, limit);
+};
+

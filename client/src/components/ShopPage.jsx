@@ -9,6 +9,7 @@ export default function ShopPage({
   onNavigateHome, 
   initialCategory = 'all', 
   onQuickView, 
+  onViewProduct,
   onAddToCart,
   searchQuery: initialSearch = ''
 }) {
@@ -268,7 +269,7 @@ export default function ShopPage({
                 {/* Product Image Frame */}
                 <div 
                   className="shop-card-image-frame"
-                  onClick={() => onQuickView(prod)}
+                  onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
                 >
                   {imageErrors[prod.id] ? (
                     <div className="fallback-image-placeholder">
@@ -306,7 +307,7 @@ export default function ShopPage({
 
                   <h3 
                     className="shop-card-title"
-                    onClick={() => onQuickView(prod)}
+                    onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
                   >
                     {prod.name}
                   </h3>
@@ -333,10 +334,10 @@ export default function ShopPage({
                     <div className="card-actions-group">
                       <button
                         className="btn-card-view"
-                        onClick={() => onQuickView(prod)}
-                        title="View product details"
+                        onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
+                        title="View full product details"
                       >
-                        View
+                        View Product
                       </button>
                       <button
                         className="btn-card-add"

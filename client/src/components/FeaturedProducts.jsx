@@ -12,7 +12,14 @@ const FILTER_TABS = [
   { id: 'millets-grains', label: 'Native Millets' },
 ];
 
-export default function FeaturedProducts({ onQuickView, onAddToCart, searchQuery, activeCategory, onCategoryChange }) {
+export default function FeaturedProducts({ 
+  onQuickView, 
+  onViewProduct, 
+  onAddToCart, 
+  searchQuery, 
+  activeCategory, 
+  onCategoryChange 
+}) {
   const [selectedTab, setSelectedTab] = useState(activeCategory || 'all');
 
   const currentTab = activeCategory || selectedTab;
@@ -106,38 +113,49 @@ export default function FeaturedProducts({ onQuickView, onAddToCart, searchQuery
                   <span className="product-weight-tag">{prod.weight}</span>
                 </div>
 
-                <h3 className="product-title" onClick={() => onQuickView(prod)}>
-                  {prod.name}
-                </h3>
-                <span className="product-tamil-sub">{prod.tamilName}</span>
+                  <h3 className="product-title" onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}>
+                    {prod.name}
+                  </h3>
+                  <span className="product-tamil-sub">{prod.tamilName}</span>
 
-                {/* Rating */}
-                <div className="product-rating-row">
-                  <div className="stars-mini">
-                    <Star size={13} fill="#d97706" color="#d97706" />
-                    <span className="rating-num">{prod.rating}</span>
-                  </div>
-                  <span className="rating-count">({prod.reviewsCount})</span>
-                </div>
-
-                {/* Price and Add button */}
-                <div className="product-card-footer">
-                  <div className="price-group">
-                    <span className="current-price">₹{prod.price}</span>
-                    {prod.originalPrice && (
-                      <span className="slashed-price">₹{prod.originalPrice}</span>
-                    )}
+                  {/* Rating */}
+                  <div className="product-rating-row">
+                    <div className="stars-mini">
+                      <Star size={13} fill="#d97706" color="#d97706" />
+                      <span className="rating-num">{prod.rating}</span>
+                    </div>
+                    <span className="rating-count">({prod.reviewsCount})</span>
                   </div>
 
-                  <button 
-                    className="btn-add-cart"
-                    onClick={() => onAddToCart(prod)}
-                    aria-label={`Add ${prod.name} to cart`}
-                  >
-                    <ShoppingBag size={16} />
-                    <span>Add</span>
-                  </button>
-                </div>
+                  {/* Price and Add button */}
+                  <div className="product-card-footer">
+                    <div className="price-group">
+                      <span className="current-price">₹{prod.price}</span>
+                      {prod.originalPrice && (
+                        <span className="slashed-price">₹{prod.originalPrice}</span>
+                      )}
+                    </div>
+
+                    <div className="card-actions-group">
+                      {onViewProduct && (
+                        <button
+                          className="btn-card-view"
+                          onClick={() => onViewProduct(prod.id)}
+                          title="View product details"
+                        >
+                          View
+                        </button>
+                      )}
+                      <button 
+                        className="btn-add-cart"
+                        onClick={() => onAddToCart(prod)}
+                        aria-label={`Add ${prod.name} to cart`}
+                      >
+                        <ShoppingBag size={16} />
+                        <span>Add</span>
+                      </button>
+                    </div>
+                  </div>
               </div>
             </article>
           ))}
