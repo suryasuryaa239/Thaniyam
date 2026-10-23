@@ -1,13 +1,27 @@
 import React, { useState } from 'react';
 import { Search, ShoppingBag, Menu, X, ArrowRight } from 'lucide-react';
 
-export default function Navbar({ cartCount, onCartClick, searchQuery, onSearchChange, onNavigate }) {
+export default function Navbar({ 
+  currentView, 
+  cartCount, 
+  onCartClick, 
+  searchQuery, 
+  onSearchChange, 
+  onNavigate 
+}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
 
-  const handleNavClick = (sectionId) => {
+  const handleNavClick = (view, sectionId) => {
     setMobileMenuOpen(false);
-    onNavigate(sectionId);
+    onNavigate(view, sectionId);
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      handleNavClick('shop');
+    }
   };
 
   return (
@@ -26,7 +40,7 @@ export default function Navbar({ cartCount, onCartClick, searchQuery, onSearchCh
         <a 
           href="#home" 
           className="brand-logo" 
-          onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}
+          onClick={(e) => { e.preventDefault(); handleNavClick('home', 'home'); }}
         >
           <div className="logo-symbol">
             <span>🌿</span>
@@ -41,27 +55,54 @@ export default function Navbar({ cartCount, onCartClick, searchQuery, onSearchCh
         <nav className="desktop-nav" aria-label="Main Navigation">
           <ul className="nav-links">
             <li>
-              <a href="#home" onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}>Home</a>
+              <a 
+                href="#home" 
+                className={currentView === 'home' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'home'); }}
+              >
+                Home
+              </a>
             </li>
             <li>
-              <a href="#shop" onClick={(e) => { e.preventDefault(); handleNavClick('featured-products'); }}>Shop</a>
+              <a 
+                href="#shop" 
+                className={currentView === 'shop' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); handleNavClick('shop'); }}
+              >
+                Shop All
+              </a>
             </li>
             <li>
-              <a href="#categories" onClick={(e) => { e.preventDefault(); handleNavClick('categories'); }}>Categories</a>
+              <a 
+                href="#categories" 
+                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'categories'); }}
+              >
+                Categories
+              </a>
             </li>
             <li>
-              <a href="#why-us" onClick={(e) => { e.preventDefault(); handleNavClick('why-us'); }}>Why Us</a>
+              <a 
+                href="#why-us" 
+                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'why-us'); }}
+              >
+                Why Us
+              </a>
             </li>
             <li>
-              <a href="#our-story" onClick={(e) => { e.preventDefault(); handleNavClick('our-story'); }}>Our Story</a>
+              <a 
+                href="#our-story" 
+                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'our-story'); }}
+              >
+                Our Story
+              </a>
             </li>
           </ul>
         </nav>
 
         {/* Actions (Search & Cart) */}
         <div className="navbar-actions">
-          {/* Search Trigger */}
-          <div className={`search-wrapper ${searchOpen ? 'open' : ''}`}>
+          {/* Search Trigger & Form */}
+          <form className={`search-wrapper ${searchOpen ? 'open' : ''}`} onSubmit={handleSearchSubmit}>
             {searchOpen && (
               <input
                 type="text"
@@ -73,13 +114,20 @@ export default function Navbar({ cartCount, onCartClick, searchQuery, onSearchCh
               />
             )}
             <button
+              type="button"
               className="action-icon-btn"
               aria-label="Search products"
-              onClick={() => setSearchOpen(!searchOpen)}
+              onClick={() => {
+                if (searchOpen && searchQuery) {
+                  handleNavClick('shop');
+                } else {
+                  setSearchOpen(!searchOpen);
+                }
+              }}
             >
               {searchOpen ? <X size={20} /> : <Search size={20} />}
             </button>
-          </div>
+          </form>
 
           {/* Cart Trigger */}
           <button
@@ -98,23 +146,46 @@ export default function Navbar({ cartCount, onCartClick, searchQuery, onSearchCh
         <nav className="mobile-drawer" aria-label="Mobile Navigation">
           <ul className="mobile-nav-links">
             <li>
-              <a href="#home" onClick={(e) => { e.preventDefault(); handleNavClick('home'); }}>Home</a>
+              <a 
+                href="#home" 
+                className={currentView === 'home' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'home'); }}
+              >
+                Home
+              </a>
             </li>
             <li>
-              <a href="#shop" onClick={(e) => { e.preventDefault(); handleNavClick('featured-products'); }}>
+              <a 
+                href="#shop" 
+                className={currentView === 'shop' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); handleNavClick('shop'); }}
+              >
                 Shop All Products <ArrowRight size={16} />
               </a>
             </li>
             <li>
-              <a href="#categories" onClick={(e) => { e.preventDefault(); handleNavClick('categories'); }}>
+              <a 
+                href="#categories" 
+                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'categories'); }}
+              >
                 Categories <ArrowRight size={16} />
               </a>
             </li>
             <li>
-              <a href="#why-us" onClick={(e) => { e.preventDefault(); handleNavClick('why-us'); }}>Why Us</a>
+              <a 
+                href="#why-us" 
+                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'why-us'); }}
+              >
+                Why Us
+              </a>
             </li>
             <li>
-              <a href="#our-story" onClick={(e) => { e.preventDefault(); handleNavClick('our-story'); }}>Our Story</a>
+              <a 
+                href="#our-story" 
+                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'our-story'); }}
+              >
+                Our Story
+              </a>
             </li>
           </ul>
         </nav>
