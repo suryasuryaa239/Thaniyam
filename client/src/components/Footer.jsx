@@ -61,8 +61,8 @@ export default function Footer({ onNavigate }) {
                 </a>
               </li>
               <li>
-                <a href="#admin" onClick={(e) => { e.preventDefault(); onNavigate('admin'); }}>
-                  Admin Orders Portal
+                <a href="#admin" className="footer-admin-link" onClick={(e) => { e.preventDefault(); onNavigate('admin'); }}>
+                  🛡️ Admin Orders & Inventory
                 </a>
               </li>
             </ul>

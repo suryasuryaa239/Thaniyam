@@ -108,11 +108,12 @@ export default function Navbar({
             <li>
               <a 
                 href="#admin" 
-                className={currentView === 'admin' ? 'active' : ''}
+                className={`nav-admin-badge ${currentView === 'admin' ? 'active' : ''}`}
                 onClick={(e) => { e.preventDefault(); handleNavClick('admin'); }}
                 title="Admin Orders & Inventory Portal"
               >
-                Admin
+                <ShieldCheck size={14} className="nav-admin-icon" />
+                <span>Admin</span>
               </a>
             </li>
           </ul>
@@ -148,15 +149,16 @@ export default function Navbar({
             </button>
           </form>
 
-          {/* Admin Direct Button */}
+          {/* Admin Direct Highlighted Button */}
           <button
             type="button"
-            className={`action-icon-btn ${currentView === 'admin' ? 'active' : ''}`}
+            className={`action-admin-btn ${currentView === 'admin' ? 'active' : ''}`}
             aria-label="Admin Portal"
             title="Admin Orders & Inventory Portal"
             onClick={() => handleNavClick('admin')}
           >
-            <ShieldCheck size={20} />
+            <ShieldCheck size={16} />
+            <span className="admin-btn-text">Admin</span>
           </button>
 
           {/* Cart Trigger */}
@@ -238,10 +240,14 @@ export default function Navbar({
             <li>
               <a 
                 href="#admin" 
-                className={currentView === 'admin' ? 'active' : ''}
+                className={`mobile-nav-admin-badge ${currentView === 'admin' ? 'active' : ''}`}
                 onClick={(e) => { e.preventDefault(); handleNavClick('admin'); }}
               >
-                Admin Orders & Inventory <ArrowRight size={16} />
+                <span className="mobile-admin-badge-inner">
+                  <ShieldCheck size={18} />
+                  <span>Admin Orders & Inventory</span>
+                </span>
+                <ArrowRight size={16} />
               </a>
             </li>
           </ul>
