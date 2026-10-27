@@ -32,7 +32,17 @@ const startServer = async () => {
   });
 
   // Attempt database connection without blocking API server startup
-  await connectDB();
+  const isDbOk = await connectDB();
+  if (isDbOk) {
+    try {
+      const { syncProductsFromMySQL } = await import('./data/mockProductStore.js');
+      const { syncOrdersFromMySQL } = await import('./data/mockOrderStore.js');
+      await syncProductsFromMySQL();
+      await syncOrdersFromMySQL();
+    } catch (e) {
+      console.warn('⚠️ [Store] MySQL sync warning:', e.message);
+    }
+  }
 };
 
 startServer();

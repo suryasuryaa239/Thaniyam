@@ -1,3 +1,10 @@
+import {
+  isMySQLConnected,
+  mysqlGetAllOrders,
+  mysqlSaveOrder,
+  mysqlUpdateOrderStatus
+} from '../config/mysqlStore.js';
+
 // In-memory / persistent development store for orders when MongoDB is in offline mode
 const memoryOrders = new Map();
 
@@ -96,6 +103,21 @@ const seedDemoOrders = () => {
 
 seedDemoOrders();
 
+export const syncOrdersFromMySQL = async () => {
+  if (!isMySQLConnected()) return;
+  try {
+    const orders = await mysqlGetAllOrders();
+    if (orders && orders.length > 0) {
+      for (const o of orders) {
+        memoryOrders.set(o.orderId, o);
+      }
+      console.log(`📋 [Store] Synced ${orders.length} orders from TiDB MySQL into cache.`);
+    }
+  } catch (err) {
+    console.warn('⚠️ [MySQL] syncOrders warning:', err.message);
+  }
+};
+
 export const saveOrderToFallback = (order) => {
   if (!order.createdAt) {
     order.createdAt = new Date().toISOString();
@@ -104,6 +126,9 @@ export const saveOrderToFallback = (order) => {
     order.updatedAt = order.createdAt;
   }
   memoryOrders.set(order.orderId, order);
+  if (isMySQLConnected()) {
+    mysqlSaveOrder(order).catch((err) => console.warn('⚠️ [MySQL] saveOrder notice:', err.message));
+  }
   return order;
 };
 
@@ -147,6 +172,13 @@ export const updateOrderStatusInFallback = (orderId, newStatus) => {
   targetOrder.orderStatus = newStatus;
   targetOrder.updatedAt = new Date().toISOString();
   memoryOrders.set(targetKey, targetOrder);
+
+  if (isMySQLConnected()) {
+    mysqlUpdateOrderStatus(targetKey, newStatus, targetOrder.orderTimeline).catch((err) =>
+      console.warn('⚠️ [MySQL] updateStatus notice:', err.message)
+    );
+  }
+
   return targetOrder;
 };
 

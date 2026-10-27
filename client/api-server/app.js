@@ -5,7 +5,15 @@ import { getDBStatus } from './config/db.js';
 import orderRoutes from './routes/orderRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const app = express();
 
@@ -49,10 +57,10 @@ app.get('/api/health', (req, res) => {
     uptime: process.uptime(),
     database: {
       status: dbStatus,
-      configured: Boolean(process.env.MONGODB_URI),
-      message: dbStatus === 'connected' 
-        ? 'Connected to MongoDB' 
-        : 'MongoDB is not connected. The backend is running in resilient store mode.'
+      configured: Boolean(process.env.DATABASE_URL || process.env.MYSQL_URI || process.env.MONGODB_URI),
+      message: dbStatus.startsWith('connected')
+        ? `Active Database: ${dbStatus}`
+        : 'Database is not connected. The backend is running in resilient store mode.'
     },
     timestamp: new Date().toISOString()
   });

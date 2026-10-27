@@ -1,7 +1,29 @@
 // In-memory persistent catalog & inventory store for Thaniyam Treats
 // Ensures resilient operation with full stock tracking, atomic deduction, and safe deactivation
+import {
+  isMySQLConnected,
+  mysqlGetAllProducts,
+  mysqlSaveProduct,
+  mysqlUpdateProductStock,
+  mysqlDeactivateProduct
+} from '../config/mysqlStore.js';
 
 const memoryProducts = new Map();
+
+export const syncProductsFromMySQL = async () => {
+  if (!isMySQLConnected()) return;
+  try {
+    const products = await mysqlGetAllProducts(true);
+    if (products && products.length > 0) {
+      for (const p of products) {
+        memoryProducts.set(p.id, p);
+      }
+      console.log(`📦 [Store] Synced ${products.length} products from TiDB MySQL into cache.`);
+    }
+  } catch (err) {
+    console.warn('⚠️ [MySQL] syncProducts warning:', err.message);
+  }
+};
 
 // Authentic seed products matching Thaniyam Treats heritage catalog
 const SEED_CATALOG = [
@@ -432,6 +454,9 @@ export const createProductInStore = (productData) => {
   };
 
   memoryProducts.set(id, newProduct);
+  if (isMySQLConnected()) {
+    mysqlSaveProduct(newProduct).catch((err) => console.warn('⚠️ [MySQL] createProduct notice:', err.message));
+  }
   return { ...newProduct };
 };
 
@@ -475,6 +500,9 @@ export const updateProductInStore = (id, updates) => {
   }
 
   memoryProducts.set(id, updated);
+  if (isMySQLConnected()) {
+    mysqlSaveProduct(updated).catch((err) => console.warn('⚠️ [MySQL] updateProduct notice:', err.message));
+  }
   return { ...updated };
 };
 
@@ -491,6 +519,9 @@ export const adjustProductStockInStore = (id, delta) => {
   existing.updatedAt = new Date().toISOString();
 
   memoryProducts.set(id, existing);
+  if (isMySQLConnected()) {
+    mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] adjustStock notice:', err.message));
+  }
   return { ...existing };
 };
 
@@ -505,6 +536,9 @@ export const setProductStockInStore = (id, targetStock) => {
   existing.updatedAt = new Date().toISOString();
 
   memoryProducts.set(id, existing);
+  if (isMySQLConnected()) {
+    mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] setStock notice:', err.message));
+  }
   return { ...existing };
 };
 
@@ -519,6 +553,9 @@ export const deactivateOrDeleteProductInStore = (id, hasOrderHistory = false) =>
     existing.isActive = false;
     existing.updatedAt = new Date().toISOString();
     memoryProducts.set(id, existing);
+    if (isMySQLConnected()) {
+      mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
+    }
     return {
       action: 'deactivated',
       product: { ...existing },
@@ -527,6 +564,9 @@ export const deactivateOrDeleteProductInStore = (id, hasOrderHistory = false) =>
   } else {
     // No past orders reference this product; clean removal is safe
     memoryProducts.delete(id);
+    if (isMySQLConnected()) {
+      mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
+    }
     return {
       action: 'deleted',
       product: { ...existing },
@@ -580,6 +620,9 @@ export const deductStockForOrderItemsInStore = (orderItems) => {
     prod.updatedAt = new Date().toISOString();
 
     memoryProducts.set(prodId, prod);
+    if (isMySQLConnected()) {
+      mysqlUpdateProductStock(prodId, prod.stock).catch((err) => console.warn('⚠️ [MySQL] deduct notice:', err.message));
+    }
     deducted.push({
       id: prod.id,
       name: prod.name,
@@ -606,6 +649,9 @@ export const restoreStockForOrderItemsInStore = (orderItems) => {
       prod.inStock = prod.stock > 0;
       prod.updatedAt = new Date().toISOString();
       memoryProducts.set(prodId, prod);
+      if (isMySQLConnected()) {
+        mysqlUpdateProductStock(prodId, prod.stock).catch((err) => console.warn('⚠️ [MySQL] restore notice:', err.message));
+      }
     }
   }
 };
