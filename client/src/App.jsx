@@ -19,76 +19,144 @@ import OurStory from './components/OurStory';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
 
+function getViewFromUrl() {
+  if (typeof window === 'undefined') return { view: 'home' };
+  const hash = window.location.hash || '';
+  const pathname = window.location.pathname || '';
+
+  // 1. Admin route (/admin, #/admin, #admin)
+  if (
+    hash.startsWith('#/admin') ||
+    hash.startsWith('#admin') ||
+    pathname === '/admin' ||
+    pathname.startsWith('/admin')
+  ) {
+    return { view: 'admin' };
+  }
+
+  // 2. Cart route (/cart, #/cart, #cart)
+  if (
+    hash.startsWith('#/cart') ||
+    hash.startsWith('#cart') ||
+    pathname === '/cart' ||
+    pathname.startsWith('/cart')
+  ) {
+    return { view: 'cart' };
+  }
+
+  // 3. Checkout route (/checkout, #/checkout, #checkout)
+  if (
+    hash.startsWith('#/checkout') ||
+    hash.startsWith('#checkout') ||
+    pathname === '/checkout' ||
+    pathname.startsWith('/checkout')
+  ) {
+    return { view: 'checkout' };
+  }
+
+  // 4. Track order route (/track-order, #/track-order, #track-order)
+  if (
+    hash.startsWith('#/track-order') ||
+    hash.startsWith('#track-order') ||
+    pathname === '/track-order' ||
+    pathname.startsWith('/track-order')
+  ) {
+    let orderId = '';
+    let mobile = '';
+    const querySource = hash.includes('?') ? hash.split('?')[1] : window.location.search;
+    if (querySource) {
+      const params = new URLSearchParams(querySource.replace(/^\?/, ''));
+      orderId = params.get('orderId') || '';
+      mobile = params.get('mobile') || params.get('phone') || '';
+    }
+    return { view: 'track-order', orderId, mobile };
+  }
+
+  // 5. Order confirmation route (/order-confirmation, #/order-confirmation)
+  if (
+    hash.startsWith('#/order-confirmation') ||
+    pathname.startsWith('/order-confirmation')
+  ) {
+    let orderId = null;
+    const querySource = hash.includes('?') ? hash.split('?')[1] : window.location.search;
+    if (querySource) {
+      const params = new URLSearchParams(querySource.replace(/^\?/, ''));
+      orderId = params.get('orderId');
+    }
+    if (!orderId) {
+      const parts = (hash || pathname).split('/');
+      if (parts.length >= 3 && parts[2]) {
+        orderId = parts[2].replace(/^#/, '');
+      }
+    }
+    return { view: 'order-confirmation', orderId };
+  }
+
+  // 6. Product route (/product, #/product)
+  if (
+    hash.startsWith('#/product') ||
+    pathname.startsWith('/product')
+  ) {
+    const querySource = hash.includes('?') ? hash.split('?')[1] : window.location.search;
+    const params = new URLSearchParams((querySource || '').replace(/^\?/, ''));
+    let productId = params.get('id');
+    if (!productId) {
+      const parts = (hash || pathname).split('/');
+      if (parts.length >= 3 && parts[2]) productId = parts[2];
+    }
+    return { view: 'product', productId: productId || 'prod-001' };
+  }
+
+  // 7. Shop route (/shop, #/shop)
+  if (
+    hash.startsWith('#/shop') ||
+    pathname.startsWith('/shop')
+  ) {
+    const querySource = hash.includes('?') ? hash.split('?')[1] : window.location.search;
+    const params = new URLSearchParams((querySource || '').replace(/^\?/, ''));
+    const category = params.get('category') || 'all';
+    return { view: 'shop', category };
+  }
+
+  return { view: 'home' };
+}
+
 function AppContent() {
   const { products, refreshProducts, getProductById, getRelatedProducts } = useProducts();
-  const [currentView, setCurrentView] = useState('home'); // 'home' | 'shop' | 'product' | 'cart' | 'checkout' | 'order-confirmation' | 'track-order' | 'admin'
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [selectedProductId, setSelectedProductId] = useState(null);
+  const initialRoute = getViewFromUrl();
+  const [currentView, setCurrentView] = useState(initialRoute.view); // 'home' | 'shop' | 'product' | 'cart' | 'checkout' | 'order-confirmation' | 'track-order' | 'admin'
+  const [selectedCategory, setSelectedCategory] = useState(initialRoute.category || 'all');
+  const [selectedProductId, setSelectedProductId] = useState(initialRoute.productId || null);
   const [searchQuery, setSearchQuery] = useState('');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
-  const [confirmedOrderId, setConfirmedOrderId] = useState(null);
+  const [confirmedOrderId, setConfirmedOrderId] = useState(initialRoute.orderId || null);
   const [confirmedOrder, setConfirmedOrder] = useState(null);
-  const [trackingOrderId, setTrackingOrderId] = useState('');
-  const [trackingMobile, setTrackingMobile] = useState('');
+  const [trackingOrderId, setTrackingOrderId] = useState(initialRoute.orderId || '');
+  const [trackingMobile, setTrackingMobile] = useState(initialRoute.mobile || '');
 
   const { totalItems, addToCart, toast, closeToast } = useCart();
 
-  // Sync state with URL hash on mount and hash change events
+  // Sync state with URL hash and pathname on mount and navigation events
   useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash;
-      if (hash.startsWith('#/admin') || hash.startsWith('#admin')) {
-        setCurrentView('admin');
-      } else if (hash.startsWith('#/cart')) {
-        setCurrentView('cart');
-      } else if (hash.startsWith('#/checkout')) {
-        setCurrentView('checkout');
-      } else if (hash.startsWith('#/track-order') || hash.startsWith('#track-order')) {
-        setCurrentView('track-order');
-        if (hash.includes('?')) {
-          const params = new URLSearchParams(hash.split('?')[1] || '');
-          const id = params.get('orderId');
-          const mob = params.get('mobile') || params.get('phone');
-          if (id) setTrackingOrderId(id);
-          if (mob) setTrackingMobile(mob);
-        }
-      } else if (hash.startsWith('#/order-confirmation')) {
-        setCurrentView('order-confirmation');
-        let id = null;
-        if (hash.includes('?')) {
-          const params = new URLSearchParams(hash.split('?')[1] || '');
-          id = params.get('orderId');
-        } else {
-          const parts = hash.split('/');
-          if (parts.length >= 3 && parts[2]) {
-            id = parts[2];
-          }
-        }
-        if (id) {
-          setConfirmedOrderId(id);
-        }
-      } else if (hash.startsWith('#/product')) {
-        setCurrentView('product');
-        const params = new URLSearchParams(hash.split('?')[1] || '');
-        const id = params.get('id') || hash.split('/')[2];
-        setSelectedProductId(id || 'prod-001');
-      } else if (hash.startsWith('#/shop')) {
-        setCurrentView('shop');
-        const params = new URLSearchParams(hash.split('?')[1] || '');
-        const cat = params.get('category');
-        if (cat) {
-          setSelectedCategory(cat);
-        } else {
-          setSelectedCategory('all');
-        }
-      } else {
-        setCurrentView('home');
+    const syncRouteWithUrl = () => {
+      const route = getViewFromUrl();
+      setCurrentView(route.view);
+      if (route.category) setSelectedCategory(route.category);
+      if (route.productId) setSelectedProductId(route.productId);
+      if (route.orderId) {
+        setConfirmedOrderId(route.orderId);
+        setTrackingOrderId(route.orderId);
       }
+      if (route.mobile) setTrackingMobile(route.mobile);
     };
 
-    handleHashChange();
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
+    syncRouteWithUrl();
+    window.addEventListener('hashchange', syncRouteWithUrl);
+    window.addEventListener('popstate', syncRouteWithUrl);
+    return () => {
+      window.removeEventListener('hashchange', syncRouteWithUrl);
+      window.removeEventListener('popstate', syncRouteWithUrl);
+    };
   }, []);
 
   const navigateTo = (view, sectionId = null, categoryId = 'all', productId = null, orderId = null, mobile = null) => {

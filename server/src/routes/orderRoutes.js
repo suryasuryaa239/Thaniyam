@@ -372,8 +372,9 @@ router.get('/track', trackingRateLimiter, handleTrackOrder);
 // Step 9: Admin Authentication & Order Management System
 // ============================================================================
 
-// In-memory active admin sessions (Token -> { username, role, expiresAt })
+// In-memory active admin sessions & revoked token set
 const adminSessions = new Map();
+const revokedTokens = new Set();
 const ADMIN_SESSION_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours validity
 
 const getAdminCredentials = () => {
@@ -384,11 +385,70 @@ const getAdminCredentials = () => {
   };
 };
 
+export const createAdminToken = (username, role = 'Store Administrator') => {
+  const expiresAt = Date.now() + ADMIN_SESSION_TTL_MS;
+  const payload = Buffer.from(JSON.stringify({ username, role, expiresAt })).toString('base64url');
+  const signature = crypto.createHmac('sha256', getAdminCredentials().secretKey).update(payload).digest('hex');
+  const token = `th_adm_${payload}.${signature}`;
+
+  adminSessions.set(token, {
+    username,
+    role,
+    createdAt: Date.now(),
+    expiresAt
+  });
+  return token;
+};
+
+export const verifyAdminToken = (token) => {
+  if (!token) return null;
+  if (revokedTokens.has(token)) return null;
+
+  const { secretKey } = getAdminCredentials();
+
+  // If master secret is passed directly
+  if (token === secretKey) {
+    return { username: 'admin', role: 'Store Administrator' };
+  }
+
+  // Check in-memory session first
+  const session = adminSessions.get(token);
+  if (session) {
+    if (Date.now() > session.expiresAt) {
+      adminSessions.delete(token);
+      return null;
+    }
+    return { username: session.username, role: session.role };
+  }
+
+  // Stateless signature verification (supports serverless lambda cold starts)
+  if (token.startsWith('th_adm_')) {
+    const raw = token.slice('th_adm_'.length);
+    const dotIndex = raw.lastIndexOf('.');
+    if (dotIndex > 0) {
+      const payloadB64 = raw.slice(0, dotIndex);
+      const signature = raw.slice(dotIndex + 1);
+      const expectedSignature = crypto.createHmac('sha256', secretKey).update(payloadB64).digest('hex');
+      if (signature === expectedSignature) {
+        try {
+          const data = JSON.parse(Buffer.from(payloadB64, 'base64url').toString('utf8'));
+          if (data && data.expiresAt && Date.now() <= data.expiresAt) {
+            return { username: data.username, role: data.role || 'Store Administrator' };
+          }
+        } catch {
+          return null;
+        }
+      }
+    }
+  }
+
+  return null;
+};
+
 // Admin Authorization Middleware
 export const requireAdminAuth = (req, res, next) => {
   const authHeader = req.headers.authorization || '';
   const xAdminKey = req.headers['x-admin-key'] || '';
-  const { secretKey } = getAdminCredentials();
 
   let token = '';
   if (authHeader.startsWith('Bearer ')) {
@@ -404,30 +464,15 @@ export const requireAdminAuth = (req, res, next) => {
     });
   }
 
-  // Allow static master secret key or Bearer secret key
-  if (token === secretKey) {
-    req.admin = { username: 'admin', role: 'Store Administrator' };
-    return next();
-  }
-
-  // Validate session token
-  const session = adminSessions.get(token);
-  if (!session) {
+  const verified = verifyAdminToken(token);
+  if (!verified) {
     return res.status(401).json({
       success: false,
       message: 'Invalid or expired admin session. Please log in again.'
     });
   }
 
-  if (Date.now() > session.expiresAt) {
-    adminSessions.delete(token);
-    return res.status(401).json({
-      success: false,
-      message: 'Admin session has expired. Please log in again.'
-    });
-  }
-
-  req.admin = { username: session.username, role: session.role };
+  req.admin = verified;
   next();
 };
 
@@ -449,14 +494,7 @@ router.post('/admin/login', (req, res) => {
       });
     }
 
-    const token = 'th_adm_' + crypto.randomBytes(24).toString('hex');
-    adminSessions.set(token, {
-      username: creds.username,
-      role: 'Store Administrator',
-      createdAt: Date.now(),
-      expiresAt: Date.now() + ADMIN_SESSION_TTL_MS
-    });
-
+    const token = createAdminToken(creds.username, 'Store Administrator');
     console.log(`🔐 [Admin Auth] Admin "${creds.username}" logged in successfully.`);
 
     return res.json({
@@ -486,8 +524,11 @@ router.get('/admin/verify', requireAdminAuth, (req, res) => {
 router.post('/admin/logout', (req, res) => {
   const authHeader = req.headers.authorization || '';
   const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : req.headers['x-admin-key'];
-  if (token && adminSessions.has(token)) {
-    adminSessions.delete(token);
+  if (token) {
+    revokedTokens.add(token);
+    if (adminSessions.has(token)) {
+      adminSessions.delete(token);
+    }
   }
   return res.json({ success: true, message: 'Logged out successfully.' });
 });

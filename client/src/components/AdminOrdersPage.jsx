@@ -63,21 +63,23 @@ export default function AdminOrdersPage({
     fetch(apiUrl('/api/orders/admin/verify'), {
       headers: { Authorization: `Bearer ${authToken}` }
     })
-      .then((res) => {
-        if (!res.ok) throw new Error('Session invalid');
-        return res.json();
-      })
-      .then((data) => {
+      .then(async (res) => {
+        if (res.status === 401 || res.status === 403) {
+          sessionStorage.removeItem('thaniyam_admin_token');
+          if (isMounted) {
+            setAuthToken('');
+            setAdminUser(null);
+          }
+          return;
+        }
+        if (!res.ok) return;
+        const data = await res.json();
         if (isMounted && data.success) {
           setAdminUser(data.admin);
         }
       })
-      .catch(() => {
-        if (isMounted) {
-          sessionStorage.removeItem('thaniyam_admin_token');
-          setAuthToken('');
-          setAdminUser(null);
-        }
+      .catch((err) => {
+        console.warn('⚠️ [Admin] Session verification check notice:', err.message);
       });
 
     return () => { isMounted = false; };

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ShoppingBag, Menu, X, ArrowRight } from 'lucide-react';
+import { Search, ShoppingBag, Menu, X, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export default function Navbar({ 
   currentView, 
@@ -105,10 +105,20 @@ export default function Navbar({
                 Track Order
               </a>
             </li>
+            <li>
+              <a 
+                href="#admin" 
+                className={currentView === 'admin' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); handleNavClick('admin'); }}
+                title="Admin Orders & Inventory Portal"
+              >
+                Admin
+              </a>
+            </li>
           </ul>
         </nav>
 
-        {/* Actions (Search & Cart) */}
+        {/* Actions (Search, Admin Quick Link & Cart) */}
         <div className="navbar-actions">
           {/* Search Trigger & Form */}
           <form className={`search-wrapper ${searchOpen ? 'open' : ''}`} onSubmit={handleSearchSubmit}>
@@ -137,6 +147,17 @@ export default function Navbar({
               {searchOpen ? <X size={20} /> : <Search size={20} />}
             </button>
           </form>
+
+          {/* Admin Direct Button */}
+          <button
+            type="button"
+            className={`action-icon-btn ${currentView === 'admin' ? 'active' : ''}`}
+            aria-label="Admin Portal"
+            title="Admin Orders & Inventory Portal"
+            onClick={() => handleNavClick('admin')}
+          >
+            <ShieldCheck size={20} />
+          </button>
 
           {/* Cart Trigger */}
           <button
@@ -212,6 +233,15 @@ export default function Navbar({
                 onClick={(e) => { e.preventDefault(); handleNavClick('track-order'); }}
               >
                 Track Order <ArrowRight size={16} />
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#admin" 
+                className={currentView === 'admin' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); handleNavClick('admin'); }}
+              >
+                Admin Orders & Inventory <ArrowRight size={16} />
               </a>
             </li>
           </ul>
