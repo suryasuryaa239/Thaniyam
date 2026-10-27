@@ -102,27 +102,42 @@ export default function CartPage({
 
                         {/* Quantity Controls */}
                         <div className="cart-item-quantity">
-                          <div className="cart-qty-box">
-                            <button
-                              className="cart-qty-btn"
-                              onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                              disabled={item.quantity <= 1}
-                              aria-label={`Decrease quantity of ${item.name}`}
-                            >
-                              -
-                            </button>
-                            <span className="cart-qty-val" aria-live="polite">
-                              {item.quantity}
-                            </span>
-                            <button
-                              className="cart-qty-btn"
-                              onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                              disabled={item.quantity >= 20}
-                              aria-label={`Increase quantity of ${item.name}`}
-                            >
-                              +
-                            </button>
-                          </div>
+                          {(() => {
+                            const maxStock = typeof item.stock === 'number' ? item.stock : 20;
+                            const isAtMax = item.quantity >= maxStock;
+
+                            return (
+                              <div className="cart-qty-wrapper">
+                                <div className="cart-qty-box">
+                                  <button
+                                    className="cart-qty-btn"
+                                    onClick={() => updateQuantity(item.id, item.quantity - 1, maxStock)}
+                                    disabled={item.quantity <= 1}
+                                    aria-label={`Decrease quantity of ${item.name}`}
+                                  >
+                                    -
+                                  </button>
+                                  <span className="cart-qty-val" aria-live="polite">
+                                    {item.quantity}
+                                  </span>
+                                  <button
+                                    className="cart-qty-btn"
+                                    onClick={() => updateQuantity(item.id, item.quantity + 1, maxStock)}
+                                    disabled={isAtMax}
+                                    aria-label={`Increase quantity of ${item.name}`}
+                                    title={isAtMax ? `Max available stock (${maxStock}) reached` : 'Add one more'}
+                                  >
+                                    +
+                                  </button>
+                                </div>
+                                {isAtMax && maxStock > 0 && (
+                                  <span className="cart-stock-cap-hint" style={{ fontSize: '0.72rem', color: '#b45309', display: 'block', marginTop: '2px' }}>
+                                    Max stock ({maxStock})
+                                  </span>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </div>
 
                         {/* Line Subtotal */}

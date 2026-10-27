@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CartProvider, useCart } from './context/CartContext';
+import { ProductProvider, useProducts } from './context/ProductContext';
 import AnnouncementBar from './components/AnnouncementBar';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -10,21 +11,25 @@ import ProductDetailsPage from './components/ProductDetailsPage';
 import CartPage from './components/CartPage';
 import CheckoutPage from './components/CheckoutPage';
 import OrderConfirmationPage from './components/OrderConfirmationPage';
+import TrackOrderPage from './components/TrackOrderPage';
+import AdminOrdersPage from './components/AdminOrdersPage';
 import ProductQuickViewModal from './components/ProductQuickViewModal';
 import WhyUs from './components/WhyUs';
 import OurStory from './components/OurStory';
 import Footer from './components/Footer';
 import Toast from './components/Toast';
-import { ArrowLeft, Clock, ShieldCheck, ShoppingBag } from 'lucide-react';
 
 function AppContent() {
-  const [currentView, setCurrentView] = useState('home'); // 'home' | 'shop' | 'product' | 'cart' | 'checkout' | 'order-confirmation'
+  const { products, refreshProducts, getProductById, getRelatedProducts } = useProducts();
+  const [currentView, setCurrentView] = useState('home'); // 'home' | 'shop' | 'product' | 'cart' | 'checkout' | 'order-confirmation' | 'track-order' | 'admin'
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedProductId, setSelectedProductId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [quickViewProduct, setQuickViewProduct] = useState(null);
   const [confirmedOrderId, setConfirmedOrderId] = useState(null);
   const [confirmedOrder, setConfirmedOrder] = useState(null);
+  const [trackingOrderId, setTrackingOrderId] = useState('');
+  const [trackingMobile, setTrackingMobile] = useState('');
 
   const { totalItems, addToCart, toast, closeToast } = useCart();
 
@@ -32,10 +37,21 @@ function AppContent() {
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash;
-      if (hash.startsWith('#/cart')) {
+      if (hash.startsWith('#/admin') || hash.startsWith('#admin')) {
+        setCurrentView('admin');
+      } else if (hash.startsWith('#/cart')) {
         setCurrentView('cart');
       } else if (hash.startsWith('#/checkout')) {
         setCurrentView('checkout');
+      } else if (hash.startsWith('#/track-order') || hash.startsWith('#track-order')) {
+        setCurrentView('track-order');
+        if (hash.includes('?')) {
+          const params = new URLSearchParams(hash.split('?')[1] || '');
+          const id = params.get('orderId');
+          const mob = params.get('mobile') || params.get('phone');
+          if (id) setTrackingOrderId(id);
+          if (mob) setTrackingMobile(mob);
+        }
       } else if (hash.startsWith('#/order-confirmation')) {
         setCurrentView('order-confirmation');
         let id = null;
@@ -75,14 +91,31 @@ function AppContent() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  const navigateTo = (view, sectionId = null, categoryId = 'all', productId = null, orderId = null) => {
+  const navigateTo = (view, sectionId = null, categoryId = 'all', productId = null, orderId = null, mobile = null) => {
     setCurrentView(view);
 
-    if (view === 'cart') {
+    if (view === 'admin') {
+      window.location.hash = '#/admin';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (view === 'cart') {
       window.location.hash = '#/cart';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (view === 'checkout') {
       window.location.hash = '#/checkout';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (view === 'track-order') {
+      const targetId = orderId || trackingOrderId || '';
+      const targetMobile = mobile || trackingMobile || '';
+      if (targetId) setTrackingOrderId(targetId);
+      if (targetMobile) setTrackingMobile(targetMobile);
+
+      if (targetId && targetMobile) {
+        window.location.hash = `#/track-order?orderId=${encodeURIComponent(targetId)}&mobile=${encodeURIComponent(targetMobile)}`;
+      } else if (targetId) {
+        window.location.hash = `#/track-order?orderId=${encodeURIComponent(targetId)}`;
+      } else {
+        window.location.hash = '#/track-order';
+      }
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (view === 'order-confirmation') {
       const targetId = orderId || confirmedOrderId;
@@ -130,12 +163,26 @@ function AppContent() {
 
       {/* 3. Main Content Router */}
       <main>
-        {currentView === 'order-confirmation' ? (
+        {currentView === 'admin' ? (
+          <AdminOrdersPage
+            onNavigateHome={() => navigateTo('home')}
+            onNavigateTrack={(orderId, mobile) => navigateTo('track-order', null, 'all', null, orderId, mobile)}
+            onProductChange={refreshProducts}
+          />
+        ) : currentView === 'track-order' ? (
+          <TrackOrderPage
+            initialOrderId={trackingOrderId}
+            initialMobile={trackingMobile}
+            onNavigateHome={() => navigateTo('home')}
+            onNavigateShop={(cat) => navigateTo('shop', null, cat || 'all')}
+          />
+        ) : currentView === 'order-confirmation' ? (
           <OrderConfirmationPage
             orderId={confirmedOrderId}
             initialOrder={confirmedOrder}
             onNavigateHome={() => navigateTo('home')}
             onNavigateShop={(cat) => navigateTo('shop', null, cat || 'all')}
+            onNavigateTrack={(orderId, mobile) => navigateTo('track-order', null, 'all', null, orderId, mobile)}
           />
         ) : currentView === 'checkout' ? (
           <CheckoutPage
@@ -145,6 +192,7 @@ function AppContent() {
             onOrderSuccess={(order) => {
               setConfirmedOrder(order);
               setConfirmedOrderId(order.orderId);
+              refreshProducts();
               window.location.hash = `#/order-confirmation/${order.orderId}`;
               setCurrentView('order-confirmation');
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -190,6 +238,7 @@ function AppContent() {
 
             {/* Featured Products on Landing */}
             <FeaturedProducts
+              products={products}
               onQuickView={(prod) => setQuickViewProduct(prod)}
               onViewProduct={(id) => navigateTo('product', null, 'all', id)}
               onAddToCart={addToCart}
@@ -214,6 +263,10 @@ function AppContent() {
         onNavigate={(target) => {
           if (target === 'shop' || target === 'categories') {
             navigateTo('shop');
+          } else if (target === 'track-order') {
+            navigateTo('track-order');
+          } else if (target === 'admin') {
+            navigateTo('admin');
           } else {
             navigateTo('home', target);
           }
@@ -239,8 +292,10 @@ function AppContent() {
 
 export default function App() {
   return (
-    <CartProvider>
-      <AppContent />
-    </CartProvider>
+    <ProductProvider>
+      <CartProvider>
+        <AppContent />
+      </CartProvider>
+    </ProductProvider>
   );
 }

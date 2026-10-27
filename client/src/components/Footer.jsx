@@ -55,6 +55,16 @@ export default function Footer({ onNavigate }) {
                   Our Story & Heritage
                 </a>
               </li>
+              <li>
+                <a href="#track-order" onClick={(e) => { e.preventDefault(); onNavigate('track-order'); }}>
+                  Track Order
+                </a>
+              </li>
+              <li>
+                <a href="#admin" onClick={(e) => { e.preventDefault(); onNavigate('admin'); }}>
+                  Admin Orders Portal
+                </a>
+              </li>
             </ul>
           </div>
 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { 
-  ChevronRight, ArrowLeft, ShieldCheck, CheckCircle2, 
-  AlertCircle, Lock, Truck, Phone, MapPin, Sparkles, Loader2 
+  ChevronRight, ArrowLeft, ShieldCheck, 
+  AlertCircle, Lock, Loader2 
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { apiUrl } from '../config/api';
 
 const INDIAN_STATES = [
   'Tamil Nadu', 'Kerala', 'Karnataka', 'Andhra Pradesh', 'Telangana',
@@ -160,7 +161,7 @@ export default function CheckoutPage({
         }))
       };
 
-      const res = await fetch('/api/orders', {
+      const res = await fetch(apiUrl('/api/orders'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

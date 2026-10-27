@@ -5,12 +5,14 @@ import {
   AlertCircle, Loader2, Copy, Check, Info 
 } from 'lucide-react';
 import { ALL_PRODUCTS } from '../data/productsCatalog';
+import { apiUrl } from '../config/api';
 
 export default function OrderConfirmationPage({
   orderId,
   initialOrder,
   onNavigateHome,
-  onNavigateShop
+  onNavigateShop,
+  onNavigateTrack
 }) {
   const [order, setOrder] = useState(initialOrder || null);
   const [loading, setLoading] = useState(!initialOrder && !!orderId);
@@ -35,7 +37,7 @@ export default function OrderConfirmationPage({
     setLoading(true);
     setError(null);
 
-    fetch(`/api/orders/${orderId}`)
+    fetch(apiUrl(`/api/orders/${orderId}`))
       .then(async (res) => {
         const data = await res.json();
         if (!res.ok || !data.success) {
@@ -169,13 +171,23 @@ export default function OrderConfirmationPage({
           </div>
         </section>
 
-        {/* Action Toolbar (Print, Shop) */}
+        {/* Action Toolbar (Track, Print, Shop) */}
         <div className="conf-toolbar no-print">
+          {onNavigateTrack && (
+            <button 
+              className="btn-primary btn-track-order-cta" 
+              onClick={() => onNavigateTrack(order.orderId, customer.mobile)}
+              id="btn-conf-track-order"
+            >
+              <Truck size={16} />
+              <span>Track Live Status</span>
+            </button>
+          )}
           <button className="btn-secondary btn-print-receipt" onClick={handlePrint}>
             <Printer size={16} />
             <span>Print Receipt</span>
           </button>
-          <button className="btn-primary" onClick={() => onNavigateShop('all')}>
+          <button className="btn-secondary" onClick={() => onNavigateShop('all')}>
             <ShoppingBag size={16} />
             <span>Continue Shopping</span>
           </button>
@@ -335,6 +347,23 @@ export default function OrderConfirmationPage({
                 <ShieldCheck size={16} color="#15803d" />
                 <span>100% Traditional Quality Assured</span>
               </div>
+
+              {onNavigateTrack && (
+                <div className="conf-track-prompt" style={{ marginTop: '14px', paddingTop: '14px', borderTop: '1px solid var(--color-border)' }}>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '8px' }}>
+                    Follow this parcel throughout its journey from preparation to your doorstep:
+                  </p>
+                  <button
+                    type="button"
+                    className="btn-secondary"
+                    style={{ width: '100%', justifyContent: 'center', gap: '8px', padding: '8px 12px', fontSize: '0.86rem' }}
+                    onClick={() => onNavigateTrack(order.orderId, customer.mobile)}
+                  >
+                    <Truck size={15} color="#1b4332" />
+                    <span>Open Live Order Tracking</span>
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

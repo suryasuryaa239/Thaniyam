@@ -18,11 +18,13 @@ export default function FeaturedProducts({
   onAddToCart, 
   searchQuery, 
   activeCategory, 
-  onCategoryChange 
+  onCategoryChange,
+  products: productsProp
 }) {
   const [selectedTab, setSelectedTab] = useState(activeCategory || 'all');
 
   const currentTab = activeCategory || selectedTab;
+  const activeCatalog = (productsProp || FEATURED_PRODUCTS).filter((p) => p.isActive !== false);
 
   const handleTabClick = (tabId) => {
     setSelectedTab(tabId);
@@ -32,12 +34,12 @@ export default function FeaturedProducts({
   };
 
   // Filter products by selected category tab and search query
-  const filteredProducts = FEATURED_PRODUCTS.filter((product) => {
+  const filteredProducts = activeCatalog.filter((product) => {
     const matchesTab = currentTab === 'all' || product.category === currentTab;
     const matchesSearch = !searchQuery || 
       product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.tamilName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      product.categoryName.toLowerCase().includes(searchQuery.toLowerCase());
+      (product.tamilName && product.tamilName.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (product.categoryName && product.categoryName.toLowerCase().includes(searchQuery.toLowerCase()));
     return matchesTab && matchesSearch;
   });
 
@@ -78,87 +80,109 @@ export default function FeaturedProducts({
         </div>
       ) : (
         <div className="products-grid">
-          {filteredProducts.map((prod) => (
-            <article key={prod.id} className="product-card">
-              {/* Product Badge */}
-              {prod.badge && (
-                <span className="product-badge">{prod.badge}</span>
-              )}
+            {filteredProducts.map((prod) => {
+              const isOutOfStock = (typeof prod.stock === 'number' && prod.stock <= 0) || prod.inStock === false;
+              const isLowStock = !isOutOfStock && typeof prod.stock === 'number' && prod.stock <= 5;
 
-              {/* Product Image Frame */}
-              <div className="product-image-frame" onClick={() => onQuickView(prod)}>
-                <img 
-                  src={prod.image} 
-                  alt={prod.name} 
-                  className="product-card-img"
-                  loading="lazy"
-                />
-                <button 
-                  className="quick-view-overlay-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onQuickView(prod);
-                  }}
-                  aria-label={`Quick view ${prod.name}`}
-                >
-                  <Eye size={16} />
-                  <span>Quick View</span>
-                </button>
-              </div>
-
-              {/* Product Body */}
-              <div className="product-body">
-                <div className="product-meta">
-                  <span className="product-cat-name">{prod.categoryName}</span>
-                  <span className="product-weight-tag">{prod.weight}</span>
-                </div>
-
-                  <h3 className="product-title" onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}>
-                    {prod.name}
-                  </h3>
-                  <span className="product-tamil-sub">{prod.tamilName}</span>
-
-                  {/* Rating */}
-                  <div className="product-rating-row">
-                    <div className="stars-mini">
-                      <Star size={13} fill="#d97706" color="#d97706" />
-                      <span className="rating-num">{prod.rating}</span>
-                    </div>
-                    <span className="rating-count">({prod.reviewsCount})</span>
+              return (
+                <article key={prod.id} className={`product-card ${isOutOfStock ? 'card-out-of-stock' : ''}`}>
+                  {/* Product Badge */}
+                  <div className="product-badge-wrap">
+                    {isOutOfStock ? (
+                      <span className="product-badge badge-out-of-stock">Sold Out</span>
+                    ) : isLowStock ? (
+                      <span className="product-badge badge-low-stock">Only {prod.stock} left!</span>
+                    ) : prod.badge ? (
+                      <span className="product-badge">{prod.badge}</span>
+                    ) : null}
                   </div>
 
-                  {/* Price and Add button */}
-                  <div className="product-card-footer">
-                    <div className="price-group">
-                      <span className="current-price">₹{prod.price}</span>
-                      {prod.originalPrice && (
-                        <span className="slashed-price">₹{prod.originalPrice}</span>
-                      )}
+                  {/* Product Image Frame */}
+                  <div className="product-image-frame" onClick={() => onQuickView(prod)}>
+                    <img 
+                      src={prod.image} 
+                      alt={prod.name} 
+                      className="product-card-img"
+                      loading="lazy"
+                    />
+                    <button 
+                      className="quick-view-overlay-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onQuickView(prod);
+                      }}
+                      aria-label={`Quick view ${prod.name}`}
+                    >
+                      <Eye size={16} />
+                      <span>Quick View</span>
+                    </button>
+                  </div>
+
+                  {/* Product Body */}
+                  <div className="product-body">
+                    <div className="product-meta">
+                      <span className="product-cat-name">{prod.categoryName}</span>
+                      <span className="product-weight-tag">{prod.weight}</span>
                     </div>
 
-                    <div className="card-actions-group">
-                      {onViewProduct && (
-                        <button
-                          className="btn-card-view"
-                          onClick={() => onViewProduct(prod.id)}
-                          title="View product details"
-                        >
-                          View
-                        </button>
-                      )}
-                      <button 
-                        className="btn-add-cart"
-                        onClick={() => onAddToCart(prod)}
-                        aria-label={`Add ${prod.name} to cart`}
-                      >
-                        <ShoppingBag size={16} />
-                        <span>Add</span>
-                      </button>
+                    <h3 className="product-title" onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}>
+                      {prod.name}
+                    </h3>
+                    <span className="product-tamil-sub">{prod.tamilName}</span>
+
+                    {/* Rating */}
+                    <div className="product-rating-row">
+                      <div className="stars-mini">
+                        <Star size={13} fill="#d97706" color="#d97706" />
+                        <span className="rating-num">{prod.rating}</span>
+                      </div>
+                      <span className="rating-count">({prod.reviewsCount})</span>
+                    </div>
+
+                    {/* Price and Add button */}
+                    <div className="product-card-footer">
+                      <div className="price-group">
+                        <span className="current-price">₹{prod.price}</span>
+                        {prod.originalPrice && (
+                          <span className="slashed-price">₹{prod.originalPrice}</span>
+                        )}
+                      </div>
+
+                      <div className="card-actions-group">
+                        {onViewProduct && (
+                          <button
+                            className="btn-card-view"
+                            onClick={() => onViewProduct(prod.id)}
+                            title="View product details"
+                          >
+                            View
+                          </button>
+                        )}
+                        {isOutOfStock ? (
+                          <button 
+                            className="btn-add-cart btn-soldout"
+                            disabled
+                            aria-disabled="true"
+                            title="Item sold out"
+                          >
+                            <span>Sold Out</span>
+                          </button>
+                        ) : (
+                          <button 
+                            className="btn-add-cart"
+                            onClick={() => onAddToCart(prod)}
+                            aria-label={`Add ${prod.name} to cart`}
+                          >
+                            <ShoppingBag size={16} />
+                            <span>Add</span>
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-              </div>
-            </article>
-          ))}
+                </article>
+              );
+            })}
         </div>
       )}
 

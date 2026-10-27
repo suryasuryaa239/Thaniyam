@@ -77,43 +77,78 @@ export default function ProductQuickViewModal({ product, onClose, onAddToCart })
               <span>Small-batch prepared without synthetic food preservatives.</span>
             </div>
 
-            {/* Actions */}
-            <div className="modal-actions-row">
-              <div className="quantity-control">
-                <button 
-                  className="qty-btn" 
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  aria-label="Decrease quantity"
-                >
-                  -
-                </button>
-                <span className="qty-value">{quantity}</span>
-                <button 
-                  className="qty-btn" 
-                  onClick={() => setQuantity(quantity + 1)}
-                  aria-label="Increase quantity"
-                >
-                  +
-                </button>
-              </div>
+            {/* Live Stock Pill */}
+            {(() => {
+              const productStock = typeof product.stock === 'number' ? product.stock : 25;
+              const isOutOfStock = productStock <= 0 || product.inStock === false;
+              const isLowStock = !isOutOfStock && productStock <= 5;
 
-              <button 
-                className={`btn-primary modal-add-btn ${added ? 'btn-success' : ''}`}
-                onClick={handleAdd}
-              >
-                {added ? (
-                  <>
-                    <Check size={18} />
-                    <span>Added to Cart!</span>
-                  </>
-                ) : (
-                  <>
-                    <ShoppingBag size={18} />
-                    <span>Add to Cart • ₹{product.price * quantity}</span>
-                  </>
-                )}
-              </button>
-            </div>
+              return (
+                <>
+                  <div className={`stock-status-pill ${isOutOfStock ? 'stock-pill-out' : isLowStock ? 'stock-pill-low' : 'stock-pill-ok'}`}>
+                    <span className={`stock-indicator-dot ${isOutOfStock ? 'dot-red' : isLowStock ? 'dot-amber' : 'dot-green'}`}></span>
+                    <strong>Status:</strong>
+                    {isOutOfStock ? (
+                      <span className="stock-label-out">Out of Stock (கையிருப்பு இல்லை)</span>
+                    ) : isLowStock ? (
+                      <span className="stock-label-low">Only {productStock} left in stock!</span>
+                    ) : (
+                      <span>In Stock ({productStock} units)</span>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="modal-actions-row">
+                    <div className="quantity-control">
+                      <button 
+                        className="qty-btn" 
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        disabled={isOutOfStock || quantity <= 1}
+                        aria-label="Decrease quantity"
+                      >
+                        -
+                      </button>
+                      <span className="qty-value">{isOutOfStock ? 0 : quantity}</span>
+                      <button 
+                        className="qty-btn" 
+                        onClick={() => setQuantity(Math.min(Math.min(productStock, 20), quantity + 1))}
+                        disabled={isOutOfStock || quantity >= Math.min(productStock, 20)}
+                        aria-label="Increase quantity"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    {isOutOfStock ? (
+                      <button 
+                        className="btn-primary modal-add-btn btn-soldout"
+                        disabled
+                        aria-disabled="true"
+                      >
+                        <span>Sold Out</span>
+                      </button>
+                    ) : (
+                      <button 
+                        className={`btn-primary modal-add-btn ${added ? 'btn-success' : ''}`}
+                        onClick={handleAdd}
+                      >
+                        {added ? (
+                          <>
+                            <Check size={18} />
+                            <span>Added to Cart!</span>
+                          </>
+                        ) : (
+                          <>
+                            <ShoppingBag size={18} />
+                            <span>Add to Cart • ₹{product.price * quantity}</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </>
+              );
+            })()}
           </div>
         </div>
       </div>

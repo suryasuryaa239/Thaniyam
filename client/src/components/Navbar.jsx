@@ -96,6 +96,15 @@ export default function Navbar({
                 Our Story
               </a>
             </li>
+            <li>
+              <a 
+                href="#track-order" 
+                className={currentView === 'track-order' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); handleNavClick('track-order'); }}
+              >
+                Track Order
+              </a>
+            </li>
           </ul>
         </nav>
 
@@ -194,6 +203,15 @@ export default function Navbar({
                 onClick={(e) => { e.preventDefault(); handleNavClick('home', 'our-story'); }}
               >
                 Our Story
+              </a>
+            </li>
+            <li>
+              <a 
+                href="#track-order" 
+                className={currentView === 'track-order' ? 'active' : ''}
+                onClick={(e) => { e.preventDefault(); handleNavClick('track-order'); }}
+              >
+                Track Order <ArrowRight size={16} />
               </a>
             </li>
           </ul>

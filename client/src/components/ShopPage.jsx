@@ -1,9 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Search, X, SlidersHorizontal, ArrowUpDown, Star, Eye, ShoppingBag, 
-  ChevronRight, Sparkles, Filter, RotateCcw, AlertCircle 
+  ChevronRight, Sparkles, Filter, RotateCcw, AlertCircle, AlertTriangle 
 } from 'lucide-react';
 import { SHOP_CATEGORIES, ALL_PRODUCTS } from '../data/productsCatalog';
+import { useProducts } from '../context/ProductContext';
 
 export default function ShopPage({ 
   onNavigateHome, 
@@ -11,30 +12,46 @@ export default function ShopPage({
   onQuickView, 
   onViewProduct,
   onAddToCart,
-  searchQuery: initialSearch = ''
+  searchQuery: initialSearch = '',
+  products: productsProp
 }) {
+  const { products: contextProducts } = useProducts();
+  const allProducts = (productsProp || contextProducts || ALL_PRODUCTS).filter((p) => p.isActive !== false);
+
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [sortBy, setSortBy] = useState('featured');
   const [priceFilter, setPriceFilter] = useState('all'); // 'all', 'under-150', '150-250', 'above-250'
   const [imageErrors, setImageErrors] = useState({});
 
+  // Synchronize category filter if navigation passed a new initialCategory
+  useEffect(() => {
+    if (initialCategory) {
+      setSelectedCategory(initialCategory);
+    }
+  }, [initialCategory]);
+
+  // Synchronize search query if navbar search changed
+  useEffect(() => {
+    setSearchQuery(initialSearch || '');
+  }, [initialSearch]);
+
   const handleImageError = (productId) => {
     setImageErrors((prev) => ({ ...prev, [productId]: true }));
   };
 
-  // Calculate category counts
+  // Calculate category counts dynamically
   const categoryCounts = useMemo(() => {
-    const counts = { all: ALL_PRODUCTS.length };
-    ALL_PRODUCTS.forEach((prod) => {
+    const counts = { all: allProducts.length };
+    allProducts.forEach((prod) => {
       counts[prod.category] = (counts[prod.category] || 0) + 1;
     });
     return counts;
-  }, []);
+  }, [allProducts]);
 
   // Filter and sort products
   const filteredAndSortedProducts = useMemo(() => {
-    return ALL_PRODUCTS.filter((product) => {
+    return allProducts.filter((product) => {
       // 1. Category filter
       const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
 
@@ -42,9 +59,9 @@ export default function ShopPage({
       const query = searchQuery.trim().toLowerCase();
       const matchesSearch = !query || 
         product.name.toLowerCase().includes(query) ||
-        product.tamilName.toLowerCase().includes(query) ||
-        product.categoryName.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query) ||
+        (product.tamilName && product.tamilName.toLowerCase().includes(query)) ||
+        (product.categoryName && product.categoryName.toLowerCase().includes(query)) ||
+        (product.description && product.description.toLowerCase().includes(query)) ||
         (product.ingredients && product.ingredients.some(ing => ing.toLowerCase().includes(query)));
 
       // 3. Price filter
@@ -259,99 +276,121 @@ export default function ShopPage({
           </div>
         ) : (
           <div className="shop-products-grid">
-            {filteredAndSortedProducts.map((prod) => (
-              <article key={prod.id} className="shop-product-card">
-                {/* Badge */}
-                {prod.badge && (
-                  <span className="product-badge">{prod.badge}</span>
-                )}
+            {filteredAndSortedProducts.map((prod) => {
+              const isOutOfStock = (typeof prod.stock === 'number' && prod.stock <= 0) || prod.inStock === false;
+              const isLowStock = !isOutOfStock && typeof prod.stock === 'number' && prod.stock <= 5;
 
-                {/* Product Image Frame */}
-                <div 
-                  className="shop-card-image-frame"
-                  onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
-                >
-                  {imageErrors[prod.id] ? (
-                    <div className="fallback-image-placeholder">
-                      <span>🌾</span>
-                      <p>{prod.name}</p>
-                    </div>
-                  ) : (
-                    <img
-                      src={prod.image}
-                      alt={prod.name}
-                      className="shop-card-img"
-                      loading="lazy"
-                      onError={() => handleImageError(prod.id)}
-                    />
-                  )}
-                  <button
-                    className="shop-quick-view-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onQuickView(prod);
-                    }}
-                    aria-label={`Quick view ${prod.name}`}
-                  >
-                    <Eye size={15} />
-                    <span>Quick View</span>
-                  </button>
-                </div>
-
-                {/* Card Content */}
-                <div className="shop-card-content">
-                  <div className="shop-card-meta">
-                    <span className="shop-card-category">{prod.categoryName}</span>
-                    <span className="shop-card-weight">{prod.weight}</span>
+              return (
+                <article key={prod.id} className={`shop-product-card ${isOutOfStock ? 'card-out-of-stock' : ''}`}>
+                  {/* Badges */}
+                  <div className="product-card-badges">
+                    {isOutOfStock ? (
+                      <span className="product-badge badge-out-of-stock">கையிருப்பு இல்லை • Sold Out</span>
+                    ) : isLowStock ? (
+                      <span className="product-badge badge-low-stock">Only {prod.stock} left!</span>
+                    ) : prod.badge ? (
+                      <span className="product-badge">{prod.badge}</span>
+                    ) : null}
                   </div>
 
-                  <h3 
-                    className="shop-card-title"
+                  {/* Product Image Frame */}
+                  <div 
+                    className="shop-card-image-frame"
                     onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
                   >
-                    {prod.name}
-                  </h3>
-                  <span className="shop-card-tamil">{prod.tamilName}</span>
-
-                  {/* Rating */}
-                  <div className="shop-card-rating">
-                    <div className="stars-mini">
-                      <Star size={13} fill="#d97706" color="#d97706" />
-                      <span className="rating-num">{prod.rating}</span>
-                    </div>
-                    <span className="rating-count">({prod.reviewsCount} reviews)</span>
+                    {imageErrors[prod.id] ? (
+                      <div className="fallback-image-placeholder">
+                        <span>🌾</span>
+                        <p>{prod.name}</p>
+                      </div>
+                    ) : (
+                      <img
+                        src={prod.image}
+                        alt={prod.name}
+                        className="shop-card-img"
+                        loading="lazy"
+                        onError={() => handleImageError(prod.id)}
+                      />
+                    )}
+                    <button
+                      className="shop-quick-view-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onQuickView(prod);
+                      }}
+                      aria-label={`Quick view ${prod.name}`}
+                    >
+                      <Eye size={15} />
+                      <span>Quick View</span>
+                    </button>
                   </div>
 
-                  {/* Footer (Price & Add Button) */}
-                  <div className="shop-card-footer">
-                    <div className="price-group">
-                      <span className="current-price">₹{prod.price}</span>
-                      {prod.originalPrice && (
-                        <span className="slashed-price">₹{prod.originalPrice}</span>
-                      )}
+                  {/* Card Content */}
+                  <div className="shop-card-content">
+                    <div className="shop-card-meta">
+                      <span className="shop-card-category">{prod.categoryName}</span>
+                      <span className="shop-card-weight">{prod.weight}</span>
                     </div>
 
-                    <div className="card-actions-group">
-                      <button
-                        className="btn-card-view"
-                        onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
-                        title="View full product details"
-                      >
-                        View Product
-                      </button>
-                      <button
-                        className="btn-card-add"
-                        onClick={() => onAddToCart(prod)}
-                        aria-label={`Add ${prod.name} to cart`}
-                      >
-                        <ShoppingBag size={15} />
-                        <span>Add</span>
-                      </button>
+                    <h3 
+                      className="shop-card-title"
+                      onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
+                    >
+                      {prod.name}
+                    </h3>
+                    <span className="shop-card-tamil">{prod.tamilName}</span>
+
+                    {/* Rating */}
+                    <div className="shop-card-rating">
+                      <div className="stars-mini">
+                        <Star size={13} fill="#d97706" color="#d97706" />
+                        <span className="rating-num">{prod.rating}</span>
+                      </div>
+                      <span className="rating-count">({prod.reviewsCount} reviews)</span>
+                    </div>
+
+                    {/* Footer (Price & Add Button) */}
+                    <div className="shop-card-footer">
+                      <div className="price-group">
+                        <span className="current-price">₹{prod.price}</span>
+                        {prod.originalPrice && (
+                          <span className="slashed-price">₹{prod.originalPrice}</span>
+                        )}
+                      </div>
+
+                      <div className="card-actions-group">
+                        <button
+                          className="btn-card-view"
+                          onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
+                          title="View full product details"
+                        >
+                          View Product
+                        </button>
+                        {isOutOfStock ? (
+                          <button
+                            className="btn-card-add btn-card-soldout"
+                            disabled
+                            aria-disabled="true"
+                            title="This item is currently out of stock"
+                          >
+                            <span>Sold Out</span>
+                          </button>
+                        ) : (
+                          <button
+                            className="btn-card-add"
+                            onClick={() => onAddToCart(prod)}
+                            aria-label={`Add ${prod.name} to cart`}
+                          >
+                            <ShoppingBag size={15} />
+                            <span>Add</span>
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              );
+            })}
           </div>
         )}
 

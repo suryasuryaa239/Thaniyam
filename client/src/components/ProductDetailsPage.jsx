@@ -222,75 +222,113 @@ export default function ProductDetailsPage({
               <span className="tax-inclusive-tag">Inclusive of all taxes</span>
             </div>
 
-            {/* Stock Availability */}
-            <div className="stock-status-pill">
-              <span className="stock-indicator-dot"></span>
-              <strong>Availability:</strong>
-              <span>In Stock (Fresh Small-Batch)</span>
-            </div>
+            {/* Live Stock Availability */}
+            {(() => {
+              const productStock = typeof product.stock === 'number' ? product.stock : 25;
+              const isOutOfStock = productStock <= 0 || product.inStock === false;
+              const isLowStock = !isOutOfStock && productStock <= 5;
 
-            {/* Description */}
-            <div className="product-description-block">
-              <h3 className="subheading">About This Traditional Treat</h3>
-              <p className="description-text">{product.description}</p>
-            </div>
+              return (
+                <>
+                  <div className={`stock-status-pill ${isOutOfStock ? 'stock-pill-out' : isLowStock ? 'stock-pill-low' : 'stock-pill-ok'}`}>
+                    <span className={`stock-indicator-dot ${isOutOfStock ? 'dot-red' : isLowStock ? 'dot-amber' : 'dot-green'}`}></span>
+                    <strong>Availability:</strong>
+                    {isOutOfStock ? (
+                      <span className="stock-label-out">Out of Stock (கையிருப்பு தற்காலிகமாக இல்லை)</span>
+                    ) : isLowStock ? (
+                      <span className="stock-label-low">Only {productStock} packs left in stock!</span>
+                    ) : (
+                      <span>In Stock ({productStock} units fresh in small-batch)</span>
+                    )}
+                  </div>
 
-            {/* Traditional Ingredients */}
-            {product.ingredients && product.ingredients.length > 0 && (
-              <div className="product-ingredients-block">
-                <h3 className="subheading">Pure Traditional Ingredients</h3>
-                <div className="ingredients-pill-list">
-                  {product.ingredients.map((item, idx) => (
-                    <span key={idx} className="ingredient-pill-tag">
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
+                  {isOutOfStock && (
+                    <div className="product-soldout-notice">
+                      <AlertCircle size={18} color="#dc2626" />
+                      <div>
+                        <strong>Currently Sold Out</strong>
+                        <p>A fresh batch is being traditionally prepared in our village kitchen. Check back shortly!</p>
+                      </div>
+                    </div>
+                  )}
 
-            {/* Purchase Controls (Quantity + Add to Cart) */}
-            <div className="purchase-controls-card">
-              <div className="quantity-selector-group">
-                <label className="qty-label">Quantity</label>
-                <div className="qty-control-box">
-                  <button
-                    className="qty-btn"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    disabled={quantity <= 1}
-                    aria-label="Decrease quantity"
-                  >
-                    -
-                  </button>
-                  <span className="qty-number" aria-live="polite">{quantity}</span>
-                  <button
-                    className="qty-btn"
-                    onClick={() => setQuantity(Math.min(10, quantity + 1))}
-                    disabled={quantity >= 10}
-                    aria-label="Increase quantity"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
+                  {/* Description */}
+                  <div className="product-description-block">
+                    <h3 className="subheading">About This Traditional Treat</h3>
+                    <p className="description-text">{product.description}</p>
+                  </div>
 
-              <button
-                className={`btn-primary purchase-add-btn ${added ? 'btn-success' : ''}`}
-                onClick={handleAdd}
-              >
-                {added ? (
-                  <>
-                    <Check size={20} />
-                    <span>Added to Cart!</span>
-                  </>
-                ) : (
-                  <>
-                    <ShoppingBag size={20} />
-                    <span>Add to Cart • ₹{product.price * quantity}</span>
-                  </>
-                )}
-              </button>
-            </div>
+                  {/* Traditional Ingredients */}
+                  {product.ingredients && product.ingredients.length > 0 && (
+                    <div className="product-ingredients-block">
+                      <h3 className="subheading">Pure Traditional Ingredients</h3>
+                      <div className="ingredients-pill-list">
+                        {product.ingredients.map((item, idx) => (
+                          <span key={idx} className="ingredient-pill-tag">
+                            {item}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Purchase Controls (Quantity + Add to Cart) */}
+                  <div className="purchase-controls-card">
+                    <div className="quantity-selector-group">
+                      <label className="qty-label">Quantity</label>
+                      <div className="qty-control-box">
+                        <button
+                          className="qty-btn"
+                          onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                          disabled={isOutOfStock || quantity <= 1}
+                          aria-label="Decrease quantity"
+                        >
+                          -
+                        </button>
+                        <span className="qty-number" aria-live="polite">
+                          {isOutOfStock ? 0 : quantity}
+                        </span>
+                        <button
+                          className="qty-btn"
+                          onClick={() => setQuantity(Math.min(Math.min(productStock, 20), quantity + 1))}
+                          disabled={isOutOfStock || quantity >= Math.min(productStock, 20)}
+                          aria-label="Increase quantity"
+                        >
+                          +
+                        </button>
+                      </div>
+                    </div>
+
+                    {isOutOfStock ? (
+                      <button
+                        className="btn-primary purchase-add-btn btn-soldout"
+                        disabled
+                        aria-disabled="true"
+                      >
+                        <span>Sold Out • கையிருப்பு இல்லை</span>
+                      </button>
+                    ) : (
+                      <button
+                        className={`btn-primary purchase-add-btn ${added ? 'btn-success' : ''}`}
+                        onClick={handleAdd}
+                      >
+                        {added ? (
+                          <>
+                            <Check size={20} />
+                            <span>Added to Cart!</span>
+                          </>
+                        ) : (
+                          <>
+                            <ShoppingBag size={20} />
+                            <span>Add to Cart • ₹{product.price * quantity}</span>
+                          </>
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </>
+              );
+            })()}
 
             {/* Traditional Trust Strip */}
             <div className="product-trust-strip">
