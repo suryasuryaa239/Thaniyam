@@ -79,3 +79,4 @@ export const deleteCategoryFromStore = async (id) => {
 
   return existed;
 };
+

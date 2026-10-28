@@ -556,3 +556,4 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
     </div>
   );
 }
+
