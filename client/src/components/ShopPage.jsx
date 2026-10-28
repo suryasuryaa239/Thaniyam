@@ -156,11 +156,6 @@ export default function ShopPage({
             )}
           </nav>
 
-          <div className="shop-tag-badge">
-            <Sparkles size={14} />
-            <span>100% FARM TO PANTRY • NATIVE SOURCING</span>
-          </div>
-
           <h1 className="shop-main-heading">
             {selectedCategory === 'all' ? 'Authentic Traditional Pantry' : activeCategoryObj.name}
           </h1>
