@@ -1,8 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, ShoppingBag, Menu, X, ArrowRight, Heart, ChevronDown, PackageSearch } from 'lucide-react';
+import { 
+  Search, ShoppingBag, Menu, X, ArrowRight, Heart, 
+  ChevronDown, ChevronRight, PackageSearch, Sparkles 
+} from 'lucide-react';
 import { CATEGORIES } from '../data/sampleData';
 import { useWishlist } from '../context/WishlistContext';
 import { useLanguage } from '../context/LanguageContext';
+import { useProducts } from '../context/ProductContext';
+
+const CATEGORY_IMAGE_MAP = {
+  'millets-grains': '/images/cat-millets.jpg',
+  'traditional-snacks': '/images/cat-snacks.jpg',
+  'wood-pressed-oils': '/images/cat-oils.jpg',
+  'natural-sweeteners': '/images/cat-jaggery.jpg',
+  'heritage-podis': '/images/prod-podi.jpg',
+  'millet-sweets': '/images/prod-laddu.jpg',
+};
+
+const CATEGORY_ICON_MAP = {
+  'millets-grains': '🌾',
+  'traditional-snacks': '🥨',
+  'wood-pressed-oils': '🫒',
+  'natural-sweeteners': '🍯',
+  'heritage-podis': '🌶️',
+  'millet-sweets': '🍬',
+};
+
+const CATEGORY_TAG_MAP = {
+  'millets-grains': 'Unpolished & Native',
+  'traditional-snacks': 'Wood-Pressed Crisp',
+  'wood-pressed-oils': 'Cold-Pressed Vaagai',
+  'natural-sweeteners': 'Pure Udangudi Karupatti',
+  'heritage-podis': 'Stone-Ground Blends',
+  'millet-sweets': 'Palm Jaggery Delights',
+};
 
 export default function Navbar({
   currentView,
@@ -18,6 +49,11 @@ export default function Navbar({
   const catRef = useRef(null);
   const { wishlistIds } = useWishlist();
   const { lang, toggleLang, t } = useLanguage();
+  const { categories: dynamicCategories } = useProducts();
+
+  const activeCategories = (dynamicCategories && dynamicCategories.length > 0)
+    ? dynamicCategories.filter((c) => c.id !== 'all')
+    : CATEGORIES;
 
   useEffect(() => {
     const onDocClick = (e) => {
@@ -102,7 +138,12 @@ export default function Navbar({
                 {t('shop')}
               </a>
             </li>
-            <li className="nav-dropdown" ref={catRef}>
+            <li 
+              className="nav-dropdown" 
+              ref={catRef}
+              onMouseEnter={() => setCatOpen(true)}
+              onMouseLeave={() => setCatOpen(false)}
+            >
               <button
                 type="button"
                 className={`nav-dropdown-trigger ${catOpen ? 'open' : ''}`}
@@ -110,18 +151,88 @@ export default function Navbar({
                 aria-expanded={catOpen}
                 onClick={() => setCatOpen((o) => !o)}
               >
-                {t('categories')} <ChevronDown size={15} />
+                <span>{t('categories')}</span>
+                <ChevronDown size={14} className={`nav-chevron ${catOpen ? 'rotated' : ''}`} />
               </button>
+
               {catOpen && (
-                <ul className="nav-dropdown-menu">
-                  {CATEGORIES.map((cat) => (
-                    <li key={cat.id}>
-                      <button type="button" onClick={() => handleCategoryClick(cat.id)}>
-                        {lang === 'ta' ? cat.tamilName : cat.name}
-                      </button>
-                    </li>
-                  ))}
-                </ul>
+                <div className="nav-dropdown-panel" role="menu">
+                  {/* Dropdown Header */}
+                  <div className="nav-dropdown-header">
+                    <div className="nav-dropdown-header-info">
+                      <span className="dropdown-header-icon">🌿</span>
+                      <div>
+                        <span className="dropdown-header-title">Heritage Collections</span>
+                        <span className="dropdown-header-tamil">நம் பாரம்பரிய அங்காடி பிரிவுகள்</span>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="dropdown-view-all-btn"
+                      onClick={() => handleNavClick('shop')}
+                    >
+                      <span>Explore Shop</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
+
+                  {/* Category Items List */}
+                  <div className="nav-dropdown-list">
+                    {activeCategories.map((cat) => {
+                      const catImage = cat.image || CATEGORY_IMAGE_MAP[cat.id] || '/images/cat-snacks.jpg';
+                      const catIcon = cat.icon || CATEGORY_ICON_MAP[cat.id] || '🌾';
+                      const catTag = CATEGORY_TAG_MAP[cat.id] || 'Pure Traditional';
+
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          className="nav-cat-item-btn"
+                          onClick={() => handleCategoryClick(cat.id)}
+                          role="menuitem"
+                        >
+                          <div className="nav-cat-thumb-box">
+                            <img
+                              src={catImage}
+                              alt={cat.name}
+                              className="nav-cat-thumb-img"
+                              loading="lazy"
+                            />
+                            <span className="nav-cat-emoji">{catIcon}</span>
+                          </div>
+                          <div className="nav-cat-info">
+                            <div className="nav-cat-title-row">
+                              <span className="nav-cat-name">
+                                {lang === 'ta' && cat.tamilName ? cat.tamilName : cat.name}
+                              </span>
+                              <span className="nav-cat-pill">{catTag}</span>
+                            </div>
+                            <span className="nav-cat-sub">
+                              {lang === 'ta' ? cat.name : cat.tamilName}
+                            </span>
+                          </div>
+                          <ChevronRight size={15} className="nav-cat-arrow" />
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Dropdown Trust Footer */}
+                  <div className="nav-dropdown-footer">
+                    <div className="dropdown-perk-item">
+                      <span className="perk-bullet">🪵</span>
+                      <span>100% Marachekku</span>
+                    </div>
+                    <div className="dropdown-perk-item">
+                      <span className="perk-bullet">🌾</span>
+                      <span>Native Millets</span>
+                    </div>
+                    <div className="dropdown-perk-item">
+                      <span className="perk-bullet">🚚</span>
+                      <span>Free Delivery &gt; ₹499</span>
+                    </div>
+                  </div>
+                </div>
               )}
             </li>
             <li>
@@ -200,16 +311,28 @@ export default function Navbar({
                 {t('shop')} <ArrowRight size={16} />
               </a>
             </li>
-            {CATEGORIES.map((cat) => (
-              <li key={cat.id} className="mobile-sub-item">
-                <a
-                  href={`#/shop?category=${cat.id}`}
-                  onClick={(e) => { e.preventDefault(); handleCategoryClick(cat.id); }}
-                >
-                  {lang === 'ta' ? cat.tamilName : cat.name}
-                </a>
-              </li>
-            ))}
+            <li className="mobile-category-header">
+              <span>{t('categories')}</span>
+            </li>
+            {activeCategories.map((cat) => {
+              const catIcon = cat.icon || CATEGORY_ICON_MAP[cat.id] || '🌾';
+              return (
+                <li key={cat.id} className="mobile-sub-item">
+                  <a
+                    href={`#/shop?category=${cat.id}`}
+                    onClick={(e) => { e.preventDefault(); handleCategoryClick(cat.id); }}
+                    className="mobile-cat-link"
+                  >
+                    <span className="mobile-cat-icon">{catIcon}</span>
+                    <div className="mobile-cat-text">
+                      <span className="mobile-cat-name">{cat.name}</span>
+                      <span className="mobile-cat-tamil">{cat.tamilName}</span>
+                    </div>
+                    <ChevronRight size={14} className="mobile-cat-arrow" />
+                  </a>
+                </li>
+              );
+            })}
             <li>
               <a
                 href="#our-story"
