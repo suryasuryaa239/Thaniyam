@@ -1,167 +1,152 @@
-import React, { useState } from 'react';
-import { Search, ShoppingBag, Menu, X, ArrowRight, ShieldCheck } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Search, ShoppingBag, Menu, X, ArrowRight, Heart, ChevronDown, PackageSearch } from 'lucide-react';
+import { CATEGORIES } from '../data/sampleData';
+import { useWishlist } from '../context/WishlistContext';
+import { useLanguage } from '../context/LanguageContext';
 
-export default function Navbar({ 
-  currentView, 
-  cartCount, 
-  onCartClick, 
-  searchQuery, 
-  onSearchChange, 
-  onNavigate 
+export default function Navbar({
+  currentView,
+  cartCount,
+  onCartClick,
+  searchQuery,
+  onSearchChange,
+  onNavigate,
+  onNavigateCategory,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [catOpen, setCatOpen] = useState(false);
+  const catRef = useRef(null);
+  const { wishlistIds } = useWishlist();
+  const { lang, toggleLang, t } = useLanguage();
+
+  useEffect(() => {
+    const onDocClick = (e) => {
+      if (catRef.current && !catRef.current.contains(e.target)) setCatOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    return () => document.removeEventListener('mousedown', onDocClick);
+  }, []);
 
   const handleNavClick = (view, sectionId) => {
     setMobileMenuOpen(false);
+    setCatOpen(false);
     onNavigate(view, sectionId);
+  };
+
+  const handleCategoryClick = (catId) => {
+    setMobileMenuOpen(false);
+    setCatOpen(false);
+    onNavigateCategory(catId);
   };
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      handleNavClick('shop');
-    }
+    if (searchQuery.trim()) handleNavClick('shop');
   };
+
+  const searchForm = (idSuffix) => (
+    <form className="search-pill" onSubmit={handleSearchSubmit} role="search">
+      <Search size={17} className="search-pill-icon" aria-hidden="true" />
+      <input
+        id={`site-search-${idSuffix}`}
+        type="search"
+        className="search-pill-input"
+        placeholder={t('searchPlaceholder')}
+        aria-label={t('searchPlaceholder')}
+        value={searchQuery}
+        onChange={(e) => onSearchChange(e.target.value)}
+      />
+    </form>
+  );
 
   return (
     <header className="navbar-header">
       <div className="navbar-container">
-        {/* Mobile Menu Button */}
-        <button 
-          className="mobile-menu-btn" 
+        <button
+          className="mobile-menu-btn"
           aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* Brand Logo / Wordmark */}
-        <a 
-          href="#home" 
-          className="brand-logo" 
+        <a
+          href="#home"
+          className="brand-logo"
           onClick={(e) => { e.preventDefault(); handleNavClick('home', 'home'); }}
         >
-          <div className="logo-symbol">
-            <span>🌿</span>
-          </div>
+          <div className="logo-symbol"><span>🌿</span></div>
           <div className="logo-text-group">
-            <span className="logo-title">Thaniyam Treats</span>
-            <span className="logo-subtitle">பாரம்பரிய நல்சுவை • Heritage Foods</span>
+            <span className="logo-title">Thaniyam</span>
+            <span className="logo-subtitle">Heritage Foods</span>
           </div>
         </a>
 
-        {/* Desktop Navigation Links */}
         <nav className="desktop-nav" aria-label="Main Navigation">
           <ul className="nav-links">
             <li>
-              <a 
-                href="#home" 
+              <a
+                href="#home"
                 className={currentView === 'home' ? 'active' : ''}
                 onClick={(e) => { e.preventDefault(); handleNavClick('home', 'home'); }}
               >
-                Home
+                {t('home')}
               </a>
             </li>
             <li>
-              <a 
-                href="#shop" 
+              <a
+                href="#shop"
                 className={currentView === 'shop' ? 'active' : ''}
                 onClick={(e) => { e.preventDefault(); handleNavClick('shop'); }}
               >
-                Shop All
+                {t('shop')}
               </a>
             </li>
-            <li>
-              <a 
-                href="#categories" 
-                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'categories'); }}
+            <li className="nav-dropdown" ref={catRef}>
+              <button
+                type="button"
+                className={`nav-dropdown-trigger ${catOpen ? 'open' : ''}`}
+                aria-haspopup="true"
+                aria-expanded={catOpen}
+                onClick={() => setCatOpen((o) => !o)}
               >
-                Categories
-              </a>
+                {t('categories')} <ChevronDown size={15} />
+              </button>
+              {catOpen && (
+                <ul className="nav-dropdown-menu">
+                  {CATEGORIES.map((cat) => (
+                    <li key={cat.id}>
+                      <button type="button" onClick={() => handleCategoryClick(cat.id)}>
+                        {lang === 'ta' ? cat.tamilName : cat.name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
             <li>
-              <a 
-                href="#why-us" 
-                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'why-us'); }}
-              >
-                Why Us
-              </a>
-            </li>
-            <li>
-              <a 
-                href="#our-story" 
+              <a
+                href="#our-story"
                 onClick={(e) => { e.preventDefault(); handleNavClick('home', 'our-story'); }}
               >
-                Our Story
-              </a>
-            </li>
-            <li>
-              <a 
-                href="#track-order" 
-                className={currentView === 'track-order' ? 'active' : ''}
-                onClick={(e) => { e.preventDefault(); handleNavClick('track-order'); }}
-              >
-                Track Order
-              </a>
-            </li>
-            <li>
-              <a 
-                href="#admin" 
-                className={`nav-admin-badge ${currentView === 'admin' ? 'active' : ''}`}
-                onClick={(e) => { e.preventDefault(); handleNavClick('admin'); }}
-                title="Admin Orders & Inventory Portal"
-              >
-                <ShieldCheck size={14} className="nav-admin-icon" />
-                <span>Admin</span>
+                {t('ourStory')}
               </a>
             </li>
           </ul>
         </nav>
 
-        {/* Actions (Search, Admin Quick Link & Cart) */}
         <div className="navbar-actions">
-          {/* Search Trigger & Form */}
-          <form className={`search-wrapper ${searchOpen ? 'open' : ''}`} onSubmit={handleSearchSubmit}>
-            {searchOpen && (
-              <input
-                type="text"
-                className="search-input"
-                placeholder="Search murukku, millets, oils..."
-                value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
-                autoFocus
-              />
-            )}
-            <button
-              type="button"
-              className="action-icon-btn"
-              aria-label="Search products"
-              onClick={() => {
-                if (searchOpen && searchQuery) {
-                  handleNavClick('shop');
-                } else {
-                  setSearchOpen(!searchOpen);
-                }
-              }}
-            >
-              {searchOpen ? <X size={20} /> : <Search size={20} />}
-            </button>
-          </form>
+          <div className="search-desktop">{searchForm('desktop')}</div>
 
-          {/* Admin Direct Highlighted Button */}
           <button
-            type="button"
-            className={`action-admin-btn ${currentView === 'admin' ? 'active' : ''}`}
-            aria-label="Admin Portal"
-            title="Admin Orders & Inventory Portal"
-            onClick={() => handleNavClick('admin')}
+            className="action-icon-btn"
+            aria-label={`Wishlist with ${wishlistIds.length} items`}
+            onClick={() => handleNavClick('wishlist')}
           >
-            <ShieldCheck size={16} />
-            <span className="admin-btn-text">Admin</span>
+            <Heart size={20} />
+            {wishlistIds.length > 0 && <span className="cart-badge">{wishlistIds.length}</span>}
           </button>
 
-          {/* Cart Trigger */}
           <button
             className="action-icon-btn cart-btn"
             aria-label={`Shopping cart with ${cartCount} items`}
@@ -170,84 +155,85 @@ export default function Navbar({
             <ShoppingBag size={20} />
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
           </button>
+
+          <button
+            type="button"
+            className="lang-toggle"
+            onClick={toggleLang}
+            aria-label={lang === 'en' ? 'Switch to Tamil' : 'Switch to English'}
+            title={lang === 'en' ? 'தமிழ்' : 'English'}
+          >
+            <span className={`lang-opt ${lang === 'ta' ? 'on' : ''}`}>த</span>
+            <span className={`lang-opt ${lang === 'en' ? 'on' : ''}`}>E</span>
+          </button>
+
+          <button
+            type="button"
+            className={`pill-cta ${currentView === 'track-order' ? 'active' : ''}`}
+            onClick={() => handleNavClick('track-order')}
+          >
+            <PackageSearch size={16} />
+            <span className="pill-cta-text">{t('trackOrder')}</span>
+          </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Drawer */}
       {mobileMenuOpen && (
         <nav className="mobile-drawer" aria-label="Mobile Navigation">
+          <div className="mobile-search">{searchForm('mobile')}</div>
           <ul className="mobile-nav-links">
             <li>
-              <a 
-                href="#home" 
+              <a
+                href="#home"
                 className={currentView === 'home' ? 'active' : ''}
                 onClick={(e) => { e.preventDefault(); handleNavClick('home', 'home'); }}
               >
-                Home
+                {t('home')}
               </a>
             </li>
             <li>
-              <a 
-                href="#shop" 
+              <a
+                href="#shop"
                 className={currentView === 'shop' ? 'active' : ''}
                 onClick={(e) => { e.preventDefault(); handleNavClick('shop'); }}
               >
-                Shop All Products <ArrowRight size={16} />
+                {t('shop')} <ArrowRight size={16} />
               </a>
             </li>
+            {CATEGORIES.map((cat) => (
+              <li key={cat.id} className="mobile-sub-item">
+                <a
+                  href={`#/shop?category=${cat.id}`}
+                  onClick={(e) => { e.preventDefault(); handleCategoryClick(cat.id); }}
+                >
+                  {lang === 'ta' ? cat.tamilName : cat.name}
+                </a>
+              </li>
+            ))}
             <li>
-              <a 
-                href="#categories" 
-                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'categories'); }}
+              <a
+                href="#our-story"
+                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'our-story'); }}
               >
-                Categories <ArrowRight size={16} />
+                {t('ourStory')}
               </a>
             </li>
             <li>
-              <a 
-                href="#why-us" 
-                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'why-us'); }}
-              >
-                Why Us
-              </a>
-            </li>
-            <li>
-              <a 
-                href="#cart" 
+              <a
+                href="#cart"
                 className={currentView === 'cart' ? 'active' : ''}
                 onClick={(e) => { e.preventDefault(); handleNavClick('cart'); }}
               >
-                Shopping Basket {cartCount > 0 && `(${cartCount})`} <ArrowRight size={16} />
+                Cart {cartCount > 0 && `(${cartCount})`} <ArrowRight size={16} />
               </a>
             </li>
             <li>
-              <a 
-                href="#our-story" 
-                onClick={(e) => { e.preventDefault(); handleNavClick('home', 'our-story'); }}
-              >
-                Our Story
-              </a>
-            </li>
-            <li>
-              <a 
-                href="#track-order" 
+              <a
+                href="#track-order"
                 className={currentView === 'track-order' ? 'active' : ''}
                 onClick={(e) => { e.preventDefault(); handleNavClick('track-order'); }}
               >
-                Track Order <ArrowRight size={16} />
-              </a>
-            </li>
-            <li>
-              <a 
-                href="#admin" 
-                className={`mobile-nav-admin-badge ${currentView === 'admin' ? 'active' : ''}`}
-                onClick={(e) => { e.preventDefault(); handleNavClick('admin'); }}
-              >
-                <span className="mobile-admin-badge-inner">
-                  <ShieldCheck size={18} />
-                  <span>Admin Orders & Inventory</span>
-                </span>
-                <ArrowRight size={16} />
+                {t('trackOrder')} <ArrowRight size={16} />
               </a>
             </li>
           </ul>
