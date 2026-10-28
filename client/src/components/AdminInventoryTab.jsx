@@ -5,6 +5,7 @@ import {
   ShieldCheck, AlertTriangle, Archive, Power
 } from 'lucide-react';
 import { apiUrl } from '../config/api';
+import { useProducts } from '../context/ProductContext';
 
 const CATEGORY_OPTIONS = [
   { id: 'traditional-snacks', name: 'Traditional Savory Snacks', tamilName: 'பாரம்பரிய நொறுக்குத்தீனிகள்' },
@@ -16,18 +17,42 @@ const CATEGORY_OPTIONS = [
 ];
 
 const PRESET_IMAGES = [
-  { label: 'Traditional Snacks', url: '/images/cat-snacks.jpg' },
-  { label: 'Wood-Pressed Oils', url: '/images/cat-oils.jpg' },
-  { label: 'Palm Sweeteners', url: '/images/cat-jaggery.jpg' },
-  { label: 'Native Millets', url: '/images/cat-millets.jpg' },
-  { label: 'Heritage Podis', url: '/images/prod-podi.jpg' },
-  { label: 'Millet Sweets', url: '/images/prod-laddu.jpg' }
+  { label: 'Kai Murukku', url: '/images/products/kai-murukku.jpg' },
+  { label: 'Kara Thattai', url: '/images/products/spicy-thattai.jpg' },
+  { label: 'Crispy Seedai', url: '/images/products/traditional-seedai.jpg' },
+  { label: 'Kambu Murukku', url: '/images/products/kambu-murukku.jpg' },
+  { label: 'Sesame Oil', url: '/images/products/sesame-oil.jpg' },
+  { label: 'Groundnut Oil', url: '/images/products/groundnut-oil.jpg' },
+  { label: 'Virgin Coconut Oil', url: '/images/products/coconut-oil.jpg' },
+  { label: 'Udangudi Karupatti', url: '/images/products/palm-jaggery.jpg' },
+  { label: 'Panang Karkandu', url: '/images/products/palm-candy.jpg' },
+  { label: 'Nattu Sarkarai', url: '/images/products/nattu-sarkarai.jpg' },
+  { label: 'Thinai Millet', url: '/images/products/thinai-millet.jpg' },
+  { label: 'Samai Millet', url: '/images/products/samai-millet.jpg' },
+  { label: 'Varagu Millet', url: '/images/products/varagu-millet.jpg' },
+  { label: 'Pearl Millet Grain', url: '/images/products/kambu-grain.jpg' },
+  { label: 'Curry Leaf Podi', url: '/images/products/curry-leaf-podi.jpg' },
+  { label: 'Paruppu Podi', url: '/images/products/paruppu-podi.jpg' },
+  { label: 'Thinai Laddu', url: '/images/products/thinai-laddu.jpg' },
+  { label: 'Traditional Athirasam', url: '/images/products/athirasam.jpg' },
+  { label: 'Snacks Category', url: '/images/cat-snacks.jpg' },
+  { label: 'Oils Category', url: '/images/cat-oils.jpg' },
+  { label: 'Jaggery Category', url: '/images/cat-jaggery.jpg' },
+  { label: 'Millets Category', url: '/images/cat-millets.jpg' }
 ];
 
 export default function AdminInventoryTab({
   authToken,
   onProductChange
 }) {
+  const { categories: contextCategories } = useProducts();
+  const activeCategories = useMemo(() => {
+    if (contextCategories && contextCategories.length > 0) {
+      return contextCategories.filter((c) => c.id !== 'all');
+    }
+    return CATEGORY_OPTIONS;
+  }, [contextCategories]);
+
   const [products, setProducts] = useState([]);
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -500,7 +525,7 @@ export default function AdminInventoryTab({
               id="select-inventory-category"
             >
               <option value="all">All Categories</option>
-              {CATEGORY_OPTIONS.map((c) => (
+              {activeCategories.map((c) => (
                 <option key={c.id} value={c.id}>{c.name}</option>
               ))}
             </select>
@@ -803,9 +828,16 @@ export default function AdminInventoryTab({
                     id="prod-cat"
                     className="form-input"
                     value={formData.category}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    onChange={(e) => {
+                      const selected = activeCategories.find((c) => c.id === e.target.value);
+                      setFormData({ 
+                        ...formData, 
+                        category: e.target.value,
+                        categoryName: selected ? selected.name : formData.categoryName
+                      });
+                    }}
                   >
-                    {CATEGORY_OPTIONS.map((c) => (
+                    {activeCategories.map((c) => (
                       <option key={c.id} value={c.id}>{c.name}</option>
                     ))}
                   </select>
@@ -902,7 +934,7 @@ export default function AdminInventoryTab({
 
               {/* Product Image Preset Picker & Custom URL */}
               <div className="form-group">
-                <label className="form-label">Product Image Preset or URL</label>
+                <label className="form-label">Product Image (Choose Preset or Custom URL)</label>
                 <div className="preset-images-strip">
                   {PRESET_IMAGES.map((preset) => (
                     <button
@@ -910,19 +942,28 @@ export default function AdminInventoryTab({
                       type="button"
                       className={`preset-thumb-btn ${formData.image === preset.url ? 'active' : ''}`}
                       onClick={() => setFormData({ ...formData, image: preset.url })}
+                      title={preset.label}
                     >
                       <img src={preset.url} alt={preset.label} />
                       <span>{preset.label}</span>
                     </button>
                   ))}
                 </div>
-                <input
-                  type="text"
-                  className="form-input mt-2"
-                  value={formData.image}
-                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                  placeholder="/images/cat-snacks.jpg or https://..."
-                />
+                <div className="image-url-preview-row mt-2">
+                  <input
+                    type="text"
+                    className="form-input"
+                    value={formData.image}
+                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                    placeholder="/images/products/kai-murukku.jpg or https://..."
+                  />
+                  {formData.image && (
+                    <div className="live-preview-box">
+                      <img src={formData.image} alt="Live Preview" onError={(e) => { e.target.src = '/images/cat-snacks.jpg'; }} />
+                      <span>Preview</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {/* Description */}

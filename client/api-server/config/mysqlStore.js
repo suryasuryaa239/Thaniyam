@@ -77,7 +77,34 @@ export const initMySQL = async () => {
       )
     `);
 
-    // 3. Seed initial products if table is empty
+    // 3. Ensure categories table exists
+    await connection.query(`
+      CREATE TABLE IF NOT EXISTS categories (
+        id VARCHAR(64) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        tamilName VARCHAR(255),
+        icon VARCHAR(50) DEFAULT '✨',
+        image VARCHAR(500),
+        description TEXT,
+        createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+      )
+    `);
+
+    const [catCountRows] = await connection.query('SELECT COUNT(*) as count FROM categories');
+    if (catCountRows[0].count === 0) {
+      const { DEFAULT_CATEGORIES } = await import('../data/mockCategoryStore.js');
+      for (const c of DEFAULT_CATEGORIES) {
+        await connection.query(
+          `INSERT INTO categories (id, name, tamilName, icon, image, description)
+           VALUES (?, ?, ?, ?, ?, ?)`,
+          [c.id, c.name, c.tamilName || '', c.icon || '✨', c.image || '', c.description || '']
+        );
+      }
+      console.log('📂 [Database] Seeded categories into TiDB MySQL.');
+    }
+
+    // 4. Seed initial products if table is empty
     const [countRows] = await connection.query('SELECT COUNT(*) as count FROM products');
     if (countRows[0].count === 0) {
       const { SEED_CATALOG } = await import('../data/mockProductStore.js');
@@ -354,5 +381,54 @@ export const mysqlUpdateOrderStatus = async (orderId, newStatus, timeline) => {
   } catch (err) {
     console.warn('⚠️ [MySQL] updateOrderStatus error:', err.message);
     return null;
+  }
+};
+
+
+export const mysqlGetAllCategories = async () => {
+  const p = getMySQLPool();
+  if (!p) return null;
+  try {
+    const [rows] = await p.query('SELECT * FROM categories ORDER BY id ASC');
+    return rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      tamilName: r.tamilName || '',
+      icon: r.icon || '✨',
+      image: r.image || '',
+      description: r.description || ''
+    }));
+  } catch (err) {
+    console.warn('⚠️ [MySQL] getAllCategories error:', err.message);
+    return null;
+  }
+};
+
+export const mysqlSaveCategory = async (cat) => {
+  const p = getMySQLPool();
+  if (!p || !cat || !cat.id) return null;
+  try {
+    await p.query(
+      `INSERT INTO categories (id, name, tamilName, icon, image, description)
+       VALUES (?, ?, ?, ?, ?, ?)
+       ON DUPLICATE KEY UPDATE name = VALUES(name), tamilName = VALUES(tamilName), icon = VALUES(icon), image = VALUES(image), description = VALUES(description), updatedAt = NOW()`,
+      [cat.id, cat.name, cat.tamilName || '', cat.icon || '✨', cat.image || '', cat.description || '']
+    );
+    return cat;
+  } catch (err) {
+    console.warn('⚠️ [MySQL] saveCategory error:', err.message);
+    return null;
+  }
+};
+
+export const mysqlDeleteCategory = async (id) => {
+  const p = getMySQLPool();
+  if (!p || !id) return false;
+  try {
+    const [res] = await p.query('DELETE FROM categories WHERE id = ?', [id]);
+    return res.affectedRows > 0;
+  } catch (err) {
+    console.warn('⚠️ [MySQL] deleteCategory error:', err.message);
+    return false;
   }
 };

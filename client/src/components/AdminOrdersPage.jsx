@@ -4,10 +4,11 @@ import {
   Phone, ArrowLeft, RefreshCw, ShieldCheck, ChevronRight,
   ChevronLeft, MapPin, Calendar, X, Eye, Lock, LogOut,
   Copy, Check, ExternalLink, IndianRupee, Sparkles, Filter,
-  User, Mail, SlidersHorizontal
+  User, Mail, SlidersHorizontal, FolderTree
 } from 'lucide-react';
 import { ALL_PRODUCTS } from '../data/productsCatalog';
 import AdminInventoryTab from './AdminInventoryTab';
+import AdminCategoriesTab from './AdminCategoriesTab';
 import { apiUrl } from '../config/api';
 
 const STATUS_OPTIONS = [
@@ -459,16 +460,18 @@ export default function AdminOrdersPage({
                 <span className="admin-badge-icon">🌿</span>
                 <span className="admin-badge-name">Thaniyam Treats Store Administration</span>
                 <span className="admin-badge-tag">
-                  {activeAdminTab === 'orders' ? 'Step 9 • Order Operations' : 'Step 10 • Inventory Operations'}
+                  {activeAdminTab === 'orders' ? 'Order Operations' : activeAdminTab === 'inventory' ? 'Inventory Operations' : 'Category Operations'}
                 </span>
               </div>
               <h1 className="admin-page-title">
-                {activeAdminTab === 'orders' ? 'Admin Order Management' : 'Product & Inventory Management'}
+                {activeAdminTab === 'orders' ? 'Admin Order Management' : activeAdminTab === 'inventory' ? 'Product & Inventory Management' : 'Category Management'}
               </h1>
               <p className="admin-page-subtitle">
                 {activeAdminTab === 'orders'
                   ? 'View real-time customer orders, inspect line items & delivery addresses, and update fulfillment milestones.'
-                  : 'Manage authentic product catalogue, update prices & live stock, safely deactivate items, and replenish inventory.'}
+                  : activeAdminTab === 'inventory'
+                  ? 'Manage authentic product catalogue, update prices & live stock, safely deactivate items, and replenish inventory.'
+                  : 'Configure storefront categories, edit Tamil titles, choose category icons, and set banner images.'}
               </p>
             </div>
 
@@ -529,9 +532,23 @@ export default function AdminOrdersPage({
             <SlidersHorizontal size={17} />
             <span>Products &amp; Inventory</span>
           </button>
+          <button
+            type="button"
+            className={`admin-nav-tab ${activeAdminTab === 'categories' ? 'active' : ''}`}
+            onClick={() => setActiveAdminTab('categories')}
+            id="tab-admin-categories"
+          >
+            <FolderTree size={17} />
+            <span>Categories</span>
+          </button>
         </div>
 
-        {activeAdminTab === 'inventory' ? (
+        {activeAdminTab === 'categories' ? (
+          <AdminCategoriesTab
+            authToken={authToken}
+            onCategoryChange={onProductChange}
+          />
+        ) : activeAdminTab === 'inventory' ? (
           <AdminInventoryTab
             authToken={authToken}
             onProductChange={onProductChange}

@@ -1,7 +1,7 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   Search, X, SlidersHorizontal, ArrowUpDown, Star, Eye, ShoppingBag, 
-  ChevronRight, Sparkles, Filter, RotateCcw, AlertCircle, AlertTriangle,
+  ChevronRight, ChevronLeft, Sparkles, Filter, RotateCcw, AlertCircle, AlertTriangle,
   LayoutGrid, List, Check, Plus, Minus, Flame, Tag, Percent, Truck, Leaf, ShieldCheck
 } from 'lucide-react';
 import { SHOP_CATEGORIES, ALL_PRODUCTS } from '../data/productsCatalog';
@@ -17,10 +17,18 @@ export default function ShopPage({
   searchQuery: initialSearch = '',
   products: productsProp
 }) {
-  const { products: contextProducts } = useProducts();
+  const { products: contextProducts, categories: contextCategories } = useProducts();
   const allProducts = (productsProp || contextProducts || ALL_PRODUCTS).filter((p) => p.isActive !== false);
+  const categoriesList = (contextCategories && contextCategories.length > 0) ? contextCategories : SHOP_CATEGORIES;
 
   const { cartItems, updateQuantity, removeFromCart } = useCart();
+
+  const categoryScrollRef = useRef(null);
+  const scrollCategories = (offset) => {
+    if (categoryScrollRef.current) {
+      categoryScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+    }
+  };
 
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
@@ -112,7 +120,7 @@ export default function ShopPage({
     });
   }, [allProducts, selectedCategory, searchQuery, priceFilter, quickFilter, sortBy]);
 
-  const activeCategoryObj = SHOP_CATEGORIES.find(c => c.id === selectedCategory) || SHOP_CATEGORIES[0];
+  const activeCategoryObj = categoriesList.find(c => c.id === selectedCategory) || categoriesList[0] || { name: 'All Products', tamilName: 'அனைத்து பொருட்கள்' };
 
   const handleResetFilters = () => {
     setSelectedCategory('all');
@@ -191,15 +199,38 @@ export default function ShopPage({
       </section>
 
       <div className="shop-main-layout">
-        {/* 2. Visual Category Cards Bar */}
+        {/* 2. Visual Category Showcase Bar */}
         <div className="category-showcase-section">
           <div className="category-showcase-header">
-            <h2 className="category-showcase-title">Browse By Category</h2>
-            <span className="category-showcase-subtitle">Select a category to explore authentic heritage delicacies</span>
+            <div className="category-header-title-block">
+              <span className="category-micro-label">HERITAGE SELECTIONS</span>
+              <h2 className="category-showcase-title">Browse By Category • பாரம்பரிய வகைகள்</h2>
+              <span className="category-showcase-subtitle">Choose from artisanal sweets, wood-pressed oils, native grains, and handmade snacks</span>
+            </div>
+            <div className="category-scroll-arrows">
+              <button 
+                type="button" 
+                className="btn-cat-scroll" 
+                onClick={() => scrollCategories(-240)}
+                aria-label="Scroll categories left"
+                title="Scroll categories left"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <button 
+                type="button" 
+                className="btn-cat-scroll" 
+                onClick={() => scrollCategories(240)}
+                aria-label="Scroll categories right"
+                title="Scroll categories right"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
           </div>
 
-          <div className="category-cards-scroll" role="tablist" aria-label="Product Categories">
-            {SHOP_CATEGORIES.map((cat) => {
+          <div className="category-cards-scroll" ref={categoryScrollRef} role="tablist" aria-label="Product Categories">
+            {categoriesList.map((cat) => {
               const isSelected = selectedCategory === cat.id;
               return (
                 <button
@@ -217,7 +248,7 @@ export default function ShopPage({
                       loading="lazy"
                     />
                     <div className="cat-card-icon-overlay">
-                      <span className="cat-card-icon">{cat.icon}</span>
+                      <span className="cat-card-icon">{cat.icon || '✨'}</span>
                     </div>
                     {isSelected && (
                       <div className="cat-card-active-indicator">
@@ -234,6 +265,34 @@ export default function ShopPage({
               );
             })}
           </div>
+
+          {/* Active Category Spotlight Hero Banner */}
+          {selectedCategory !== 'all' && (
+            <div className="category-spotlight-ribbon">
+              <div className="spotlight-thumb">
+                <img src={activeCategoryObj.image || '/images/cat-snacks.jpg'} alt={activeCategoryObj.name} />
+                <span className="spotlight-emoji">{activeCategoryObj.icon || '✨'}</span>
+              </div>
+              <div className="spotlight-details">
+                <div className="spotlight-tag">
+                  <span className="spotlight-tag-text">SELECTED CATEGORY</span>
+                  <span className="spotlight-count-tag">{categoryCounts[activeCategoryObj.id] || 0} Products</span>
+                </div>
+                <h3 className="spotlight-title">{activeCategoryObj.name}</h3>
+                <span className="spotlight-tamil-title">{activeCategoryObj.tamilName}</span>
+                <p className="spotlight-desc">{activeCategoryObj.description || 'Authentic South Indian heritage delicacies crafted from ancestral village recipes.'}</p>
+              </div>
+              <button
+                type="button"
+                className="btn-spotlight-all"
+                onClick={() => setSelectedCategory('all')}
+                title="View all products across all categories"
+              >
+                <span>View All Products</span>
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          )}
         </div>
 
         {/* 3. Search & Filter Control Bar */}

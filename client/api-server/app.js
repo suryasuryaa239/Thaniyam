@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { getDBStatus } from './config/db.js';
 import orderRoutes from './routes/orderRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -45,6 +46,7 @@ app.use(express.json());
 // API Routes
 app.use('/api/orders', orderRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
 
 // Basic backend health-check route
 app.get('/api/health', (req, res) => {

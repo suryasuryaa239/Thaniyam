@@ -26,7 +26,7 @@ export const syncProductsFromMySQL = async () => {
 };
 
 // Authentic seed products matching Thaniyam Treats heritage catalog
-const SEED_CATALOG = [
+export const SEED_CATALOG = [
   {
     id: 'prod-001',
     name: 'Handcrafted Kai Murukku',

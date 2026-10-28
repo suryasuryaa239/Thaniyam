@@ -37,8 +37,10 @@ const startServer = async () => {
     try {
       const { syncProductsFromMySQL } = await import('./data/mockProductStore.js');
       const { syncOrdersFromMySQL } = await import('./data/mockOrderStore.js');
+      const { syncCategoriesFromMySQL } = await import('./data/mockCategoryStore.js');
       await syncProductsFromMySQL();
       await syncOrdersFromMySQL();
+      await syncCategoriesFromMySQL();
     } catch (e) {
       console.warn('⚠️ [Store] MySQL sync warning:', e.message);
     }

@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { ALL_PRODUCTS as FALLBACK_PRODUCTS } from '../data/productsCatalog';
+import { ALL_PRODUCTS as FALLBACK_PRODUCTS, SHOP_CATEGORIES as FALLBACK_CATEGORIES } from '../data/productsCatalog';
 import { apiUrl } from '../config/api';
 
 const ProductContext = createContext(null);
 
 export function ProductProvider({ children }) {
   const [products, setProducts] = useState(FALLBACK_PRODUCTS);
+  const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -22,17 +23,31 @@ export function ProductProvider({ children }) {
         setProducts(data.products);
       }
     } catch (err) {
-      console.warn('⚠️ [ProductContext] API unavailable, using local catalog fallback:', err.message);
+      console.warn('⚠️ [ProductContext] Products API notice, using fallback:', err.message);
       setError(err.message);
-      // Fallback is already initialized in state
     } finally {
       setIsLoading(false);
     }
   }, []);
 
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await fetch(apiUrl('/api/categories'));
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && Array.isArray(data.categories) && data.categories.length > 0) {
+          setCategories(data.categories);
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ [ProductContext] Categories API notice:', err.message);
+    }
+  }, []);
+
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]);
+    fetchCategories();
+  }, [fetchProducts, fetchCategories]);
 
   const getProductById = useCallback((id) => {
     const found = products.find((p) => p.id === id);
@@ -55,9 +70,11 @@ export function ProductProvider({ children }) {
     <ProductContext.Provider
       value={{
         products,
+        categories,
         isLoading,
         error,
         refreshProducts: fetchProducts,
+        refreshCategories: fetchCategories,
         getProductById,
         getRelatedProducts
       }}
