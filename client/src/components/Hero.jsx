@@ -1,82 +1,47 @@
 import React from 'react';
-import { ArrowRight, Sparkles, ShieldCheck, HeartHandshake, Award } from 'lucide-react';
+import { ArrowRight, Leaf } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
-export default function Hero({ onShopNowClick, onExploreCategoriesClick }) {
+export default function Hero({ onShopNowClick, onLearnMoreClick }) {
+  const { t } = useLanguage();
+
   return (
     <section id="home" className="hero-section">
-      <div className="hero-grid">
-        {/* Left Column: Hero Copy & CTAs */}
-        <div className="hero-content">
-          <div className="hero-pill">
-            <Sparkles size={14} className="hero-pill-icon" />
-            <span>Handcrafted Traditional Heritage</span>
-          </div>
+      <img
+        src="/images/hero-banner.jpg"
+        alt=""
+        className="hero-bg-img"
+        loading="eager"
+        fetchPriority="high"
+      />
+      <div className="hero-overlay" aria-hidden="true" />
 
-          <h1 className="hero-heading">
-            Authentic Traditional Flavours, Crafted from <span className="highlight-text">Native Millets</span>
-          </h1>
-
-          <p className="hero-description">
-            Experience the wholesome goodness of unpolished native grains, wood-pressed pure oils,
-            hand-twisted crispy murukku, and authentic palm jaggery made with time-honored ancestral recipes.
-          </p>
-
-          <div className="hero-cta-group">
-            <button 
-              className="btn-primary hero-btn"
-              onClick={onShopNowClick}
-            >
-              <span>Shop Traditional Treats</span>
-              <ArrowRight size={18} />
-            </button>
-            <button 
-              className="btn-secondary hero-btn"
-              onClick={onExploreCategoriesClick}
-            >
-              <span>Explore Categories</span>
-            </button>
-          </div>
-
-          {/* Quick trust highlights strip */}
-          <div className="hero-trust-bar">
-            <div className="trust-item">
-              <span className="trust-icon-box">🌾</span>
-              <div>
-                <strong>Native Millets</strong>
-                <p>100% Unpolished</p>
-              </div>
-            </div>
-            <div className="trust-item">
-              <span className="trust-icon-box">🪵</span>
-              <div>
-                <strong>Wood-Pressed</strong>
-                <p>Cold-Extracted Oils</p>
-              </div>
-            </div>
-            <div className="trust-item">
-              <span className="trust-icon-box">🍯</span>
-              <div>
-                <strong>Palm Jaggery</strong>
-                <p>Zero White Sugar</p>
-              </div>
-            </div>
-          </div>
+      <div className="hero-content">
+        <div className="hero-pill">
+          <Leaf size={14} className="hero-pill-icon" />
+          <span>{t('heroBadge')}</span>
         </div>
 
-        {/* Right Column: High-Res Food Visual Card */}
-        <div className="hero-visual">
-          <div className="hero-image-frame">
-            <img 
-              src="/images/hero-banner.jpg" 
-              alt="Traditional South Indian millet snacks, kai murukku, and sweets in vintage brass bowls" 
-              className="hero-main-img"
-              loading="eager"
-            />
-            <div className="hero-floating-badge">
-              <span className="badge-tagline">100% Traditional</span>
-              <span className="badge-highlight">Village Made Recipes</span>
-            </div>
-          </div>
+        <h1 className="hero-heading">
+          {t('heroLine1')}{' '}
+          <span className="highlight-text">
+            {t('heroHighlight')}
+            <svg className="highlight-swoosh" viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M2 9 C 60 2, 120 2, 180 7 S 270 12, 298 4" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+            </svg>
+          </span>
+        </h1>
+
+        <p className="hero-description">{t('heroSub')}</p>
+
+        <div className="hero-cta-group">
+          <button className="btn-primary hero-btn" onClick={onShopNowClick}>
+            <span>{t('shopNow')}</span>
+            <ArrowRight size={18} />
+          </button>
+          <button className="btn-glass hero-btn" onClick={onLearnMoreClick}>
+            <span>{t('learnMore')}</span>
+          </button>
         </div>
       </div>
     </section>

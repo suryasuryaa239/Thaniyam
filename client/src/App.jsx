@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { CartProvider, useCart } from './context/CartContext';
 import { ProductProvider, useProducts } from './context/ProductContext';
+import { WishlistProvider } from './context/WishlistContext';
+import { LanguageProvider } from './context/LanguageContext';
+import WishlistPage from './components/WishlistPage';
+import SocialRail from './components/SocialRail';
 import AnnouncementBar from './components/AnnouncementBar';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
@@ -107,6 +111,11 @@ function getViewFromUrl() {
     return { view: 'product', productId: productId || 'prod-001' };
   }
 
+  // 6b. Wishlist route (/wishlist, #/wishlist)
+  if (hash.startsWith('#/wishlist') || pathname.startsWith('/wishlist')) {
+    return { view: 'wishlist' };
+  }
+
   // 7. Shop route (/shop, #/shop)
   if (
     hash.startsWith('#/shop') ||
@@ -164,6 +173,9 @@ function AppContent() {
 
     if (view === 'admin') {
       window.location.hash = '#/admin';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (view === 'wishlist') {
+      window.location.hash = '#/wishlist';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (view === 'cart') {
       window.location.hash = '#/cart';
@@ -227,11 +239,18 @@ function AppContent() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onNavigate={(view, sectionId) => navigateTo(view, sectionId)}
+        onNavigateCategory={(catId) => navigateTo('shop', null, catId)}
       />
 
       {/* 3. Main Content Router */}
       <main>
-        {currentView === 'admin' ? (
+        {currentView === 'wishlist' ? (
+          <WishlistPage
+            onViewProduct={(id) => navigateTo('product', null, 'all', id)}
+            onAddToCart={addToCart}
+            onNavigateShop={() => navigateTo('shop', null, 'all')}
+          />
+        ) : currentView === 'admin' ? (
           <AdminOrdersPage
             onNavigateHome={() => navigateTo('home')}
             onNavigateTrack={(orderId, mobile) => navigateTo('track-order', null, 'all', null, orderId, mobile)}
@@ -296,7 +315,7 @@ function AppContent() {
             {/* Landing Hero */}
             <Hero
               onShopNowClick={() => navigateTo('shop', null, 'all')}
-              onExploreCategoriesClick={() => navigateTo('home', 'categories')}
+              onLearnMoreClick={() => navigateTo('home', 'our-story')}
             />
 
             {/* Shop by Category on Landing */}
@@ -311,8 +330,6 @@ function AppContent() {
               onViewProduct={(id) => navigateTo('product', null, 'all', id)}
               onAddToCart={addToCart}
               searchQuery={searchQuery}
-              activeCategory="all"
-              onCategoryChange={(catId) => navigateTo('shop', null, catId)}
             />
 
             {/* Why Us Values */}
@@ -354,16 +371,23 @@ function AppContent() {
       {toast && (
         <Toast toast={toast} onClose={closeToast} />
       )}
+
+      {/* 7. Floating social bar + chat (hidden until links are set in config/social.js) */}
+      <SocialRail />
     </div>
   );
 }
 
 export default function App() {
   return (
-    <ProductProvider>
-      <CartProvider>
-        <AppContent />
-      </CartProvider>
-    </ProductProvider>
+    <LanguageProvider>
+      <WishlistProvider>
+        <ProductProvider>
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
+        </ProductProvider>
+      </WishlistProvider>
+    </LanguageProvider>
   );
 }
