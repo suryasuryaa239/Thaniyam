@@ -65,7 +65,7 @@ export const FEATURED_PRODUCTS = [
     rating: 4.9,
     reviewsCount: 64,
     badge: 'Bestseller',
-    image: '/images/cat-snacks.jpg',
+    image: '/images/products/kai-murukku.jpg',
     description: 'Authentic hand-pressed spiral murukku prepared with premium rice flour, roasted urad dal, cumin seeds, and a hint of asafoetida. Deep fried in pure wood-pressed groundnut oil for signature crunch.',
     ingredients: ['Raw Rice Flour', 'Roasted Urad Dal Flour', 'Butter', 'Cumin Seeds', 'Asafoetida', 'Salt', 'Wood-Pressed Groundnut Oil']
   },
@@ -81,7 +81,7 @@ export const FEATURED_PRODUCTS = [
     rating: 5.0,
     reviewsCount: 88,
     badge: 'Pure Wood-Pressed',
-    image: '/images/cat-oils.jpg',
+    image: '/images/products/sesame-oil.jpg',
     description: 'Extracted slowly using traditional Vaagai wood cold press (Marachekku). Preserves all natural aroma, golden color, and nutrients without refining, bleaching, or chemical de-odorizing.',
     ingredients: ['100% Native Black Sesame Seeds', 'Pure Palm Jaggery (as natural processing aid)']
   },
@@ -97,7 +97,7 @@ export const FEATURED_PRODUCTS = [
     rating: 4.8,
     reviewsCount: 52,
     badge: 'Heritage Sourced',
-    image: '/images/cat-jaggery.jpg',
+    image: '/images/products/palm-jaggery.jpg',
     description: 'Handcrafted solid blocks of genuine Karupatti boiled from fresh palmyra palm sap in Udangudi. Free from white sugar adulteration, sodium bicarbonate, or artificial clarifying agents.',
     ingredients: ['100% Clarified Palmyra Palm Sap', 'Dry Ginger', 'Cardamom']
   },
@@ -113,7 +113,7 @@ export const FEATURED_PRODUCTS = [
     rating: 4.9,
     reviewsCount: 41,
     badge: 'Jaggery Sweetened',
-    image: '/images/prod-laddu.jpg',
+    image: '/images/products/thinai-laddu.jpg',
     description: 'Nutritious festive laddu made with slow-roasted foxtail millet flour, crushed country jaggery, cardamom, and roasted cashews bound together with pure farm ghee.',
     ingredients: ['Foxtail Millet Flour', 'Country Jaggery (Nattu Sarkarai)', 'Pure Cow Ghee', 'Cashew Nuts', 'Cardamom']
   },
@@ -129,7 +129,7 @@ export const FEATURED_PRODUCTS = [
     rating: 4.9,
     reviewsCount: 73,
     badge: 'Small-Batch Roasted',
-    image: '/images/prod-podi.jpg',
+    image: '/images/products/curry-leaf-podi.jpg',
     description: 'Coarsely ground aromatic gun-powder blend featuring sun-dried native curry leaves, split roasted lentils, red chillies, and white sesame seeds. Perfect companion for hot idlis and dosas.',
     ingredients: ['Curry Leaves', 'Urad Dal', 'Chana Dal', 'Dry Red Chillies', 'Sesame Seeds', 'Garlic', 'Rock Salt', 'Asafoetida']
   },
@@ -145,7 +145,7 @@ export const FEATURED_PRODUCTS = [
     rating: 4.8,
     reviewsCount: 39,
     badge: 'Whole Grain',
-    image: '/images/cat-millets.jpg',
+    image: '/images/products/thinai-millet.jpg',
     description: 'Cleaned and unpolished whole foxtail millet grain with natural bran intact. Ideal alternative to white polished rice for making traditional upma, pongal, or wholesome daily porridge.',
     ingredients: ['100% Unpolished Foxtail Millet Grains']
   }

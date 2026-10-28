@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Search, X, SlidersHorizontal, ArrowUpDown, Star, Eye, ShoppingBag, 
-  ChevronRight, Sparkles, Filter, RotateCcw, AlertCircle, AlertTriangle 
+  ChevronRight, Sparkles, Filter, RotateCcw, AlertCircle, AlertTriangle,
+  LayoutGrid, List, Check, Plus, Minus, Flame, Tag, Percent, Truck, Leaf, ShieldCheck
 } from 'lucide-react';
 import { SHOP_CATEGORIES, ALL_PRODUCTS } from '../data/productsCatalog';
 import { useProducts } from '../context/ProductContext';
+import { useCart } from '../context/CartContext';
 
 export default function ShopPage({ 
   onNavigateHome, 
@@ -18,10 +20,14 @@ export default function ShopPage({
   const { products: contextProducts } = useProducts();
   const allProducts = (productsProp || contextProducts || ALL_PRODUCTS).filter((p) => p.isActive !== false);
 
+  const { cartItems, updateQuantity, removeFromCart } = useCart();
+
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [sortBy, setSortBy] = useState('featured');
   const [priceFilter, setPriceFilter] = useState('all'); // 'all', 'under-150', '150-250', 'above-250'
+  const [quickFilter, setQuickFilter] = useState('all'); // 'all' | 'bestsellers' | 'offers' | 'in-stock'
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [imageErrors, setImageErrors] = useState({});
 
   // Synchronize category filter if navigation passed a new initialCategory
@@ -38,6 +44,12 @@ export default function ShopPage({
 
   const handleImageError = (productId) => {
     setImageErrors((prev) => ({ ...prev, [productId]: true }));
+  };
+
+  // Helper to check in-cart quantity
+  const getCartQuantity = (productId) => {
+    const item = cartItems.find((i) => i.id === productId);
+    return item ? item.quantity : 0;
   };
 
   // Calculate category counts dynamically
@@ -74,7 +86,18 @@ export default function ShopPage({
         matchesPrice = product.price > 250;
       }
 
-      return matchesCategory && matchesSearch && matchesPrice;
+      // 4. Quick filter (bestsellers, offers, in-stock)
+      let matchesQuick = true;
+      if (quickFilter === 'bestsellers') {
+        matchesQuick = product.badge === 'Bestseller' || (typeof product.rating === 'number' && product.rating >= 4.9);
+      } else if (quickFilter === 'offers') {
+        matchesQuick = Boolean(product.originalPrice && product.originalPrice > product.price);
+      } else if (quickFilter === 'in-stock') {
+        const isOut = (typeof product.stock === 'number' && product.stock <= 0) || product.inStock === false;
+        matchesQuick = !isOut;
+      }
+
+      return matchesCategory && matchesSearch && matchesPrice && matchesQuick;
     }).sort((a, b) => {
       if (sortBy === 'price-low') {
         return a.price - b.price;
@@ -87,7 +110,7 @@ export default function ShopPage({
       }
       return 0; // 'featured' retains natural catalog order
     });
-  }, [selectedCategory, searchQuery, priceFilter, sortBy]);
+  }, [allProducts, selectedCategory, searchQuery, priceFilter, quickFilter, sortBy]);
 
   const activeCategoryObj = SHOP_CATEGORIES.find(c => c.id === selectedCategory) || SHOP_CATEGORIES[0];
 
@@ -95,14 +118,15 @@ export default function ShopPage({
     setSelectedCategory('all');
     setSearchQuery('');
     setPriceFilter('all');
+    setQuickFilter('all');
     setSortBy('featured');
   };
 
-  const isFiltered = selectedCategory !== 'all' || searchQuery !== '' || priceFilter !== 'all' || sortBy !== 'featured';
+  const isFiltered = selectedCategory !== 'all' || searchQuery !== '' || priceFilter !== 'all' || quickFilter !== 'all' || sortBy !== 'featured';
 
   return (
     <div className="shop-page">
-      {/* 1. Page Header & Breadcrumbs */}
+      {/* 1. Page Header & Breadcrumbs Banner */}
       <section className="shop-header-banner">
         <div className="shop-header-container">
           <nav className="breadcrumbs" aria-label="Breadcrumb navigation">
@@ -124,32 +148,92 @@ export default function ShopPage({
             )}
           </nav>
 
+          <div className="shop-tag-badge">
+            <Sparkles size={14} />
+            <span>100% FARM TO PANTRY • NATIVE SOURCING</span>
+          </div>
+
           <h1 className="shop-main-heading">
-            {selectedCategory === 'all' ? 'Shop All Traditional Foods' : activeCategoryObj.name}
+            {selectedCategory === 'all' ? 'Authentic Traditional Pantry' : activeCategoryObj.name}
           </h1>
-          <p className="shop-tamil-subtitle">{activeCategoryObj.tamilName}</p>
+          <p className="shop-tamil-subtitle">
+            {activeCategoryObj.tamilName} • நம் மண்ணின் பாரம்பரிய சுவை
+          </p>
           <p className="shop-intro-description">
             Explore authentic South Indian traditional foods, unpolished native millets,
             stone-pressed pure oils, and crispy savories handcrafted from ancestral village recipes.
           </p>
+
+          {/* Heritage Trust Badges */}
+          <div className="shop-trust-strip">
+            <div className="trust-pill">
+              <span className="trust-emoji">🪵</span>
+              <span>100% Marachekku Cold-Pressed</span>
+            </div>
+            <div className="trust-pill">
+              <span className="trust-emoji">🌾</span>
+              <span>Unpolished Native Millets</span>
+            </div>
+            <div className="trust-pill">
+              <span className="trust-emoji">🍯</span>
+              <span>Pure Udangudi Karupatti</span>
+            </div>
+            <div className="trust-pill">
+              <span className="trust-emoji">✨</span>
+              <span>Zero Artificial Additives</span>
+            </div>
+            <div className="trust-pill">
+              <span className="trust-emoji">🚚</span>
+              <span>Free Delivery Above ₹499</span>
+            </div>
+          </div>
         </div>
       </section>
 
       <div className="shop-main-layout">
-        {/* 2. Category Navigation Chips */}
-        <div className="category-chips-bar" role="tablist" aria-label="Categories">
-          {SHOP_CATEGORIES.map((cat) => (
-            <button
-              key={cat.id}
-              role="tab"
-              aria-selected={selectedCategory === cat.id}
-              className={`cat-chip-btn ${selectedCategory === cat.id ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat.id)}
-            >
-              <span>{cat.name}</span>
-              <span className="chip-count">({categoryCounts[cat.id] || 0})</span>
-            </button>
-          ))}
+        {/* 2. Visual Category Cards Bar */}
+        <div className="category-showcase-section">
+          <div className="category-showcase-header">
+            <h2 className="category-showcase-title">Browse By Category</h2>
+            <span className="category-showcase-subtitle">Select a category to explore authentic heritage delicacies</span>
+          </div>
+
+          <div className="category-cards-scroll" role="tablist" aria-label="Product Categories">
+            {SHOP_CATEGORIES.map((cat) => {
+              const isSelected = selectedCategory === cat.id;
+              return (
+                <button
+                  key={cat.id}
+                  role="tab"
+                  aria-selected={isSelected}
+                  className={`category-visual-card ${isSelected ? 'active' : ''}`}
+                  onClick={() => setSelectedCategory(cat.id)}
+                >
+                  <div className="cat-card-thumb-wrap">
+                    <img 
+                      src={cat.image || '/images/cat-snacks.jpg'} 
+                      alt={cat.name} 
+                      className="cat-card-thumb" 
+                      loading="lazy"
+                    />
+                    <div className="cat-card-icon-overlay">
+                      <span className="cat-card-icon">{cat.icon}</span>
+                    </div>
+                    {isSelected && (
+                      <div className="cat-card-active-indicator">
+                        <Check size={12} strokeWidth={3} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="cat-card-text">
+                    <span className="cat-card-name">{cat.name}</span>
+                    <span className="cat-card-tamil">{cat.tamilName}</span>
+                    <span className="cat-card-count">{categoryCounts[cat.id] || 0} items</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* 3. Search & Filter Control Bar */}
@@ -174,6 +258,41 @@ export default function ShopPage({
                 <X size={16} />
               </button>
             )}
+          </div>
+
+          {/* Quick Filter Chips (All, Bestsellers, Offers, In-Stock) */}
+          <div className="shop-quick-filters">
+            <button
+              type="button"
+              className={`quick-filter-chip ${quickFilter === 'all' ? 'active' : ''}`}
+              onClick={() => setQuickFilter('all')}
+            >
+              All Items
+            </button>
+            <button
+              type="button"
+              className={`quick-filter-chip ${quickFilter === 'bestsellers' ? 'active' : ''}`}
+              onClick={() => setQuickFilter(quickFilter === 'bestsellers' ? 'all' : 'bestsellers')}
+            >
+              <Flame size={13} className="chip-ico-flame" />
+              <span>Bestsellers</span>
+            </button>
+            <button
+              type="button"
+              className={`quick-filter-chip ${quickFilter === 'offers' ? 'active' : ''}`}
+              onClick={() => setQuickFilter(quickFilter === 'offers' ? 'all' : 'offers')}
+            >
+              <Percent size={13} className="chip-ico-sale" />
+              <span>Special Offers</span>
+            </button>
+            <button
+              type="button"
+              className={`quick-filter-chip ${quickFilter === 'in-stock' ? 'active' : ''}`}
+              onClick={() => setQuickFilter(quickFilter === 'in-stock' ? 'all' : 'in-stock')}
+            >
+              <Check size={13} />
+              <span>In-Stock Only</span>
+            </button>
           </div>
 
           {/* Filters & Sorting Controls */}
@@ -215,6 +334,28 @@ export default function ShopPage({
               </select>
             </div>
 
+            {/* View Mode Switcher (Grid vs List) */}
+            <div className="shop-view-toggle" role="group" aria-label="Layout view mode">
+              <button
+                type="button"
+                className={`view-toggle-btn ${viewMode === 'grid' ? 'active' : ''}`}
+                onClick={() => setViewMode('grid')}
+                title="Grid view"
+                aria-label="Grid view"
+              >
+                <LayoutGrid size={16} />
+              </button>
+              <button
+                type="button"
+                className={`view-toggle-btn ${viewMode === 'list' ? 'active' : ''}`}
+                onClick={() => setViewMode('list')}
+                title="List view"
+                aria-label="List view"
+              >
+                <List size={16} />
+              </button>
+            </div>
+
             {/* Reset Filters button */}
             {isFiltered && (
               <button 
@@ -232,7 +373,7 @@ export default function ShopPage({
         {/* 4. Active Filter Tags / Result Count */}
         <div className="shop-results-status">
           <span className="results-count-text">
-            Showing <strong>{filteredAndSortedProducts.length}</strong> of {ALL_PRODUCTS.length} traditional products
+            Showing <strong>{filteredAndSortedProducts.length}</strong> of {allProducts.length} traditional products
           </span>
           {isFiltered && (
             <div className="active-filter-tags">
@@ -248,6 +389,12 @@ export default function ShopPage({
                   <button onClick={() => setSearchQuery('')}>×</button>
                 </span>
               )}
+              {quickFilter !== 'all' && (
+                <span className="filter-tag">
+                  Filter: {quickFilter === 'bestsellers' ? 'Bestsellers' : quickFilter === 'offers' ? 'Offers' : 'In-Stock'}
+                  <button onClick={() => setQuickFilter('all')}>×</button>
+                </span>
+              )}
               {priceFilter !== 'all' && (
                 <span className="filter-tag">
                   Price: {priceFilter === 'under-150' ? '< ₹150' : priceFilter === '150-250' ? '₹150 - ₹250' : '> ₹250'}
@@ -258,7 +405,7 @@ export default function ShopPage({
           )}
         </div>
 
-        {/* 5. Product Grid (Responsive: 4 columns desktop, 2 tablet, 1 mobile) */}
+        {/* 5. Product Layout (Grid View vs List View) */}
         {filteredAndSortedProducts.length === 0 ? (
           <div className="shop-empty-state">
             <div className="empty-icon-wrap">
@@ -267,25 +414,187 @@ export default function ShopPage({
             <h3 className="empty-title">No matching traditional products found</h3>
             <p className="empty-description">
               We couldn't find any products matching your current filters
-              {searchQuery && ` for "${searchQuery}"`}. Try clearing your search or expanding the price range.
+              {searchQuery && ` for "${searchQuery}"`}. Try clearing your search, selecting another category, or expanding the price range.
             </p>
             <button className="btn-primary" onClick={handleResetFilters}>
               <RotateCcw size={16} />
               <span>Reset All Filters</span>
             </button>
           </div>
+        ) : viewMode === 'list' ? (
+          /* List View Mode */
+          <div className="shop-products-list">
+            {filteredAndSortedProducts.map((prod) => {
+              const isOutOfStock = (typeof prod.stock === 'number' && prod.stock <= 0) || prod.inStock === false;
+              const isLowStock = !isOutOfStock && typeof prod.stock === 'number' && prod.stock <= 5;
+              const discountPct = prod.originalPrice && prod.originalPrice > prod.price 
+                ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) 
+                : null;
+              const inCartQty = getCartQuantity(prod.id);
+
+              return (
+                <article key={prod.id} className={`shop-list-card ${isOutOfStock ? 'card-out-of-stock' : ''}`}>
+                  {/* Left: Image with Badges */}
+                  <div 
+                    className="shop-list-image-wrap"
+                    onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
+                  >
+                    {discountPct && (
+                      <span className="badge-discount">{discountPct}% OFF</span>
+                    )}
+                    {isOutOfStock ? (
+                      <span className="product-badge badge-out-of-stock">Sold Out</span>
+                    ) : isLowStock ? (
+                      <span className="product-badge badge-low-stock">Only {prod.stock} left!</span>
+                    ) : prod.badge ? (
+                      <span className="product-badge">{prod.badge}</span>
+                    ) : null}
+
+                    {imageErrors[prod.id] ? (
+                      <div className="fallback-image-placeholder">
+                        <span>🌾</span>
+                        <p>{prod.name}</p>
+                      </div>
+                    ) : (
+                      <img
+                        src={prod.image}
+                        alt={prod.name}
+                        className="shop-list-img"
+                        loading="lazy"
+                        onError={() => handleImageError(prod.id)}
+                      />
+                    )}
+                  </div>
+
+                  {/* Middle: Details */}
+                  <div className="shop-list-details">
+                    <div className="shop-list-meta">
+                      <span className="shop-card-category">{prod.categoryName}</span>
+                      <span className="shop-card-weight">• {prod.weight}</span>
+                    </div>
+
+                    <h3 
+                      className="shop-list-title"
+                      onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
+                    >
+                      {prod.name}
+                    </h3>
+                    <span className="shop-card-tamil">{prod.tamilName}</span>
+
+                    {prod.highlight && (
+                      <div className="shop-highlight-pill">
+                        <span className="highlight-dot">●</span>
+                        <span>{prod.highlight}</span>
+                      </div>
+                    )}
+
+                    <p className="shop-list-desc">{prod.description}</p>
+
+                    <div className="shop-card-rating">
+                      <div className="stars-mini">
+                        <Star size={13} fill="#d97706" color="#d97706" />
+                        <span className="rating-num">{prod.rating}</span>
+                      </div>
+                      <span className="rating-count">({prod.reviewsCount} verified reviews)</span>
+                    </div>
+                  </div>
+
+                  {/* Right: Price & CTA */}
+                  <div className="shop-list-actions">
+                    <div className="list-price-block">
+                      <span className="current-price">₹{prod.price}</span>
+                      {prod.originalPrice && (
+                        <span className="slashed-price">₹{prod.originalPrice}</span>
+                      )}
+                      {discountPct && (
+                        <span className="save-amount-text">Save ₹{prod.originalPrice - prod.price}</span>
+                      )}
+                    </div>
+
+                    <div className="list-buttons-group">
+                      <button
+                        className="btn-card-view"
+                        onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
+                        title="View full details"
+                      >
+                        <Eye size={14} />
+                        <span>View Details</span>
+                      </button>
+
+                      {isOutOfStock ? (
+                        <button
+                          className="btn-card-add btn-card-soldout"
+                          disabled
+                          aria-disabled="true"
+                        >
+                          Sold Out
+                        </button>
+                      ) : inCartQty > 0 ? (
+                        <div className="card-stepper-btn-group">
+                          <button
+                            type="button"
+                            className="stepper-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (inCartQty <= 1) removeFromCart(prod.id);
+                              else updateQuantity(prod.id, inCartQty - 1, prod.stock);
+                            }}
+                            title="Decrease quantity"
+                            aria-label="Decrease quantity"
+                          >
+                            <Minus size={13} />
+                          </button>
+                          <span className="stepper-qty-display">{inCartQty} in cart</span>
+                          <button
+                            type="button"
+                            className="stepper-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updateQuantity(prod.id, inCartQty + 1, prod.stock);
+                            }}
+                            disabled={typeof prod.stock === 'number' && inCartQty >= prod.stock}
+                            title="Increase quantity"
+                            aria-label="Increase quantity"
+                          >
+                            <Plus size={13} />
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          className="btn-card-add"
+                          onClick={() => onAddToCart(prod)}
+                          aria-label={`Add ${prod.name} to cart`}
+                        >
+                          <ShoppingBag size={15} />
+                          <span>Add to Cart</span>
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         ) : (
+          /* Grid View Mode */
           <div className="shop-products-grid">
             {filteredAndSortedProducts.map((prod) => {
               const isOutOfStock = (typeof prod.stock === 'number' && prod.stock <= 0) || prod.inStock === false;
               const isLowStock = !isOutOfStock && typeof prod.stock === 'number' && prod.stock <= 5;
+              const discountPct = prod.originalPrice && prod.originalPrice > prod.price 
+                ? Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100) 
+                : null;
+              const inCartQty = getCartQuantity(prod.id);
 
               return (
                 <article key={prod.id} className={`shop-product-card ${isOutOfStock ? 'card-out-of-stock' : ''}`}>
                   {/* Badges */}
                   <div className="product-card-badges">
+                    {discountPct && (
+                      <span className="badge-discount">{discountPct}% OFF</span>
+                    )}
                     {isOutOfStock ? (
-                      <span className="product-badge badge-out-of-stock">கையிருப்பு இல்லை • Sold Out</span>
+                      <span className="product-badge badge-out-of-stock">Sold Out</span>
                     ) : isLowStock ? (
                       <span className="product-badge badge-low-stock">Only {prod.stock} left!</span>
                     ) : prod.badge ? (
@@ -340,6 +649,13 @@ export default function ShopPage({
                     </h3>
                     <span className="shop-card-tamil">{prod.tamilName}</span>
 
+                    {/* Product Highlight Pill */}
+                    {prod.highlight && (
+                      <div className="shop-highlight-pill-mini">
+                        <span>{prod.highlight}</span>
+                      </div>
+                    )}
+
                     {/* Rating */}
                     <div className="shop-card-rating">
                       <div className="stars-mini">
@@ -349,7 +665,7 @@ export default function ShopPage({
                       <span className="rating-count">({prod.reviewsCount} reviews)</span>
                     </div>
 
-                    {/* Footer (Price & Add Button) */}
+                    {/* Footer (Price & Add Button / Stepper) */}
                     <div className="shop-card-footer">
                       <div className="price-group">
                         <span className="current-price">₹{prod.price}</span>
@@ -364,7 +680,7 @@ export default function ShopPage({
                           onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
                           title="View full product details"
                         >
-                          View Product
+                          View
                         </button>
                         {isOutOfStock ? (
                           <button
@@ -375,6 +691,36 @@ export default function ShopPage({
                           >
                             <span>Sold Out</span>
                           </button>
+                        ) : inCartQty > 0 ? (
+                          <div className="card-stepper-btn-group">
+                            <button
+                              type="button"
+                              className="stepper-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (inCartQty <= 1) removeFromCart(prod.id);
+                                else updateQuantity(prod.id, inCartQty - 1, prod.stock);
+                              }}
+                              title="Decrease quantity"
+                              aria-label="Decrease quantity"
+                            >
+                              <Minus size={12} />
+                            </button>
+                            <span className="stepper-qty-display">{inCartQty} in cart</span>
+                            <button
+                              type="button"
+                              className="stepper-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateQuantity(prod.id, inCartQty + 1, prod.stock);
+                              }}
+                              disabled={typeof prod.stock === 'number' && inCartQty >= prod.stock}
+                              title="Increase quantity"
+                              aria-label="Increase quantity"
+                            >
+                              <Plus size={12} />
+                            </button>
+                          </div>
                         ) : (
                           <button
                             className="btn-card-add"
@@ -394,12 +740,14 @@ export default function ShopPage({
           </div>
         )}
 
-        {/* 6. Explicit Mock Data & Upcoming API Notice */}
-        <div className="shop-datasource-banner">
-          <Sparkles size={16} className="datasource-icon" />
-          <div className="datasource-text">
-            <strong>Development Notice:</strong> Displaying 18 authentic items from the separated catalog module (<code>client/src/data/productsCatalog.js</code>). 
-            Live backend REST endpoints (<code>GET /api/products</code> and <code>GET /api/categories</code>) will be connected in Step 5.
+        {/* 6. Heritage Artisanal Promise Banner */}
+        <div className="shop-artisan-seal-banner">
+          <div className="seal-badge-icon">🌿</div>
+          <div className="seal-info">
+            <h3 className="seal-title">Our Heritage Promise • நம் பாரம்பரிய உறுதிமொழி</h3>
+            <p className="seal-desc">
+              Every item at Thaniyam Treats is prepared strictly following traditional village recipes, sun-dried native agricultural sourcing, and zero artificial preservatives. Real food crafted for real wellbeing.
+            </p>
           </div>
         </div>
       </div>

@@ -106,6 +106,17 @@ export const initMySQL = async () => {
         );
       }
       console.log('🌱 [Database] Seeded 18 products into TiDB MySQL.');
+    } else {
+      // Ensure existing database records have distinct product images
+      const { SEED_CATALOG } = await import('../data/mockProductStore.js');
+      for (const p of SEED_CATALOG) {
+        if (p.image && p.image.startsWith('/images/products/')) {
+          await connection.query(
+            'UPDATE products SET image = ? WHERE id = ? AND (image LIKE "/images/cat-%" OR image = "/images/prod-podi.jpg" OR image = "/images/prod-laddu.jpg")',
+            [p.image, p.id]
+          );
+        }
+      }
     }
 
     connection.release();

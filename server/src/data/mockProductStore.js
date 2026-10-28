@@ -40,7 +40,7 @@ const SEED_CATALOG = [
     rating: 4.9,
     reviewsCount: 64,
     badge: 'Bestseller',
-    image: '/images/cat-snacks.jpg',
+    image: '/images/products/kai-murukku.jpg',
     description: 'Authentic hand-pressed spiral murukku prepared with premium rice flour, roasted urad dal, cumin seeds, and a hint of asafoetida. Deep fried in pure wood-pressed groundnut oil for signature crunch.',
     ingredients: ['Raw Rice Flour', 'Roasted Urad Dal Flour', 'Butter', 'Cumin Seeds', 'Asafoetida', 'Salt', 'Wood-Pressed Groundnut Oil']
   },
@@ -57,7 +57,7 @@ const SEED_CATALOG = [
     rating: 4.8,
     reviewsCount: 47,
     badge: 'Spicy & Crispy',
-    image: '/images/cat-snacks.jpg',
+    image: '/images/products/spicy-thattai.jpg',
     description: 'Crispy South Indian savory discs seasoned with soaked chana dal, curry leaves, crushed red chillies, and sesame seeds.',
     ingredients: ['Rice Flour', 'Urad Dal Flour', 'Chana Dal', 'Curry Leaves', 'Red Chilli Powder', 'Sesame Seeds', 'Groundnut Oil', 'Salt']
   },
@@ -74,7 +74,7 @@ const SEED_CATALOG = [
     rating: 4.7,
     reviewsCount: 38,
     badge: 'Village Special',
-    image: '/images/cat-snacks.jpg',
+    image: '/images/products/traditional-seedai.jpg',
     description: 'Tiny, crunchy roasted rice and butter balls seasoned with white sesame and hing. A classic Gokulashtami and festive savory.',
     ingredients: ['Processed Rice Flour', 'Urad Dal Flour', 'Country Butter', 'White Sesame Seeds', 'Asafoetida', 'Salt']
   },
@@ -91,7 +91,7 @@ const SEED_CATALOG = [
     rating: 4.9,
     reviewsCount: 56,
     badge: 'Millet Rich',
-    image: '/images/cat-snacks.jpg',
+    image: '/images/products/kambu-murukku.jpg',
     description: 'Wholesome savory murukku blending native pearl millet flour with rice flour and black pepper for a deeply savory crunch.',
     ingredients: ['Pearl Millet (Kambu) Flour', 'Rice Flour', 'Roasted Gram Flour', 'Black Pepper', 'Cumin', 'Sesame Seeds', 'Groundnut Oil']
   },
@@ -108,7 +108,7 @@ const SEED_CATALOG = [
     rating: 5.0,
     reviewsCount: 88,
     badge: 'Pure Wood-Pressed',
-    image: '/images/cat-oils.jpg',
+    image: '/images/products/sesame-oil.jpg',
     description: 'Extracted slowly using traditional Vaagai wood cold press (Marachekku). Preserves all natural aroma, golden color, and nutrients without refining or chemicals.',
     ingredients: ['100% Native Black Sesame Seeds', 'Pure Palm Jaggery (as natural processing aid)']
   },
@@ -125,7 +125,7 @@ const SEED_CATALOG = [
     rating: 4.9,
     reviewsCount: 62,
     badge: 'Cold Pressed',
-    image: '/images/cat-oils.jpg',
+    image: '/images/products/groundnut-oil.jpg',
     description: 'Traditional wood-pressed peanut oil with rich nutty fragrance, ideal for authentic South Indian frying and tempering.',
     ingredients: ['100% Sun-Dried Native Groundnut Kernels']
   },
@@ -142,7 +142,7 @@ const SEED_CATALOG = [
     rating: 4.8,
     reviewsCount: 45,
     badge: 'Unrefined',
-    image: '/images/cat-oils.jpg',
+    image: '/images/products/coconut-oil.jpg',
     description: 'Extracted from sulfur-free sun-dried copra (coconut meat) from Pollachi farms. Pure, crystal clear, and full of natural aroma.',
     ingredients: ['100% Sun-Dried Coconut Copra']
   },
@@ -159,7 +159,7 @@ const SEED_CATALOG = [
     rating: 4.8,
     reviewsCount: 52,
     badge: 'Heritage Sourced',
-    image: '/images/cat-jaggery.jpg',
+    image: '/images/products/palm-jaggery.jpg',
     description: 'Handcrafted solid blocks of genuine Karupatti boiled from fresh palmyra palm sap in Udangudi. Free from white sugar adulteration or sodium bicarbonate.',
     ingredients: ['100% Clarified Palmyra Palm Sap', 'Dry Ginger', 'Cardamom']
   },
@@ -176,7 +176,7 @@ const SEED_CATALOG = [
     rating: 4.9,
     reviewsCount: 34,
     badge: 'Natural Crystal',
-    image: '/images/cat-jaggery.jpg',
+    image: '/images/products/palm-candy.jpg',
     description: 'Naturally crystallized palm sugar crystals prized for traditional milk beverages, herbal decoctions, and coffee.',
     ingredients: ['100% Palmyra Palm Sap Crystals']
   },
@@ -193,7 +193,7 @@ const SEED_CATALOG = [
     rating: 4.7,
     reviewsCount: 51,
     badge: 'Chemical Free',
-    image: '/images/cat-jaggery.jpg',
+    image: '/images/products/nattu-sarkarai.jpg',
     description: 'Pure, chemical-free cane jaggery powder traditionally clarified using plant extracts. Perfect wholesome daily sweetener for tea and coffee.',
     ingredients: ['100% Fresh Sugarcane Juice', 'Vegetable Clarifying Extract']
   },
@@ -210,7 +210,7 @@ const SEED_CATALOG = [
     rating: 4.8,
     reviewsCount: 39,
     badge: 'Whole Grain',
-    image: '/images/cat-millets.jpg',
+    image: '/images/products/thinai-millet.jpg',
     description: 'Cleaned and unpolished whole foxtail millet grain with natural bran intact. Ideal alternative to white polished rice for upma, pongal, or porridge.',
     ingredients: ['100% Unpolished Foxtail Millet Grains']
   },
@@ -227,7 +227,7 @@ const SEED_CATALOG = [
     rating: 4.8,
     reviewsCount: 42,
     badge: 'High Fiber',
-    image: '/images/cat-millets.jpg',
+    image: '/images/products/samai-millet.jpg',
     description: 'Traditional Samai grains cleaned without polishing to retain essential minerals and dietary fiber. Cooks light and fluffy.',
     ingredients: ['100% Unpolished Little Millet Grains']
   },
@@ -244,7 +244,7 @@ const SEED_CATALOG = [
     rating: 4.7,
     reviewsCount: 33,
     badge: 'Native Crop',
-    image: '/images/cat-millets.jpg',
+    image: '/images/products/varagu-millet.jpg',
     description: 'Ancient drought-resistant cereal grain with rich earthy flavor. Excellent for traditional variety rices, khichdi, and idli batter.',
     ingredients: ['100% Unpolished Kodo Millet Grains']
   },
@@ -261,7 +261,7 @@ const SEED_CATALOG = [
     rating: 4.9,
     reviewsCount: 50,
     badge: 'Heritage Grain',
-    image: '/images/cat-millets.jpg',
+    image: '/images/products/kambu-grain.jpg',
     description: 'Stone-cleaned native pearl millet seeds. Essential for cooling summer Kambu Koozh (traditional fermented porridge) and rustic rotis.',
     ingredients: ['100% Whole Pearl Millet Grains']
   },
@@ -278,7 +278,7 @@ const SEED_CATALOG = [
     rating: 4.9,
     reviewsCount: 73,
     badge: 'Small-Batch Roasted',
-    image: '/images/prod-podi.jpg',
+    image: '/images/products/curry-leaf-podi.jpg',
     description: 'Coarsely ground aromatic gun-powder blend featuring sun-dried native curry leaves, split roasted lentils, red chillies, and white sesame seeds. Perfect companion for hot idlis.',
     ingredients: ['Curry Leaves', 'Urad Dal', 'Chana Dal', 'Dry Red Chillies', 'Sesame Seeds', 'Garlic', 'Rock Salt', 'Asafoetida']
   },
@@ -295,7 +295,7 @@ const SEED_CATALOG = [
     rating: 4.8,
     reviewsCount: 41,
     badge: 'Ghee Companion',
-    image: '/images/prod-podi.jpg',
+    image: '/images/products/paruppu-podi.jpg',
     description: 'Slow-roasted roasted gram and toor dal ground with cumin and black peppercorns. Mixed with hot steaming rice and a spoonful of melted ghee.',
     ingredients: ['Roasted Gram (Pottukadalai)', 'Toor Dal', 'Cumin Seeds', 'Black Peppercorns', 'Dry Red Chillies', 'Salt', 'Asafoetida']
   },
@@ -312,7 +312,7 @@ const SEED_CATALOG = [
     rating: 4.9,
     reviewsCount: 41,
     badge: 'Jaggery Sweetened',
-    image: '/images/prod-laddu.jpg',
+    image: '/images/products/thinai-laddu.jpg',
     description: 'Nutritious festive laddu made with slow-roasted foxtail millet flour, crushed country jaggery, cardamom, and roasted cashews bound together with pure farm ghee.',
     ingredients: ['Foxtail Millet Flour', 'Country Jaggery (Nattu Sarkarai)', 'Pure Cow Ghee', 'Cashew Nuts', 'Cardamom']
   },
@@ -329,7 +329,7 @@ const SEED_CATALOG = [
     rating: 4.8,
     reviewsCount: 36,
     badge: 'Festival Classic',
-    image: '/images/prod-laddu.jpg',
+    image: '/images/products/athirasam.jpg',
     description: 'Mouth-melting soft traditional festive sweet prepared from soaked pounded raw rice fermented with melted jaggery syrup and cardamom.',
     ingredients: ['Raw Rice', 'Pure Jaggery', 'Dry Ginger', 'Cardamom', 'Wood-Pressed Groundnut Oil']
   }
