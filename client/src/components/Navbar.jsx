@@ -46,6 +46,7 @@ export default function Navbar({
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [catOpen, setCatOpen] = useState(false);
+  const [mobileCatOpen, setMobileCatOpen] = useState(false);
   const catRef = useRef(null);
   const { wishlistIds } = useWishlist();
   const { lang, toggleLang, t } = useLanguage();
@@ -65,12 +66,14 @@ export default function Navbar({
 
   const handleNavClick = (view, sectionId) => {
     setMobileMenuOpen(false);
+    setMobileCatOpen(false);
     setCatOpen(false);
     onNavigate(view, sectionId);
   };
 
   const handleCategoryClick = (catId) => {
     setMobileMenuOpen(false);
+    setMobileCatOpen(false);
     setCatOpen(false);
     onNavigateCategory(catId);
   };
@@ -101,7 +104,12 @@ export default function Navbar({
         <button
           className="mobile-menu-btn"
           aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          onClick={() => {
+            setMobileMenuOpen((o) => {
+              if (o) setMobileCatOpen(false);
+              return !o;
+            });
+          }}
         >
           {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -311,28 +319,52 @@ export default function Navbar({
                 {t('shop')} <ArrowRight size={16} />
               </a>
             </li>
-            <li className="mobile-category-header">
-              <span>{t('categories')}</span>
+            <li className="mobile-category-accordion">
+              <button
+                type="button"
+                className={`mobile-category-trigger ${mobileCatOpen ? 'open' : ''}`}
+                onClick={() => setMobileCatOpen((o) => !o)}
+                aria-expanded={mobileCatOpen}
+              >
+                <div className="mobile-category-trigger-left">
+                  <span className="mobile-category-icon-main">🌿</span>
+                  <span className="mobile-category-title-text">{t('categories')}</span>
+                  <span className="mobile-category-count-pill">{activeCategories.length}</span>
+                </div>
+                <ChevronDown 
+                  size={16} 
+                  className={`mobile-category-chevron ${mobileCatOpen ? 'rotated' : ''}`} 
+                />
+              </button>
+
+              {mobileCatOpen && (
+                <ul className="mobile-category-sublist" role="region">
+                  {activeCategories.map((cat) => {
+                    const catIcon = cat.icon || CATEGORY_ICON_MAP[cat.id] || '🌾';
+                    return (
+                      <li key={cat.id} className="mobile-sub-item">
+                        <a
+                          href={`#/shop?category=${cat.id}`}
+                          onClick={(e) => { e.preventDefault(); handleCategoryClick(cat.id); }}
+                          className="mobile-cat-link"
+                        >
+                          <span className="mobile-cat-icon">{catIcon}</span>
+                          <div className="mobile-cat-text">
+                            <span className="mobile-cat-name">
+                              {lang === 'ta' && cat.tamilName ? cat.tamilName : cat.name}
+                            </span>
+                            <span className="mobile-cat-tamil">
+                              {lang === 'ta' ? cat.name : cat.tamilName}
+                            </span>
+                          </div>
+                          <ChevronRight size={14} className="mobile-cat-arrow" />
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
             </li>
-            {activeCategories.map((cat) => {
-              const catIcon = cat.icon || CATEGORY_ICON_MAP[cat.id] || '🌾';
-              return (
-                <li key={cat.id} className="mobile-sub-item">
-                  <a
-                    href={`#/shop?category=${cat.id}`}
-                    onClick={(e) => { e.preventDefault(); handleCategoryClick(cat.id); }}
-                    className="mobile-cat-link"
-                  >
-                    <span className="mobile-cat-icon">{catIcon}</span>
-                    <div className="mobile-cat-text">
-                      <span className="mobile-cat-name">{cat.name}</span>
-                      <span className="mobile-cat-tamil">{cat.tamilName}</span>
-                    </div>
-                    <ChevronRight size={14} className="mobile-cat-arrow" />
-                  </a>
-                </li>
-              );
-            })}
             <li>
               <a
                 href="#our-story"
