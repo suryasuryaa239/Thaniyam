@@ -1687,122 +1687,323 @@ export const SEED_CATALOG = [
   }
 ];
 
-SEED_CATALOG.forEach((item) => {
-  memoryProducts.set(item.id, {
-    ...item,
-    isActive: true,
+// Initialize in-memory seed products
+const initializeProducts = () => {
+  SEED_CATALOG.forEach((item) => {
+    const product = {
+      ...item,
+      isActive: true,
+      inStock: (item.stock || 0) > 0,
+      images: item.images || [item.image, '/images/hero-banner.jpg', '/images/our-story.jpg'],
+      createdAt: new Date('2026-10-01T00:00:00.000Z').toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    memoryProducts.set(product.id, product);
+  });
+};
+
+initializeProducts();
+
+// Helper to determine next available product ID
+const getNextProductId = () => {
+  let maxNum = 0;
+  for (const id of memoryProducts.keys()) {
+    const match = id.match(/^prod-(\d+)$/);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      if (num > maxNum) maxNum = num;
+    }
+  }
+  const nextNum = maxNum + 1;
+  return `prod-${String(nextNum).padStart(3, '0')}`;
+};
+
+// Retrieve all products with optional filters
+export const getAllProductsFromStore = ({
+  includeInactive = false,
+  category = null,
+  search = null,
+  stockStatus = null // 'in-stock', 'low-stock', 'out-of-stock'
+} = {}) => {
+  let list = Array.from(memoryProducts.values());
+
+  if (!includeInactive) {
+    list = list.filter((p) => p.isActive !== false);
+  }
+
+  if (category && category !== 'all' && category !== 'ALL') {
+    list = list.filter((p) => (p.category || '').toLowerCase() === category.toLowerCase());
+  }
+
+  if (search && search.trim()) {
+    const q = search.trim().toLowerCase();
+    list = list.filter((p) =>
+      (p.name || '').toLowerCase().includes(q) ||
+      (p.tamilName || '').toLowerCase().includes(q) ||
+      (p.categoryName || '').toLowerCase().includes(q) ||
+      (p.description || '').toLowerCase().includes(q) ||
+      (p.id || '').toLowerCase().includes(q)
+    );
+  }
+
+  if (stockStatus) {
+    if (stockStatus === 'in-stock') {
+      list = list.filter((p) => p.stock > 5);
+    } else if (stockStatus === 'low-stock') {
+      list = list.filter((p) => p.stock > 0 && p.stock <= 5);
+    } else if (stockStatus === 'out-of-stock') {
+      list = list.filter((p) => p.stock <= 0);
+    }
+  }
+
+  return list.map((p) => ({ ...p }));
+};
+
+// Retrieve single product
+export const getProductByIdFromStore = (id) => {
+  if (!id) return null;
+  const found = memoryProducts.get(id);
+  return found ? { ...found } : null;
+};
+
+// Add new product
+export const createProductInStore = (productData) => {
+  const id = productData.id && !memoryProducts.has(productData.id)
+    ? productData.id
+    : getNextProductId();
+
+  const stock = Math.max(0, parseInt(productData.stock, 10) || 0);
+  const price = Math.max(1, parseFloat(productData.price) || 0);
+  const originalPrice = productData.originalPrice ? parseFloat(productData.originalPrice) : null;
+
+  const newProduct = {
+    id,
+    name: (productData.name || '').trim(),
+    tamilName: (productData.tamilName || '').trim(),
+    category: (productData.category || 'traditional-snacks').trim(),
+    categoryName: (productData.categoryName || '').trim(),
+    price,
+    originalPrice: originalPrice && originalPrice > price ? originalPrice : null,
+    weight: (productData.weight || 'Standard Pack').trim(),
+    stock,
+    inStock: stock > 0,
+    isActive: productData.isActive !== false,
+    badge: (productData.badge || '').trim(),
+    image: productData.image || '/images/cat-snacks.jpg',
+    images: Array.isArray(productData.images) && productData.images.length > 0
+      ? productData.images
+      : [productData.image || '/images/cat-snacks.jpg', '/images/hero-banner.jpg'],
+    description: (productData.description || '').trim(),
+    ingredients: Array.isArray(productData.ingredients)
+      ? productData.ingredients
+      : (typeof productData.ingredients === 'string'
+          ? productData.ingredients.split(',').map((s) => s.trim()).filter(Boolean)
+          : []),
+    rating: typeof productData.rating === 'number' ? productData.rating : 5.0,
+    reviewsCount: typeof productData.reviewsCount === 'number' ? productData.reviewsCount : 1,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
-  });
-});
-
-export const getAllProductsFromStore = (includeInactive = false) => {
-  const all = Array.from(memoryProducts.values());
-  if (includeInactive) return all;
-  return all.filter((p) => p.isActive !== false);
-};
-
-export const getProductByIdFromStore = (id) => {
-  const product = memoryProducts.get(id);
-  return product && product.isActive !== false ? product : null;
-};
-
-export const saveProductInStore = async (productData) => {
-  const now = new Date().toISOString();
-  const id = productData.id || `prod-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
-
-  const existing = memoryProducts.get(id) || {};
-  const merged = {
-    ...existing,
-    ...productData,
-    id,
-    isActive: productData.isActive !== undefined ? Boolean(productData.isActive) : true,
-    rating: Number(productData.rating || existing.rating || 4.8),
-    reviewsCount: Number(productData.reviewsCount || existing.reviewsCount || 0),
-    stock: Number(productData.stock !== undefined ? productData.stock : (existing.stock || 0)),
-    price: Number(productData.price || existing.price || 0),
-    originalPrice: productData.originalPrice ? Number(productData.originalPrice) : null,
-    createdAt: existing.createdAt || now,
-    updatedAt: now
   };
 
-  memoryProducts.set(id, merged);
-
+  memoryProducts.set(id, newProduct);
   if (isMySQLConnected()) {
-    try {
-      await mysqlSaveProduct(merged);
-    } catch (err) {
-      console.warn('⚠️ [MySQL] Failed to persist product to database:', err.message);
-    }
+    mysqlSaveProduct(newProduct).catch((err) => console.warn('⚠️ [MySQL] createProduct notice:', err.message));
   }
-
-  return merged;
+  return { ...newProduct };
 };
 
-export const updateProductStockInStore = async (id, newStock) => {
-  const product = memoryProducts.get(id);
-  if (!product) return null;
+// Edit existing product
+export const updateProductInStore = (id, updates) => {
+  const existing = memoryProducts.get(id);
+  if (!existing) return null;
 
-  const validStock = Math.max(0, Number(newStock));
-  product.stock = validStock;
-  product.updatedAt = new Date().toISOString();
-  memoryProducts.set(id, product);
+  const updatedStock = updates.stock !== undefined
+    ? Math.max(0, parseInt(updates.stock, 10) || 0)
+    : existing.stock;
 
-  if (isMySQLConnected()) {
-    try {
-      await mysqlUpdateProductStock(id, validStock);
-    } catch (err) {
-      console.warn('⚠️ [MySQL] Failed to update product stock:', err.message);
-    }
+  const updatedPrice = updates.price !== undefined
+    ? Math.max(1, parseFloat(updates.price) || existing.price)
+    : existing.price;
+
+  const updatedOriginalPrice = updates.originalPrice !== undefined
+    ? (updates.originalPrice ? parseFloat(updates.originalPrice) : null)
+    : existing.originalPrice;
+
+  const updatedIngredients = updates.ingredients !== undefined
+    ? (Array.isArray(updates.ingredients)
+        ? updates.ingredients
+        : String(updates.ingredients).split(',').map((s) => s.trim()).filter(Boolean))
+    : existing.ingredients;
+
+  const updated = {
+    ...existing,
+    ...updates,
+    id: existing.id, // ID cannot be overwritten
+    price: updatedPrice,
+    originalPrice: updatedOriginalPrice,
+    stock: updatedStock,
+    inStock: updatedStock > 0,
+    ingredients: updatedIngredients,
+    updatedAt: new Date().toISOString()
+  };
+
+  if (updates.isActive !== undefined) {
+    updated.isActive = Boolean(updates.isActive);
   }
 
-  return product;
+  memoryProducts.set(id, updated);
+  if (isMySQLConnected()) {
+    mysqlSaveProduct(updated).catch((err) => console.warn('⚠️ [MySQL] updateProduct notice:', err.message));
+  }
+  return { ...updated };
 };
 
-export const deactivateProductInStore = async (id) => {
-  const product = memoryProducts.get(id);
-  if (!product) return false;
+// Quick adjust stock
+export const adjustProductStockInStore = (id, delta) => {
+  const existing = memoryProducts.get(id);
+  if (!existing) return null;
 
-  product.isActive = false;
-  product.updatedAt = new Date().toISOString();
-  memoryProducts.set(id, product);
+  const change = parseInt(delta, 10) || 0;
+  const newStock = Math.max(0, existing.stock + change);
 
+  existing.stock = newStock;
+  existing.inStock = newStock > 0;
+  existing.updatedAt = new Date().toISOString();
+
+  memoryProducts.set(id, existing);
   if (isMySQLConnected()) {
-    try {
-      await mysqlDeactivateProduct(id);
-    } catch (err) {
-      console.warn('⚠️ [MySQL] Failed to deactivate product:', err.message);
-    }
+    mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] adjustStock notice:', err.message));
   }
-
-  return true;
+  return { ...existing };
 };
 
-export const deductStockForOrder = async (items) => {
-  for (const item of items) {
-    const product = memoryProducts.get(item.productId);
-    if (!product || product.stock < item.quantity) {
-      return {
-        success: false,
-        failedItem: item.name || item.productId,
-        available: product ? product.stock : 0,
-        requested: item.quantity
-      };
-    }
+// Set absolute stock
+export const setProductStockInStore = (id, targetStock) => {
+  const existing = memoryProducts.get(id);
+  if (!existing) return null;
+
+  const newStock = Math.max(0, parseInt(targetStock, 10) || 0);
+  existing.stock = newStock;
+  existing.inStock = newStock > 0;
+  existing.updatedAt = new Date().toISOString();
+
+  memoryProducts.set(id, existing);
+  if (isMySQLConnected()) {
+    mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] setStock notice:', err.message));
   }
+  return { ...existing };
+};
 
-  for (const item of items) {
-    const product = memoryProducts.get(item.productId);
-    product.stock = Math.max(0, product.stock - item.quantity);
-    product.updatedAt = new Date().toISOString();
-    memoryProducts.set(item.productId, product);
+// Deactivate or safe-delete product
+// If product has been part of past customer orders, we soft-deactivate it so receipts & order tracking stay 100% intact!
+export const deactivateOrDeleteProductInStore = (id, hasOrderHistory = false) => {
+  const existing = memoryProducts.get(id);
+  if (!existing) return null;
 
+  if (hasOrderHistory) {
+    // Preserve customer order integrity by soft-deactivating
+    existing.isActive = false;
+    existing.updatedAt = new Date().toISOString();
+    memoryProducts.set(id, existing);
     if (isMySQLConnected()) {
-      mysqlUpdateProductStock(item.productId, product.stock).catch((err) => {
-        console.warn(`⚠️ [MySQL] Async stock deduction failed for ${item.productId}:`, err.message);
-      });
+      mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
+    }
+    return {
+      action: 'deactivated',
+      product: { ...existing },
+      message: `Product "${existing.name}" is referenced in past customer orders and has been safely deactivated to preserve customer receipts and tracking.`
+    };
+  } else {
+    // No past orders reference this product; clean removal is safe
+    memoryProducts.delete(id);
+    if (isMySQLConnected()) {
+      mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
+    }
+    return {
+      action: 'deleted',
+      product: { ...existing },
+      message: `Product "${existing.name}" has been permanently deleted.`
+    };
+  }
+};
+
+// ATOMIC STOCK CHECK & DEDUCTION FOR ORDERS
+// Validates ALL items before modifying any stock.
+// If any item has insufficient stock, throws an error with item-specific details.
+export const deductStockForOrderItemsInStore = (orderItems) => {
+  if (!Array.isArray(orderItems) || orderItems.length === 0) {
+    return { success: true };
+  }
+
+  // 1. Validate availability & stock for ALL items first
+  for (const item of orderItems) {
+    const prodId = item.productId || item.id;
+    const prod = memoryProducts.get(prodId);
+
+    if (!prod) {
+      throw new Error(`Product "${prodId}" does not exist in our catalog.`);
+    }
+
+    if (!prod.isActive) {
+      throw new Error(`Item "${prod.name}" is currently not available for purchase.`);
+    }
+
+    const requestedQty = parseInt(item.quantity, 10);
+    if (isNaN(requestedQty) || requestedQty <= 0) {
+      throw new Error(`Invalid quantity for item "${prod.name}".`);
+    }
+
+    if (prod.stock < requestedQty) {
+      throw new Error(
+        `Insufficient stock for "${prod.name}". Available: ${prod.stock} units (Requested: ${requestedQty}). Please adjust your cart.`
+      );
     }
   }
 
-  return { success: true };
+  // 2. Perform atomic deduction
+  const deducted = [];
+  for (const item of orderItems) {
+    const prodId = item.productId || item.id;
+    const prod = memoryProducts.get(prodId);
+    const requestedQty = parseInt(item.quantity, 10);
+
+    prod.stock = Math.max(0, prod.stock - requestedQty);
+    prod.inStock = prod.stock > 0;
+    prod.updatedAt = new Date().toISOString();
+
+    memoryProducts.set(prodId, prod);
+    if (isMySQLConnected()) {
+      mysqlUpdateProductStock(prodId, prod.stock).catch((err) => console.warn('⚠️ [MySQL] deduct notice:', err.message));
+    }
+    deducted.push({
+      id: prod.id,
+      name: prod.name,
+      remainingStock: prod.stock,
+      inStock: prod.inStock
+    });
+  }
+
+  return { success: true, deducted };
+};
+
+// RESTORE STOCK (e.g. When an order is Cancelled)
+export const restoreStockForOrderItemsInStore = (orderItems) => {
+  if (!Array.isArray(orderItems) || orderItems.length === 0) {
+    return;
+  }
+
+  for (const item of orderItems) {
+    const prodId = item.productId || item.id;
+    const prod = memoryProducts.get(prodId);
+    if (prod) {
+      const returnQty = parseInt(item.quantity, 10) || 0;
+      prod.stock = prod.stock + returnQty;
+      prod.inStock = prod.stock > 0;
+      prod.updatedAt = new Date().toISOString();
+      memoryProducts.set(prodId, prod);
+      if (isMySQLConnected()) {
+        mysqlUpdateProductStock(prodId, prod.stock).catch((err) => console.warn('⚠️ [MySQL] restore notice:', err.message));
+      }
+    }
+  }
 };

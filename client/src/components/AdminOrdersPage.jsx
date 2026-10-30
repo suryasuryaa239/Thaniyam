@@ -140,7 +140,19 @@ export default function AdminOrdersPage({
         })
       });
 
-      const data = await res.json();
+      let data;
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        throw new Error(
+          res.status >= 500
+            ? 'Backend server is offline or restarting. Please ensure the backend server is running on port 5000 (run `npm run server` or `npm run dev`).'
+            : text || `Server returned error (${res.status})`
+        );
+      }
+
       if (!res.ok || !data.success) {
         throw new Error(data.message || 'Invalid administrator username or password.');
       }
