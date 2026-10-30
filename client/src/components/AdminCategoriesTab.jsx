@@ -8,14 +8,17 @@ import { apiUrl } from '../config/api';
 import { useProducts } from '../context/ProductContext';
 
 const PRESET_CATEGORY_IMAGES = [
-  { label: 'Snacks', url: '/images/cat-snacks.jpg' },
-  { label: 'Oils', url: '/images/cat-oils.jpg' },
-  { label: 'Jaggery & Sweeteners', url: '/images/cat-jaggery.jpg' },
-  { label: 'Millets & Grains', url: '/images/cat-millets.jpg' },
-  { label: 'Podis & Masalas', url: '/images/prod-podi.jpg' },
-  { label: 'Sweets', url: '/images/prod-laddu.jpg' },
-  { label: 'Hero Banner', url: '/images/hero-banner.jpg' },
-  { label: 'Our Story', url: '/images/our-story.jpg' }
+  { label: 'Dosa & Adai', url: '/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg' },
+  { label: 'Puttu Flours', url: '/images/products/poongar-rice-kozhukattai-idiyappam-flour.jpg' },
+  { label: 'Kanji & Porridge', url: '/images/products/karuppu-kavuni-kanji.jpg' },
+  { label: 'Health Mix', url: '/images/products/karuppu-kavuni-nutrition-mix.jpg' },
+  { label: 'Heritage Podis', url: '/images/products/pudina-idli-podi-mint-idli-powder.jpg' },
+  { label: 'Millet Pongal', url: '/images/products/siruthaniya-pongal-mix-multi-millet-pongal-mix.jpg' },
+  { label: 'Traditional Kali', url: '/images/products/ulundhu-kali.jpg' },
+  { label: 'Herbal Beverages', url: '/images/products/sukku-malli-coffee-herbal-coffee-mix.jpg' },
+  { label: 'Daily Needs', url: '/images/products/himalayan-rock-crtstals.jpg' },
+  { label: 'Herbal Beauty', url: '/images/products/nalangu-maavu-herbal-bath-powder.jpg' },
+  { label: 'Chapati Mix', url: '/images/products/multi-millet-chapati-mix.jpg' }
 ];
 
 const EMOJI_SUGGESTIONS = ['✨', '🌾', '🥨', '🫒', '🍯', '🌶️', '🍬', '🫖', '🥣', '🌿', '🍪', '🥥'];
@@ -43,7 +46,7 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
     name: '',
     tamilName: '',
     icon: '✨',
-    image: '/images/cat-snacks.jpg',
+    image: '/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg',
     description: ''
   });
 
@@ -84,7 +87,7 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
       name: '',
       tamilName: '',
       icon: '✨',
-      image: '/images/cat-snacks.jpg',
+      image: '/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg',
       description: ''
     });
     setModalErrors({});
@@ -324,7 +327,7 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
 
       {/* 4. Add / Edit Category Modal */}
       {isModalOpen && (
-        <div className="admin-modal-overlay" onClick={() => !isSubmitting && setIsModalOpen(false)}>
+        <div className="admin-modal-backdrop admin-modal-overlay" onClick={() => !isSubmitting && setIsModalOpen(false)} role="dialog" aria-modal="true">
           <div className="admin-modal-container category-modal" onClick={(e) => e.stopPropagation()}>
             <div className="admin-modal-header">
               <div className="modal-title-group">
@@ -460,11 +463,11 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
                       className="form-input"
                       value={formData.image}
                       onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      placeholder="/images/cat-snacks.jpg or https://images.unsplash.com/..."
+                      placeholder="/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg or https://..."
                     />
                     {formData.image && (
                       <div className="live-preview-box">
-                        <img src={formData.image} alt="Live Preview" onError={(e) => { e.target.src = '/images/cat-snacks.jpg'; }} />
+                        <img src={formData.image} alt="Live Preview" onError={(e) => { e.target.src = '/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg'; }} />
                         <span>Preview</span>
                       </div>
                     )}
@@ -521,13 +524,13 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
 
       {/* 5. Delete Category Safety Dialog */}
       {categoryToDelete && (
-        <div className="admin-modal-overlay" onClick={() => !isDeleting && setCategoryToDelete(null)}>
+        <div className="admin-modal-backdrop admin-modal-overlay" onClick={() => !isDeleting && setCategoryToDelete(null)} role="dialog" aria-modal="true">
           <div className="admin-modal-container modal-confirm-delete" onClick={(e) => e.stopPropagation()}>
             <div className="confirm-delete-body text-center">
               <div className="delete-warning-icon">
                 <AlertCircle size={40} color="#dc2626" />
               </div>
-              <h3>Delete Category "{categoryToDelete.name}"?</h3>
+              <h3 className="confirm-delete-title">Delete Category "{categoryToDelete.name}"?</h3>
               <p className="delete-modal-msg">
                 Are you sure you want to remove this category? Products currently assigned to this category will not be deleted but may become uncategorized.
               </p>
