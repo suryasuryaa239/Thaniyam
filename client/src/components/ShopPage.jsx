@@ -156,6 +156,11 @@ export default function ShopPage({
             )}
           </nav>
 
+          <div className="shop-hero-badge">
+            <Sparkles size={13} className="hero-sparkle" />
+            <span>100% FARM TO PANTRY • NATIVE SOURCING</span>
+          </div>
+
           <h1 className="shop-main-heading">
             {selectedCategory === 'all' ? 'Authentic Traditional Pantry' : activeCategoryObj.name}
           </h1>
@@ -163,27 +168,31 @@ export default function ShopPage({
             {activeCategoryObj.tamilName} • நம் மண்ணின் பாரம்பரிய சுவை
           </p>
           <p className="shop-intro-description">
-            Explore authentic South Indian traditional foods, unpolished native millets,
-            stone-pressed pure oils, and crispy savories handcrafted from ancestral village recipes.
+            Explore authentic South Indian traditional foods, stone-ground dosa mixes, heirloom kanji porridges,
+            steamed puttu flours, aromatic herbal idli podis, and pure native nutrition direct from farmer clusters.
           </p>
 
           {/* Heritage Trust Badges */}
           <div className="shop-trust-strip">
             <div className="trust-pill">
-              <span className="trust-emoji">🪵</span>
-              <span>100% Marachekku Cold-Pressed</span>
+              <span className="trust-emoji">🌾</span>
+              <span>100% Native Millets & Grains</span>
             </div>
             <div className="trust-pill">
-              <span className="trust-emoji">🌾</span>
-              <span>Unpolished Native Millets</span>
+              <span className="trust-emoji">🥣</span>
+              <span>Heirloom Kanji & Puttu Flours</span>
+            </div>
+            <div className="trust-pill">
+              <span className="trust-emoji">🌶️</span>
+              <span>Stone-Pounded Herbal Podis</span>
             </div>
             <div className="trust-pill">
               <span className="trust-emoji">🍯</span>
-              <span>Pure Udangudi Karupatti</span>
+              <span>Pure Udangudi Karupatti & Sugars</span>
             </div>
             <div className="trust-pill">
               <span className="trust-emoji">✨</span>
-              <span>Zero Artificial Additives</span>
+              <span>Zero Preservatives & Additives</span>
             </div>
             <div className="trust-pill">
               <span className="trust-emoji">🚚</span>
@@ -200,7 +209,7 @@ export default function ShopPage({
             <div className="category-header-title-block">
               <span className="category-micro-label">HERITAGE SELECTIONS</span>
               <h2 className="category-showcase-title">Browse By Category • பாரம்பரிய வகைகள்</h2>
-              <span className="category-showcase-subtitle">Choose from artisanal sweets, wood-pressed oils, native grains, and handmade snacks</span>
+              <span className="category-showcase-subtitle">Choose from heirloom dosa mixes, puttu flours, restorative kanji, herbal idli podis, and health mixes</span>
             </div>
             <div className="category-scroll-arrows">
               <button 
@@ -237,7 +246,7 @@ export default function ShopPage({
                 >
                   <div className="cat-card-thumb-wrap">
                     <img 
-                      src={cat.image || '/images/cat-snacks.jpg'} 
+                      src={cat.image || '/images/products/karuppu-kavuni-nutrition-mix.jpg'} 
                       alt={cat.name} 
                       className="cat-card-thumb" 
                       loading="lazy"
@@ -265,7 +274,7 @@ export default function ShopPage({
           {selectedCategory !== 'all' && (
             <div className="category-spotlight-ribbon">
               <div className="spotlight-thumb">
-                <img src={activeCategoryObj.image || '/images/cat-snacks.jpg'} alt={activeCategoryObj.name} />
+                <img src={activeCategoryObj.image || '/images/products/karuppu-kavuni-nutrition-mix.jpg'} alt={activeCategoryObj.name} />
                 <span className="spotlight-emoji">{activeCategoryObj.icon || '✨'}</span>
               </div>
               <div className="spotlight-details">
