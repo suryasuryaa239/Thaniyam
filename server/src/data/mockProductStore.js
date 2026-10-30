@@ -25,633 +25,2193 @@ export const syncProductsFromMySQL = async () => {
   }
 };
 
-// Authentic seed products matching Thaniyam Treats heritage catalog
+// 92 Authentic seed products matching Thaniyam Treats heritage catalog
 export const SEED_CATALOG = [
   {
-    id: 'prod-001',
-    name: 'Handcrafted Kai Murukku',
-    tamilName: 'பாரம்பரிய கை முறுக்கு',
-    category: 'traditional-snacks',
-    categoryName: 'Traditional Snacks',
-    price: 140,
-    originalPrice: 160,
-    weight: '250g',
-    stock: 25,
-    rating: 4.9,
-    reviewsCount: 64,
-    badge: 'Bestseller',
-    image: '/images/products/kai-murukku.jpg',
-    description: 'Authentic hand-pressed spiral murukku prepared with premium rice flour, roasted urad dal, cumin seeds, and a hint of asafoetida. Deep fried in pure wood-pressed groundnut oil for signature crunch.',
-    ingredients: ['Raw Rice Flour', 'Roasted Urad Dal Flour', 'Butter', 'Cumin Seeds', 'Asafoetida', 'Salt', 'Wood-Pressed Groundnut Oil']
+    "id": "prod-001",
+    "name": "Handcrafted Kai Murukku",
+    "tamilName": "பாரம்பரிய கை முறுக்கு",
+    "category": "traditional-snacks",
+    "categoryName": "Traditional Savory Snacks",
+    "price": 140,
+    "originalPrice": 160,
+    "weight": "250g",
+    "stock": 25,
+    "rating": 4.9,
+    "reviewsCount": 64,
+    "badge": "Bestseller",
+    "highlight": "Pure Butter & Wood-Pressed Oil",
+    "image": "/images/products/kai-murukku.jpg",
+    "description": "Authentic hand-pressed spiral murukku prepared with premium rice flour, roasted urad dal, cumin seeds, and a hint of asafoetida. Deep fried in pure wood-pressed groundnut oil for signature crunch.",
+    "ingredients": [
+      "Raw Rice Flour",
+      "Roasted Urad Dal Flour",
+      "Butter",
+      "Cumin Seeds",
+      "Asafoetida",
+      "Salt",
+      "Wood-Pressed Groundnut Oil"
+    ]
   },
   {
-    id: 'prod-002',
-    name: 'Spicy Kara Thattai',
-    tamilName: 'கார தட்டை',
-    category: 'traditional-snacks',
-    categoryName: 'Traditional Snacks',
-    price: 130,
-    originalPrice: 145,
-    weight: '250g',
-    stock: 20,
-    rating: 4.8,
-    reviewsCount: 47,
-    badge: 'Spicy & Crispy',
-    image: '/images/products/spicy-thattai.jpg',
-    description: 'Crispy South Indian savory discs seasoned with soaked chana dal, curry leaves, crushed red chillies, and sesame seeds.',
-    ingredients: ['Rice Flour', 'Urad Dal Flour', 'Chana Dal', 'Curry Leaves', 'Red Chilli Powder', 'Sesame Seeds', 'Groundnut Oil', 'Salt']
+    "id": "prod-002",
+    "name": "Spicy Kara Thattai",
+    "tamilName": "கார தட்டை",
+    "category": "traditional-snacks",
+    "categoryName": "Traditional Savory Snacks",
+    "price": 130,
+    "originalPrice": 145,
+    "weight": "250g",
+    "stock": 20,
+    "rating": 4.8,
+    "reviewsCount": 47,
+    "badge": "Spicy & Crispy",
+    "highlight": "Chana Dal & Curry Leaves",
+    "image": "/images/products/spicy-thattai.jpg",
+    "description": "Crispy South Indian savory discs seasoned with soaked chana dal, curry leaves, crushed red chillies, and sesame seeds.",
+    "ingredients": [
+      "Rice Flour",
+      "Urad Dal Flour",
+      "Chana Dal",
+      "Curry Leaves",
+      "Red Chilli Powder",
+      "Sesame Seeds",
+      "Groundnut Oil",
+      "Salt"
+    ]
   },
   {
-    id: 'prod-003',
-    name: 'Traditional Seedai (Crispy Butter Balls)',
-    tamilName: 'உப்பு சீடை',
-    category: 'traditional-snacks',
-    categoryName: 'Traditional Snacks',
-    price: 125,
-    originalPrice: 140,
-    weight: '200g',
-    stock: 18,
-    rating: 4.7,
-    reviewsCount: 38,
-    badge: 'Village Special',
-    image: '/images/products/traditional-seedai.jpg',
-    description: 'Tiny, crunchy roasted rice and butter balls seasoned with white sesame and hing. A classic Gokulashtami and festive savory.',
-    ingredients: ['Processed Rice Flour', 'Urad Dal Flour', 'Country Butter', 'White Sesame Seeds', 'Asafoetida', 'Salt']
+    "id": "prod-003",
+    "name": "Traditional Seedai (Crispy Butter Balls)",
+    "tamilName": "உப்பு சீடை",
+    "category": "traditional-snacks",
+    "categoryName": "Traditional Savory Snacks",
+    "price": 125,
+    "originalPrice": 140,
+    "weight": "200g",
+    "stock": 18,
+    "rating": 4.7,
+    "reviewsCount": 38,
+    "badge": "Village Special",
+    "highlight": "Roasted Urad Dal & Butter",
+    "image": "/images/products/traditional-seedai.jpg",
+    "description": "Tiny, crunchy roasted rice and butter balls seasoned with white sesame and hing. A classic Gokulashtami and festive savory.",
+    "ingredients": [
+      "Processed Rice Flour",
+      "Urad Dal Flour",
+      "Country Butter",
+      "White Sesame Seeds",
+      "Asafoetida",
+      "Salt"
+    ]
   },
   {
-    id: 'prod-004',
-    name: 'Kambu (Pearl Millet) Kara Murukku',
-    tamilName: 'கம்பு கார முறுக்கு',
-    category: 'traditional-snacks',
-    categoryName: 'Traditional Snacks',
-    price: 145,
-    originalPrice: 165,
-    weight: '250g',
-    stock: 4, // Intentionally seeded with low stock (<= 5) for test verification
-    rating: 4.9,
-    reviewsCount: 56,
-    badge: 'Millet Rich',
-    image: '/images/products/kambu-murukku.jpg',
-    description: 'Wholesome savory murukku blending native pearl millet flour with rice flour and black pepper for a deeply savory crunch.',
-    ingredients: ['Pearl Millet (Kambu) Flour', 'Rice Flour', 'Roasted Gram Flour', 'Black Pepper', 'Cumin', 'Sesame Seeds', 'Groundnut Oil']
+    "id": "prod-004",
+    "name": "Kambu (Pearl Millet) Kara Murukku",
+    "tamilName": "கம்பு கார முறுக்கு",
+    "category": "traditional-snacks",
+    "categoryName": "Traditional Savory Snacks",
+    "price": 145,
+    "originalPrice": 165,
+    "weight": "250g",
+    "stock": 22,
+    "rating": 4.9,
+    "reviewsCount": 56,
+    "badge": "Millet Rich",
+    "highlight": "High Fiber Pearl Millet",
+    "image": "/images/products/kambu-murukku.jpg",
+    "description": "Wholesome savory murukku blending native pearl millet flour with rice flour and black pepper for a deeply savory crunch.",
+    "ingredients": [
+      "Pearl Millet (Kambu) Flour",
+      "Rice Flour",
+      "Roasted Gram Flour",
+      "Black Pepper",
+      "Cumin",
+      "Sesame Seeds",
+      "Groundnut Oil"
+    ]
   },
   {
-    id: 'prod-005',
-    name: 'Marachekku Sesame Oil (Gingelly)',
-    tamilName: 'மரச்செக்கு நல்லெண்ணெய்',
-    category: 'wood-pressed-oils',
-    categoryName: 'Wood-Pressed Oils',
-    price: 290,
-    originalPrice: 320,
-    weight: '500ml',
-    stock: 30,
-    rating: 5.0,
-    reviewsCount: 88,
-    badge: 'Pure Wood-Pressed',
-    image: '/images/products/sesame-oil.jpg',
-    description: 'Extracted slowly using traditional Vaagai wood cold press (Marachekku). Preserves all natural aroma, golden color, and nutrients without refining or chemicals.',
-    ingredients: ['100% Native Black Sesame Seeds', 'Pure Palm Jaggery (as natural processing aid)']
+    "id": "prod-005",
+    "name": "Marachekku Sesame Oil (Gingelly)",
+    "tamilName": "மரச்செக்கு நல்லெண்ணெய்",
+    "category": "wood-pressed-oils",
+    "categoryName": "Wood-Pressed Oils",
+    "price": 290,
+    "originalPrice": 320,
+    "weight": "500ml",
+    "stock": 30,
+    "rating": 5,
+    "reviewsCount": 88,
+    "badge": "Pure Wood-Pressed",
+    "highlight": "Vaagai Wood Cold Pressed",
+    "image": "/images/products/sesame-oil.jpg",
+    "description": "Extracted slowly using traditional Vaagai wood cold press (Marachekku). Preserves all natural aroma, golden color, and nutrients without refining, bleaching, or chemical de-odorizing.",
+    "ingredients": [
+      "100% Native Black Sesame Seeds",
+      "Pure Palm Jaggery (as natural processing aid)"
+    ]
   },
   {
-    id: 'prod-006',
-    name: 'Marachekku Groundnut Oil',
-    tamilName: 'மரச்செக்கு கடலை எண்ணெய்',
-    category: 'wood-pressed-oils',
-    categoryName: 'Wood-Pressed Oils',
-    price: 240,
-    originalPrice: 270,
-    weight: '500ml',
-    stock: 22,
-    rating: 4.9,
-    reviewsCount: 62,
-    badge: 'Cold Pressed',
-    image: '/images/products/groundnut-oil.jpg',
-    description: 'Traditional wood-pressed peanut oil with rich nutty fragrance, ideal for authentic South Indian frying and tempering.',
-    ingredients: ['100% Sun-Dried Native Groundnut Kernels']
+    "id": "prod-006",
+    "name": "Marachekku Groundnut Oil",
+    "tamilName": "மரச்செக்கு கடலை எண்ணெய்",
+    "category": "wood-pressed-oils",
+    "categoryName": "Wood-Pressed Oils",
+    "price": 220,
+    "originalPrice": 245,
+    "weight": "500ml",
+    "stock": 25,
+    "rating": 4.9,
+    "reviewsCount": 71,
+    "badge": "Cold Pressed",
+    "highlight": "Naturally Sun-Dried Peanuts",
+    "image": "/images/products/groundnut-oil.jpg",
+    "description": "Single-pressed oil from premium sun-dried groundnuts using wooden pestle chekku. Free from argemone oil and chemical filtration.",
+    "ingredients": [
+      "100% Selected Sun-Dried Groundnuts (Peanuts)"
+    ]
   },
   {
-    id: 'prod-007',
-    name: 'Marachekku Virgin Coconut Oil',
-    tamilName: 'மரச்செக்கு தேங்காய் எண்ணெய்',
-    category: 'wood-pressed-oils',
-    categoryName: 'Wood-Pressed Oils',
-    price: 260,
-    originalPrice: 290,
-    weight: '500ml',
-    stock: 25,
-    rating: 4.8,
-    reviewsCount: 45,
-    badge: 'Unrefined',
-    image: '/images/products/coconut-oil.jpg',
-    description: 'Extracted from sulfur-free sun-dried copra (coconut meat) from Pollachi farms. Pure, crystal clear, and full of natural aroma.',
-    ingredients: ['100% Sun-Dried Coconut Copra']
+    "id": "prod-007",
+    "name": "Marachekku Virgin Coconut Oil",
+    "tamilName": "மரச்செக்கு தேங்காய் எண்ணெய்",
+    "category": "wood-pressed-oils",
+    "categoryName": "Wood-Pressed Oils",
+    "price": 260,
+    "originalPrice": 290,
+    "weight": "500ml",
+    "stock": 20,
+    "rating": 4.8,
+    "reviewsCount": 54,
+    "badge": "100% Pure Copra",
+    "highlight": "Sulfur-Free Sun Dried Copra",
+    "image": "/images/products/coconut-oil.jpg",
+    "description": "Rich, natural aroma oil pressed from sulfur-free coastal Tamil Nadu copra coconuts. Excellent for both hair nourishment and cooking.",
+    "ingredients": [
+      "100% Natural Sun-Dried Copra (Dried Coconut Meat)"
+    ]
   },
   {
-    id: 'prod-008',
-    name: 'Authentic Udangudi Palm Jaggery',
-    tamilName: 'உடன்குடி பனைக்கருப்பட்டி',
-    category: 'natural-sweeteners',
-    categoryName: 'Natural Sweeteners',
-    price: 260,
-    originalPrice: 280,
-    weight: '500g',
-    stock: 35,
-    rating: 4.8,
-    reviewsCount: 52,
-    badge: 'Heritage Sourced',
-    image: '/images/products/palm-jaggery.jpg',
-    description: 'Handcrafted solid blocks of genuine Karupatti boiled from fresh palmyra palm sap in Udangudi. Free from white sugar adulteration or sodium bicarbonate.',
-    ingredients: ['100% Clarified Palmyra Palm Sap', 'Dry Ginger', 'Cardamom']
+    "id": "prod-008",
+    "name": "Authentic Udangudi Palm Jaggery (Karupatti)",
+    "tamilName": "உடன்குடி பனைக்கருப்பட்டி",
+    "category": "natural-sweeteners",
+    "categoryName": "Natural Palm Sweeteners",
+    "price": 260,
+    "originalPrice": 280,
+    "weight": "500g",
+    "stock": 35,
+    "rating": 4.8,
+    "reviewsCount": 52,
+    "badge": "Heritage Sourced",
+    "highlight": "No Added White Sugar",
+    "image": "/images/products/palm-jaggery.jpg",
+    "description": "Handcrafted solid blocks of genuine Karupatti boiled from fresh palmyra palm sap in Udangudi. Free from white sugar adulteration, sodium bicarbonate, or artificial clarifying agents.",
+    "ingredients": [
+      "100% Clarified Palmyra Palm Sap",
+      "Dry Ginger",
+      "Cardamom"
+    ]
   },
   {
-    id: 'prod-009',
-    name: 'Pure Palm Candy (Panang Karkandu)',
-    tamilName: 'பனங்கற்கண்டு',
-    category: 'natural-sweeteners',
-    categoryName: 'Natural Sweeteners',
-    price: 210,
-    originalPrice: 235,
-    weight: '250g',
-    stock: 15,
-    rating: 4.9,
-    reviewsCount: 34,
-    badge: 'Natural Crystal',
-    image: '/images/products/palm-candy.jpg',
-    description: 'Naturally crystallized palm sugar crystals prized for traditional milk beverages, herbal decoctions, and coffee.',
-    ingredients: ['100% Palmyra Palm Sap Crystals']
+    "id": "prod-009",
+    "name": "Crystallised Palm Sugar Candy (Panangarkandu)",
+    "tamilName": "பனங்கற்கண்டு",
+    "category": "natural-sweeteners",
+    "categoryName": "Natural Palm Sweeteners",
+    "price": 195,
+    "originalPrice": 220,
+    "weight": "250g",
+    "stock": 28,
+    "rating": 4.9,
+    "reviewsCount": 46,
+    "badge": "Throat Soother",
+    "highlight": "Natural Crystal Sweetener",
+    "image": "/images/products/palm-candy.jpg",
+    "description": "Naturally cooled large crystals of evaporated palm nectar. A revered home remedy mixed with warm pepper milk for cough and throat soothing.",
+    "ingredients": [
+      "Pure Unrefined Palmyra Palm Nectar Crystals"
+    ]
   },
   {
-    id: 'prod-010',
-    name: 'Country Jaggery Powder (Nattu Sarkarai)',
-    tamilName: 'நாட்டு சர்க்கரை',
-    category: 'natural-sweeteners',
-    categoryName: 'Natural Sweeteners',
-    price: 120,
-    originalPrice: 140,
-    weight: '500g',
-    stock: 40,
-    rating: 4.7,
-    reviewsCount: 51,
-    badge: 'Chemical Free',
-    image: '/images/products/nattu-sarkarai.jpg',
-    description: 'Pure, chemical-free cane jaggery powder traditionally clarified using plant extracts. Perfect wholesome daily sweetener for tea and coffee.',
-    ingredients: ['100% Fresh Sugarcane Juice', 'Vegetable Clarifying Extract']
+    "id": "prod-010",
+    "name": "Organic Country Cane Sugar (Nattu Sarkarai)",
+    "tamilName": "நாட்டு சர்க்கரை",
+    "category": "natural-sweeteners",
+    "categoryName": "Natural Palm Sweeteners",
+    "price": 110,
+    "originalPrice": 125,
+    "weight": "500g",
+    "stock": 40,
+    "rating": 4.7,
+    "reviewsCount": 63,
+    "badge": "Zero Sulphur",
+    "highlight": "Chemical-Free Clarification",
+    "image": "/images/products/nattu-sarkarai.jpg",
+    "description": "Golden granular unrefined cane sugar clarified with okra plant stems rather than toxic bone char or sulphur. Retains natural molasses and iron.",
+    "ingredients": [
+      "100% Unrefined Crushed Sugarcane Juice Concentrate"
+    ]
   },
   {
-    id: 'prod-011',
-    name: 'Unpolished Foxtail Millet (Thinai)',
-    tamilName: 'தீட்டப்படாத தினை அரிசி',
-    category: 'millets-grains',
-    categoryName: 'Native Millets',
-    price: 110,
-    originalPrice: 130,
-    weight: '500g',
-    stock: 28,
-    rating: 4.8,
-    reviewsCount: 39,
-    badge: 'Whole Grain',
-    image: '/images/products/thinai-millet.jpg',
-    description: 'Cleaned and unpolished whole foxtail millet grain with natural bran intact. Ideal alternative to white polished rice for upma, pongal, or porridge.',
-    ingredients: ['100% Unpolished Foxtail Millet Grains']
+    "id": "prod-011",
+    "name": "Unpolished Foxtail Millet (Thinai)",
+    "tamilName": "தீட்டப்படாத தினை அரிசி",
+    "category": "millets-grains",
+    "categoryName": "Native Millets & Grains",
+    "price": 110,
+    "originalPrice": 130,
+    "weight": "500g",
+    "stock": 30,
+    "rating": 4.8,
+    "reviewsCount": 39,
+    "badge": "Whole Grain",
+    "highlight": "Low Glycemic Index",
+    "image": "/images/products/thinai-millet.jpg",
+    "description": "Cleaned and unpolished whole foxtail millet grain with natural bran intact. Ideal alternative to white polished rice for making traditional upma, pongal, or wholesome daily porridge.",
+    "ingredients": [
+      "100% Unpolished Foxtail Millet Grains"
+    ]
   },
   {
-    id: 'prod-012',
-    name: 'Unpolished Little Millet (Samai)',
-    tamilName: 'தீட்டப்படாத சாமை அரிசி',
-    category: 'millets-grains',
-    categoryName: 'Native Millets',
-    price: 115,
-    originalPrice: 135,
-    weight: '500g',
-    stock: 24,
-    rating: 4.8,
-    reviewsCount: 42,
-    badge: 'High Fiber',
-    image: '/images/products/samai-millet.jpg',
-    description: 'Traditional Samai grains cleaned without polishing to retain essential minerals and dietary fiber. Cooks light and fluffy.',
-    ingredients: ['100% Unpolished Little Millet Grains']
+    "id": "prod-012",
+    "name": "Unpolished Little Millet (Samai)",
+    "tamilName": "தீட்டப்படாத சாமை அரிசி",
+    "category": "millets-grains",
+    "categoryName": "Native Millets & Grains",
+    "price": 115,
+    "originalPrice": 135,
+    "weight": "500g",
+    "stock": 25,
+    "rating": 4.9,
+    "reviewsCount": 44,
+    "badge": "Fiber Rich",
+    "highlight": "Rich in Minerals & Iron",
+    "image": "/images/products/samai-millet.jpg",
+    "description": "Tiny nutritious native grain loaded with iron and magnesium. Cooks light and fluffy in under 12 minutes, making it ideal for tiffin pongal, curd rice, and khichdi.",
+    "ingredients": [
+      "100% Native Unpolished Little Millet Grains"
+    ]
   },
   {
-    id: 'prod-013',
-    name: 'Unpolished Kodo Millet (Varagu)',
-    tamilName: 'தீட்டப்படாத வரகு அரிசி',
-    category: 'millets-grains',
-    categoryName: 'Native Millets',
-    price: 120,
-    originalPrice: 140,
-    weight: '500g',
-    stock: 20,
-    rating: 4.7,
-    reviewsCount: 33,
-    badge: 'Native Crop',
-    image: '/images/products/varagu-millet.jpg',
-    description: 'Ancient drought-resistant cereal grain with rich earthy flavor. Excellent for traditional variety rices, khichdi, and idli batter.',
-    ingredients: ['100% Unpolished Kodo Millet Grains']
+    "id": "prod-013",
+    "name": "Unpolished Kodo Millet (Varagu)",
+    "tamilName": "தீட்டப்படாத வரகு அரிசி",
+    "category": "millets-grains",
+    "categoryName": "Native Millets & Grains",
+    "price": 120,
+    "originalPrice": 140,
+    "weight": "500g",
+    "stock": 20,
+    "rating": 4.7,
+    "reviewsCount": 33,
+    "badge": "Diabetic Friendly",
+    "highlight": "Slow Digestion Carb",
+    "image": "/images/products/varagu-millet.jpg",
+    "description": "Ancient grain renowned for supporting sustained blood sugar balance. Cleaned multiple times with husk removed gently using rubber rollers to preserve nutritious aleurone layer.",
+    "ingredients": [
+      "100% Unpolished Kodo Millet Grains"
+    ]
   },
   {
-    id: 'prod-014',
-    name: 'Whole Pearl Millet (Kambu)',
-    tamilName: 'முழு கம்பு தானியம்',
-    category: 'millets-grains',
-    categoryName: 'Native Millets',
-    price: 95,
-    originalPrice: 110,
-    weight: '500g',
-    stock: 30,
-    rating: 4.9,
-    reviewsCount: 50,
-    badge: 'Heritage Grain',
-    image: '/images/products/kambu-grain.jpg',
-    description: 'Stone-cleaned native pearl millet seeds. Essential for cooling summer Kambu Koozh (traditional fermented porridge) and rustic rotis.',
-    ingredients: ['100% Whole Pearl Millet Grains']
+    "id": "prod-014",
+    "name": "Cleaned Pearl Millet (Kambu Whole Grain)",
+    "tamilName": "நாட்டு கம்பு தானியம்",
+    "category": "millets-grains",
+    "categoryName": "Native Millets & Grains",
+    "price": 85,
+    "originalPrice": 100,
+    "weight": "500g",
+    "stock": 35,
+    "rating": 4.8,
+    "reviewsCount": 51,
+    "badge": "Cooling Summer Grain",
+    "highlight": "Ideal for Kambu Koozh",
+    "image": "/images/products/kambu-grain.jpg",
+    "description": "High-energy native pearl millet grain. The authentic cornerstone for fermenting cooling village Kambu Koozh drink with onions, buttermilk, and raw shallots.",
+    "ingredients": [
+      "100% Selected Native Pearl Millet Grain"
+    ]
   },
   {
-    id: 'prod-015',
-    name: 'Homemade Curry Leaf Idli Podi',
-    tamilName: 'கருவேப்பிலை இட்லி பொடி',
-    category: 'heritage-podis',
-    categoryName: 'Heritage Podis',
-    price: 130,
-    originalPrice: 150,
-    weight: '200g',
-    stock: 26,
-    rating: 4.9,
-    reviewsCount: 73,
-    badge: 'Small-Batch Roasted',
-    image: '/images/products/curry-leaf-podi.jpg',
-    description: 'Coarsely ground aromatic gun-powder blend featuring sun-dried native curry leaves, split roasted lentils, red chillies, and white sesame seeds. Perfect companion for hot idlis.',
-    ingredients: ['Curry Leaves', 'Urad Dal', 'Chana Dal', 'Dry Red Chillies', 'Sesame Seeds', 'Garlic', 'Rock Salt', 'Asafoetida']
+    "id": "prod-015",
+    "name": "Homemade Curry Leaf Idli Podi",
+    "tamilName": "கருவேப்பிலை இட்லி பொடி",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 130,
+    "originalPrice": 150,
+    "weight": "200g",
+    "stock": 25,
+    "rating": 4.9,
+    "reviewsCount": 73,
+    "badge": "Small-Batch Roasted",
+    "highlight": "Sun-Dried Farm Curry Leaves",
+    "image": "/images/products/curry-leaf-podi.jpg",
+    "description": "Coarsely ground aromatic gun-powder blend featuring sun-dried native curry leaves, split roasted lentils, red chillies, and white sesame seeds. Perfect companion for hot idlis and dosas.",
+    "ingredients": [
+      "Curry Leaves",
+      "Urad Dal",
+      "Chana Dal",
+      "Dry Red Chillies",
+      "Sesame Seeds",
+      "Garlic",
+      "Rock Salt",
+      "Asafoetida"
+    ]
   },
   {
-    id: 'prod-016',
-    name: 'Traditional Paruppu Podi (Lentil Podi)',
-    tamilName: 'பாரம்பரிய பருப்பு பொடி',
-    category: 'heritage-podis',
-    categoryName: 'Heritage Podis',
-    price: 125,
-    originalPrice: 140,
-    weight: '200g',
-    stock: 22,
-    rating: 4.8,
-    reviewsCount: 41,
-    badge: 'Ghee Companion',
-    image: '/images/products/paruppu-podi.jpg',
-    description: 'Slow-roasted roasted gram and toor dal ground with cumin and black peppercorns. Mixed with hot steaming rice and a spoonful of melted ghee.',
-    ingredients: ['Roasted Gram (Pottukadalai)', 'Toor Dal', 'Cumin Seeds', 'Black Peppercorns', 'Dry Red Chillies', 'Salt', 'Asafoetida']
+    "id": "prod-016",
+    "name": "Roasted Paruppu Podi (Lentil Rice Powder)",
+    "tamilName": "நெய் பருப்பு பொடி",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 120,
+    "originalPrice": 140,
+    "weight": "200g",
+    "stock": 30,
+    "rating": 4.8,
+    "reviewsCount": 60,
+    "badge": "Pure Comfort Food",
+    "highlight": "Hand-Roasted Toor & Chana Dal",
+    "image": "/images/products/paruppu-podi.jpg",
+    "description": "Mouthwatering blend of golden slow-roasted lentils, cumin, whole black pepper, and asafoetida. Mix with hot steaming rice and melted country cow ghee for quintessential comfort dining.",
+    "ingredients": [
+      "Toor Dal",
+      "Roasted Gram (Pottukadalai)",
+      "Chana Dal",
+      "Cumin Seeds",
+      "Black Peppercorns",
+      "Red Chillies",
+      "Asafoetida",
+      "Salt"
+    ]
   },
   {
-    id: 'prod-017',
-    name: 'Thinai (Foxtail Millet) Laddu',
-    tamilName: 'தினை மாவு லட்டு',
-    category: 'millet-sweets',
-    categoryName: 'Millet Sweets',
-    price: 190,
-    originalPrice: 220,
-    weight: '200g (6 pcs)',
-    stock: 16,
-    rating: 4.9,
-    reviewsCount: 41,
-    badge: 'Jaggery Sweetened',
-    image: '/images/products/thinai-laddu.jpg',
-    description: 'Nutritious festive laddu made with slow-roasted foxtail millet flour, crushed country jaggery, cardamom, and roasted cashews bound together with pure farm ghee.',
-    ingredients: ['Foxtail Millet Flour', 'Country Jaggery (Nattu Sarkarai)', 'Pure Cow Ghee', 'Cashew Nuts', 'Cardamom']
+    "id": "prod-017",
+    "name": "Thinai (Foxtail Millet) Laddu",
+    "tamilName": "தினை மாவு லட்டு",
+    "category": "millet-sweets",
+    "categoryName": "Millet Sweets & Delights",
+    "price": 190,
+    "originalPrice": 220,
+    "weight": "200g (6 pcs)",
+    "stock": 15,
+    "rating": 4.9,
+    "reviewsCount": 41,
+    "badge": "Jaggery Sweetened",
+    "highlight": "Pure Cow Ghee & Cashews",
+    "image": "/images/products/thinai-laddu.jpg",
+    "description": "Nutritious festive laddu made with slow-roasted foxtail millet flour, crushed country jaggery, cardamom, and roasted cashews bound together with pure farm ghee.",
+    "ingredients": [
+      "Foxtail Millet Flour",
+      "Country Jaggery (Nattu Sarkarai)",
+      "Pure Cow Ghee",
+      "Cashew Nuts",
+      "Cardamom"
+    ]
   },
   {
-    id: 'prod-018',
-    name: 'Traditional Athirasam (Pack of 5)',
-    tamilName: 'பாரம்பரிய அதிரசம்',
-    category: 'millet-sweets',
-    categoryName: 'Millet Sweets',
-    price: 175,
-    originalPrice: 195,
-    weight: '250g',
-    stock: 14,
-    rating: 4.8,
-    reviewsCount: 36,
-    badge: 'Festival Classic',
-    image: '/images/products/athirasam.jpg',
-    description: 'Mouth-melting soft traditional festive sweet prepared from soaked pounded raw rice fermented with melted jaggery syrup and cardamom.',
-    ingredients: ['Raw Rice', 'Pure Jaggery', 'Dry Ginger', 'Cardamom', 'Wood-Pressed Groundnut Oil']
+    "id": "prod-018",
+    "name": "Traditional Athirasam (Rice & Jaggery Pastry)",
+    "tamilName": "பாரம்பரிய நெய் அதிரசம்",
+    "category": "millet-sweets",
+    "categoryName": "Millet Sweets & Delights",
+    "price": 210,
+    "originalPrice": 240,
+    "weight": "250g (6 pcs)",
+    "stock": 12,
+    "rating": 4.8,
+    "reviewsCount": 35,
+    "badge": "Festive Authentic",
+    "highlight": "Fermented Jaggery Dough",
+    "image": "/images/products/athirasam.jpg",
+    "description": "Tender-centered deep fried sweet disc prepared from fermented wet-ground raw rice paste and melted palm jaggery syrup with a dash of dry ginger powder.",
+    "ingredients": [
+      "Raw Rice (Pacharisi)",
+      "Pure Cane Jaggery",
+      "Dry Ginger (Sukku)",
+      "Cardamom",
+      "Pure Sesame Oil for Frying"
+    ]
+  },
+  {
+    "id": "prod-dh-310",
+    "name": "Mint Face Pack (Natural Skin Care Powder)",
+    "tamilName": "இயற்கை புதினா ஃபேஸ் பேக்",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 180,
+    "originalPrice": 200,
+    "weight": "100g",
+    "stock": 1,
+    "rating": 4.8,
+    "reviewsCount": 50,
+    "badge": "100% Herbal",
+    "image": "/images/products/mint-face-pack-natural-skin-care-powder.jpg",
+    "description": "Refreshing organic mint leaf facial pack crafted to cleanse pores, reduce oiliness, and revitalize tired skin naturally without parabens.",
+    "ingredients": [
+      "Pure Mint Leaf Powder",
+      "Wild Turmeric",
+      "Multani Mitti",
+      "Neem Leaf Extracts",
+      "Rose Petal Powder"
+    ]
+  },
+  {
+    "id": "prod-dh-309",
+    "name": "Rose Face Pack (Natural Skin Care Powder)",
+    "tamilName": "பாரம்பரிய ரோஸ் ஃபேஸ் பேக்",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 180,
+    "originalPrice": 200,
+    "weight": "100g",
+    "stock": 10,
+    "rating": 4.7,
+    "reviewsCount": 37,
+    "badge": "Natural Glow",
+    "image": "/images/products/rose-face-pack-natural-skin-care-powder.jpg",
+    "description": "Aromatic steam-dried organic damask rose petals ground into a gentle skin rejuvenating powder that restores natural radiance and softness.",
+    "ingredients": [
+      "Damask Rose Petal Powder",
+      "Sandalwood Powder",
+      "Multani Mitti",
+      "Aloe Vera Leaf Powder"
+    ]
+  },
+  {
+    "id": "prod-dh-307",
+    "name": "Multi Millet Chapati Mix",
+    "tamilName": "சிறு தானிய சப்பாத்தி மாவு",
+    "category": "chapati-mix",
+    "categoryName": "Millet Chapati & Roti Mixes",
+    "price": 100,
+    "originalPrice": 140,
+    "weight": "400g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 56,
+    "badge": "High Fiber",
+    "image": "/images/products/multi-millet-chapati-mix.jpg",
+    "description": "Nutrient-dense whole grain chapati mix combining stone-ground whole wheat with pearl millet, finger millet, and foxtail millet.",
+    "ingredients": [
+      "Whole Wheat",
+      "Kambu (Pearl Millet)",
+      "Ragi (Finger Millet)",
+      "Thinai (Foxtail Millet)",
+      "Flaxseeds"
+    ]
+  },
+  {
+    "id": "prod-dh-306",
+    "name": "Bamboo Rice Chapati Mix",
+    "tamilName": "மூங்கில் அரிசி சப்பாத்தி மாவு",
+    "category": "chapati-mix",
+    "categoryName": "Millet Chapati & Roti Mixes",
+    "price": 80,
+    "originalPrice": 100,
+    "weight": "250g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 43,
+    "badge": "Rare Forest Grain",
+    "image": "/images/products/bamboo-rice-chapati-mix.jpg",
+    "description": "Rare wild bamboo seed grain milled with whole wheat for soft, nutritious chapatis that promote bone strength and joint wellness.",
+    "ingredients": [
+      "Wild Bamboo Rice",
+      "Whole Wheat Grain",
+      "Roasted Gram",
+      "Cumin"
+    ]
+  },
+  {
+    "id": "prod-dh-298",
+    "name": "Rathasali Nutrition Mix",
+    "tamilName": "ரத்தசாலி பாரம்பரிய சத்து மாவு",
+    "category": "health-mix",
+    "categoryName": "Health & Nutrition Mixes",
+    "price": 390,
+    "originalPrice": 400,
+    "weight": "500g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 29,
+    "badge": "Immunity Booster",
+    "image": "/images/products/rathasali-nutrition-mix.jpg",
+    "description": "Sacred red rice variety Rathasali combined with roasted heritage pulses, almonds, and cardamom for iron-rich daily family vitality.",
+    "ingredients": [
+      "Rathasali Heritage Red Rice",
+      "Almonds",
+      "Cashews",
+      "Roasted Gram",
+      "Green Gram",
+      "Cardamom",
+      "Dry Ginger"
+    ]
+  },
+  {
+    "id": "prod-dh-284",
+    "name": "Karuppu Kavuni Nutrition MIX",
+    "tamilName": "கருப்பு கவுனி சத்து மாவு (ஸ்பெஷல்)",
+    "category": "health-mix",
+    "categoryName": "Health & Nutrition Mixes",
+    "price": 320,
+    "originalPrice": 350,
+    "weight": "500g",
+    "stock": 51,
+    "rating": 4.9,
+    "reviewsCount": 27,
+    "badge": "Anthocyanin Rich",
+    "image": "/images/products/karuppu-kavuni-nutrition-mix.jpg",
+    "description": "Royal forbidden black rice packed with natural anti-oxidants, paired with sprouted pulses and dry nuts for morning health drinks.",
+    "ingredients": [
+      "Karuppu Kavuni Black Rice",
+      "Sprouted Ragi",
+      "Sprouted Green Gram",
+      "Almonds",
+      "Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-283",
+    "name": "Siruthaniya Pongal Mix (Multi Millet Pongal Mix)",
+    "tamilName": "சிறு தானிய பொங்கல் மிக்ஸ் (மல்டி மில்லட்)",
+    "category": "pongal-mix",
+    "categoryName": "Millet Pongal Mixes",
+    "price": 80,
+    "originalPrice": 92,
+    "weight": "200g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 59,
+    "badge": "Instant Heritage",
+    "image": "/images/products/siruthaniya-pongal-mix-multi-millet-pongal-mix.jpg",
+    "description": "Easy-to-cook healthy breakfast blend of mixed millets, roasted moong dal, whole black peppercorns, cumin, and fragrant curry leaves.",
+    "ingredients": [
+      "Foxtail Millet",
+      "Kodo Millet",
+      "Little Millet",
+      "Split Yellow Moong Dal",
+      "Black Peppercorns",
+      "Cumin Seeds",
+      "Dry Curry Leaves"
+    ]
+  },
+  {
+    "id": "prod-dh-282",
+    "name": "Kuthiravali Pongal (Barnyard Millet Pongal)",
+    "tamilName": "குதிரைவாலி பொங்கல் மிக்ஸ்",
+    "category": "pongal-mix",
+    "categoryName": "Millet Pongal Mixes",
+    "price": 80,
+    "originalPrice": 92,
+    "weight": "200g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 46,
+    "badge": "Easy Digest",
+    "image": "/images/products/kuthiravali-pongal-barnyard-millet-pongal.jpg",
+    "description": "Light, fiber-rich barnyard millet paired with golden moong dal and whole South Indian spices for a comforting breakfast.",
+    "ingredients": [
+      "Barnyard Millet (Kuthiravali)",
+      "Moong Dal",
+      "Black Pepper",
+      "Cumin",
+      "Ginger Flakes",
+      "Curry Leaves"
+    ]
+  },
+  {
+    "id": "prod-dh-281",
+    "name": "Thinai Pongal (Foxtail Millet Pongal)",
+    "tamilName": "திணை பொங்கல் மிக்ஸ்",
+    "category": "pongal-mix",
+    "categoryName": "Millet Pongal Mixes",
+    "price": 80,
+    "originalPrice": 92,
+    "weight": "200g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 33,
+    "badge": "Protein Rich",
+    "image": "/images/products/thinai-pongal-foxtail-millet-pongal.jpg",
+    "description": "Nutritious golden foxtail millet and roasted lentils seasoned with classic temple-style spices. Ready in 15 minutes.",
+    "ingredients": [
+      "Foxtail Millet (Thinai)",
+      "Moong Dal",
+      "Black Pepper",
+      "Cumin Seeds",
+      "Asafoetida",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-280",
+    "name": "Samai Pongal (Little Millet Pongal)",
+    "tamilName": "சாமை பொங்கல் மிக்ஸ்",
+    "category": "pongal-mix",
+    "categoryName": "Millet Pongal Mixes",
+    "price": 80,
+    "originalPrice": 92,
+    "weight": "200g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 65,
+    "badge": "Iron Rich",
+    "image": "/images/products/samai-pongal-little-millet-pongal.jpg",
+    "description": "Delicate little millet grains slow-cooked into comforting ven pongal. Rich in iron, phosphorus, and essential minerals.",
+    "ingredients": [
+      "Little Millet (Samai)",
+      "Moong Dal",
+      "Whole Peppercorns",
+      "Cumin Seeds",
+      "Curry Leaves"
+    ]
+  },
+  {
+    "id": "prod-dh-279",
+    "name": "Varagu Pongal (Kodo Millet Pongal)",
+    "tamilName": "வரகு பொங்கல் மிக்ஸ்",
+    "category": "pongal-mix",
+    "categoryName": "Millet Pongal Mixes",
+    "price": 80,
+    "originalPrice": 92,
+    "weight": "200g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 52,
+    "badge": "Low GI",
+    "image": "/images/products/varagu-pongal-kodo-millet-pongal.jpg",
+    "description": "Hearty kodo millet pongal blend providing long-lasting fullness and stable energy throughout busy mornings.",
+    "ingredients": [
+      "Kodo Millet (Varagu)",
+      "Yellow Moong Dal",
+      "Cracked Black Pepper",
+      "Jeera",
+      "Curry Leaves"
+    ]
+  },
+  {
+    "id": "prod-dh-277",
+    "name": "Himalayan Rock Crystals",
+    "tamilName": "இமாலயன் இயற்கை இந்துப்பு தூள்",
+    "category": "daily-needs",
+    "categoryName": "Natural Sweeteners & Daily Pantry",
+    "price": 60,
+    "originalPrice": 120,
+    "weight": "400g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 26,
+    "badge": "Iodine Natural",
+    "image": "/images/products/himalayan-rock-crtstals.jpg",
+    "description": "Fine-ground Himalayan pink rock salt for daily culinary seasoning. Enhances digestive enzymes and helps maintain electrolyte balance.",
+    "ingredients": [
+      "Fine Ground Himalayan Pink Rock Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-276",
+    "name": "Himalayan Rock Salt (Indhu Uppu)",
+    "tamilName": "சிவப்பு அரிசி பாரம்பரிய அவல்",
+    "category": "daily-needs",
+    "categoryName": "Natural Sweeteners & Daily Pantry",
+    "price": 65,
+    "originalPrice": 75,
+    "weight": "400g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 58,
+    "badge": "Heart Healthy",
+    "image": "/images/products/himalayan-salt-crtstal.jpg",
+    "description": "Nutritious flattened rice flakes prepared from native unpolished red paddy. Excellent for quick upma, porridge, and healthy evening snacks.",
+    "ingredients": [
+      "100% Unpolished Native Red Rice Poha Flakes"
+    ]
+  },
+  {
+    "id": "prod-dh-275",
+    "name": "Red Rice Aval (Sivappu Arisi Aval)",
+    "tamilName": "உடன்குடி பனை சர்க்கரை",
+    "category": "daily-needs",
+    "categoryName": "Natural Sweeteners & Daily Pantry",
+    "price": 45,
+    "originalPrice": 70,
+    "weight": "300g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 45,
+    "badge": "Zero Sulphur",
+    "image": "/images/products/red-rice-aval-sivappu-arisi-aval.jpg",
+    "description": "Traditional unrefined palm sap sugar granules naturally boiled down without synthetic bleaching agents or chemicals.",
+    "ingredients": [
+      "100% Pure Organic Palm Sap Extract (Panai Sarkarai)"
+    ]
+  },
+  {
+    "id": "prod-dh-274",
+    "name": "Palm Sugar (Panai Sarkarai)",
+    "tamilName": "இயற்கை தென்னை சர்க்கரை",
+    "category": "daily-needs",
+    "categoryName": "Natural Sweeteners & Daily Pantry",
+    "price": 70,
+    "originalPrice": 100,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 32,
+    "badge": "Low Glycemic",
+    "image": "/images/products/palm-sugar-panai-sarkarai.jpg",
+    "description": "Caramel-noted coconut flower blossom nectar sugar. A premium low-GI sweetener for coffee, baking, and traditional desserts.",
+    "ingredients": [
+      "Pure Coconut Blossom Nectar Granules"
+    ]
+  },
+  {
+    "id": "prod-dh-273",
+    "name": "Coconut Sugar (Thennai Sarkarai)",
+    "tamilName": "பாரம்பரிய நாட்டு சர்க்கரை (அச்சு வெல்லம் தூள்)",
+    "category": "daily-needs",
+    "categoryName": "Natural Sweeteners & Daily Pantry",
+    "price": 70,
+    "originalPrice": 80,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 64,
+    "badge": "Direct Sourced",
+    "image": "/images/products/coconut-sugar-thennai-sarkarai.jpg",
+    "description": "Golden cane jaggery powder slow-clarified with okra juice and sun-dried. Perfect everyday alternative to refined white sugar.",
+    "ingredients": [
+      "Unrefined Organic Sugarcane Juice Concentrate"
+    ]
+  },
+  {
+    "id": "prod-dh-272",
+    "name": "Country Sugar (Nattu Sarkarai / Jaggery Powder)",
+    "tamilName": "தூய கஸ்தூரி மஞ்சள் தூள்",
+    "category": "daily-needs",
+    "categoryName": "Natural Sweeteners & Daily Pantry",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "450g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 51,
+    "badge": "Pure Kasturi",
+    "image": "/images/products/country-sugar-nattu-sarkarai-jaggery-powder.jpg",
+    "description": "Non-staining wild aroma turmeric (Curcuma aromatica) traditionally known for acne prevention, blemish clearance, and glowing skin tone.",
+    "ingredients": [
+      "100% Sun-Dried Wild Kasturi Turmeric Roots"
+    ]
+  },
+  {
+    "id": "prod-dh-271",
+    "name": "Palm Sugar Crystal (Panangarkandu)",
+    "tamilName": "பாரம்பரிய வாசனை நலங்கு மாவு",
+    "category": "daily-needs",
+    "categoryName": "Natural Sweeteners & Daily Pantry",
+    "price": 80,
+    "originalPrice": 90,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 38,
+    "badge": "Heritage Recipe",
+    "image": "/images/products/palm-sugar-crystal-panangarkandu.jpg",
+    "description": "Ancient Ayurvedic bath powder formulated with 18 sacred cooling herbs, vetiver, rose petals, and green gram for daily royal skin care.",
+    "ingredients": [
+      "Green Gram",
+      "Wild Turmeric",
+      "Rose Petals",
+      "Vetiver (Khus)",
+      "Bavanchi Seeds",
+      "Poolankizhangu",
+      "Neem Leaves"
+    ]
+  },
+  {
+    "id": "prod-dh-270",
+    "name": "Palm Candy (Panangarkandu)",
+    "tamilName": "இயற்கை மூலிகை ஃபேஸ் க்ளென்சர்",
+    "category": "daily-needs",
+    "categoryName": "Natural Sweeteners & Daily Pantry",
+    "price": 240,
+    "originalPrice": 250,
+    "weight": "300g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 25,
+    "badge": "Gentle Cleanser",
+    "image": "/images/products/palm-candy-panangarkandu.jpg",
+    "description": "Mild foaming daily face and body cleanser formulated entirely from saponin-rich botanical berries, fenugreek, and tulsi leaves.",
+    "ingredients": [
+      "Green Gram Powder",
+      "Kasturi Turmeric",
+      "Tulsi Leaves",
+      "Fenugreek Powder",
+      "Amla Fruit"
+    ]
+  },
+  {
+    "id": "prod-dh-269",
+    "name": "Kodampuli",
+    "tamilName": "இயற்கை முல்தானி மிட்டி தூள்",
+    "category": "daily-needs",
+    "categoryName": "Natural Sweeteners & Daily Pantry",
+    "price": 60,
+    "originalPrice": 80,
+    "weight": "50g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 57,
+    "badge": "Oil Control",
+    "image": "/images/products/kodampuli.jpg",
+    "description": "Micro-fine organic Fuller’s Earth clay that draws out deep-seated impurities, regulates sebum production, and tightens pores.",
+    "ingredients": [
+      "100% Pure Natural Mineral Fuller’s Earth (Multani Mitti)"
+    ]
+  },
+  {
+    "id": "prod-dh-268",
+    "name": "Thooyamalli Kozhukattai Flour",
+    "tamilName": "இயற்கை ஆரஞ்சு ஃபேஸ் பேக்",
+    "category": "puttu-mix",
+    "categoryName": "Puttu & Kozhukattai Flours",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "250g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 44,
+    "badge": "Vitamin C Boost",
+    "image": "/images/products/thooyamalli-kozhukattai-flour.jpg",
+    "description": "Sun-ripened orange peel extract rich in bio-flavonoids and Vitamin C to combat tanning, brighten dull skin, and impart natural radiance.",
+    "ingredients": [
+      "Organic Orange Peel Powder",
+      "Multani Mitti",
+      "Kasturi Manjal",
+      "Rose Petals"
+    ]
+  },
+  {
+    "id": "prod-dh-267",
+    "name": "Poongar Rice Kozhukattai &amp; Idiyappam Flour",
+    "tamilName": "பூங்கார் பாரம்பரிய சத்து மாவு",
+    "category": "puttu-mix",
+    "categoryName": "Puttu & Kozhukattai Flours",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "250g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 31,
+    "badge": "Women’s Wellness",
+    "image": "/images/products/poongar-rice-kozhukattai-idiyappam-flour.jpg",
+    "description": "Traditional Poongar red rice specially renowned for supporting women’s hormonal health, milled with nutritious nuts and millets.",
+    "ingredients": [
+      "Poongar Heritage Rice",
+      "Foxtail Millet",
+      "Sprouted Wheat",
+      "Badam",
+      "Pista",
+      "Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-266",
+    "name": "Idiyappam Kolukattai Maavu (Rice Flour Mix)",
+    "tamilName": "நவதானிய ஆரோக்கிய சத்து மாவு",
+    "category": "puttu-mix",
+    "categoryName": "Puttu & Kozhukattai Flours",
+    "price": 50,
+    "originalPrice": 57,
+    "weight": "450g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 63,
+    "badge": "Multi-Grain Power",
+    "image": "/images/products/idiyappam-kolukattai-maavu-rice-flour-mix.jpg",
+    "description": "Time-tested 9-grain traditional mix featuring nine sprouted grains and lentils carefully slow-roasted to preserve essential nutrients.",
+    "ingredients": [
+      "Paddy",
+      "Wheat",
+      "Moong Dal",
+      "Chana Dal",
+      "Toor Dal",
+      "Urad Dal",
+      "Sesame",
+      "Horse Gram",
+      "Kidney Beans",
+      "Nuts",
+      "Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-265",
+    "name": "Sukku Malli Coffee (Herbal Coffee Mix)",
+    "tamilName": "சிறு தானிய நல்வாழ்வு சத்து மாவு",
+    "category": "tea-mix",
+    "categoryName": "Herbal Teas & Beverages",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "50g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 50,
+    "badge": "Zero Sugar",
+    "image": "/images/products/sukku-malli-coffee-herbal-coffee-mix.jpg",
+    "description": "Wholesome porridge blend of five unpolished native millets and dry fruits, delivering low-glycemic sustained daily stamina.",
+    "ingredients": [
+      "Thinai",
+      "Samai",
+      "Varagu",
+      "Kuthiravali",
+      "Kambu",
+      "Ragi",
+      "Almonds",
+      "Dry Ginger",
+      "Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-264",
+    "name": "Masala Milk Mix",
+    "tamilName": "கருப்பு கவுனி ஊட்டச்சத்து மாவு",
+    "category": "tea-mix",
+    "categoryName": "Herbal Teas & Beverages",
+    "price": 60,
+    "originalPrice": 80,
+    "weight": "50g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 37,
+    "badge": "Royal Breakfast",
+    "image": "/images/products/masala-milk-mix.jpg",
+    "description": "Nutritious breakfast porridge mix crafted from heirloom Karuppu Kavuni rice, dry fruits, and aromatic Sukku for gentle digestion.",
+    "ingredients": [
+      "Karuppu Kavuni Rice",
+      "Roasted Bengal Gram",
+      "Cashews",
+      "Almonds",
+      "Cardamom",
+      "Dry Ginger (Sukku)"
+    ]
+  },
+  {
+    "id": "prod-dh-263",
+    "name": "Masala Tea Mix",
+    "tamilName": "உடன்குடி பனங்கற்கண்டு (100g)",
+    "category": "tea-mix",
+    "categoryName": "Herbal Teas & Beverages",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "50g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 69,
+    "badge": "Throat Soother",
+    "image": "/images/products/masala-tea-mix-masala-milk-mix.jpg",
+    "description": "Cooling crystalized palm sugar crystals traditionally enjoyed with warm turmeric milk to relieve cold, cough, and throat irritation.",
+    "ingredients": [
+      "Pure Crystallized Palm Sugar (Panangarkandu)"
+    ]
+  },
+  {
+    "id": "prod-dh-262",
+    "name": "Energy Beet Haemomalt",
+    "tamilName": "பாரம்பரிய உடன்குடி பனங்கற்கண்டு (300g)",
+    "category": "tea-mix",
+    "categoryName": "Herbal Teas & Beverages",
+    "price": 150,
+    "originalPrice": 190,
+    "weight": "150g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 56,
+    "badge": "Family Pack",
+    "image": "/images/products/energy-beet-haemomalt.jpg",
+    "description": "Authentic large crystal palm sugar from coastal Udangudi palm groves. Rich in calcium, iron, and natural vitamin B complex.",
+    "ingredients": [
+      "Crystallized Palm Tree Sap"
+    ]
+  },
+  {
+    "id": "prod-dh-261",
+    "name": "Pudina Idli Podi (Mint Idli Powder)",
+    "tamilName": "மலபார் குடம்புளி (கார்சீனியா)",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 43,
+    "badge": "Digestive Health",
+    "image": "/images/products/pudina-idli-podi-mint-idli-powder.jpg",
+    "description": "Sun-smoked Garcinia gummi-gutta (Malabar tamarind) pods used in traditional coastal curries for authentic tangy flavor and weight management.",
+    "ingredients": [
+      "Sun-Dried Smoked Garcinia Cambogia (Kodampuli) Pods"
+    ]
+  },
+  {
+    "id": "prod-dh-260",
+    "name": "Kara Idli Podi (Spicy Idli Powder)",
+    "tamilName": "தூயமல்லி அரிசி கொழுக்கட்டை மாவு",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 30,
+    "badge": "Aroma Rice",
+    "image": "/images/products/kara-idli-podi-spicy-idli-powder.jpg",
+    "description": "Naturally fragrant native Thooyamalli rice steam-processed and milled for feather-soft modaks, kozhukattai, and sweet dumplings.",
+    "ingredients": [
+      "Thooyamalli Heritage Rice Flour"
+    ]
+  },
+  {
+    "id": "prod-dh-259",
+    "name": "Pirandai Idli Powder (Veld Grape Idli Podi)",
+    "tamilName": "பூங்கார் அரிசி கொழுக்கட்டை & இடியாப்ப மாவு",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 62,
+    "badge": "Red Rice Special",
+    "image": "/images/products/pirandai-idli-powder-veld-grape-idli-podi.jpg",
+    "description": "Fine roasted Poongar rice flour perfect for string hoppers (idiyappam) and savory steamed kozhukattai with gentle red hue.",
+    "ingredients": [
+      "Poongar Heritage Red Rice Flour"
+    ]
+  },
+  {
+    "id": "prod-dh-258",
+    "name": "Mudakathan Keerai Idli Powder (Balloon Vine Idli Podi)",
+    "tamilName": "பாரம்பரிய இடியாப்ப கொழுக்கட்டை மாவு",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 49,
+    "badge": "Silky Soft",
+    "image": "/images/products/mudakathan-keerai-idli-powder-balloon-vine-idli-podi.jpg",
+    "description": "Triple-sifted classic rice flour blend prepared for tear-free non-sticky idiyappam strings and festival kozhukattai.",
+    "ingredients": [
+      "Wet-Ground Sun-Dried Raw Rice Flour"
+    ]
+  },
+  {
+    "id": "prod-dh-257",
+    "name": "Murungai Keerai Idli Powder (Drumstick Leaves Idli Podi)",
+    "tamilName": "பாரம்பரிய சுக்கு மல்லி காபி தூள்",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 36,
+    "badge": "Caffeine Free",
+    "image": "/images/products/murungai-keerai-idli-powder-drumstick-leaves-idli-podi.jpg",
+    "description": "Comforting herbal wellness decoction blending sun-dried ginger (sukku), roasted coriander seeds, black pepper, and cardamom.",
+    "ingredients": [
+      "Dry Ginger (Sukku)",
+      "Coriander Seeds (Malli)",
+      "Black Pepper",
+      "Tulsi",
+      "Cardamom",
+      "Cloves"
+    ]
+  },
+  {
+    "id": "prod-dh-256",
+    "name": "Karuveppilai Idli Powder (Curry Leaves Idli Podi)",
+    "tamilName": "ஆரோக்கிய மசாலா பால் மிக்ஸ்",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 68,
+    "badge": "Golden Milk",
+    "image": "/images/products/karuveppilai-idli-powder-curry-leaves-idli-podi.jpg",
+    "description": "Healing bedtime golden milk mix packed with pure Salem turmeric, saffron strands, nutmeg, crushed almonds, and black pepper.",
+    "ingredients": [
+      "Salem Turmeric",
+      "Almonds",
+      "Nutmeg (Jathikai)",
+      "Cardamom",
+      "Black Pepper",
+      "Saffron"
+    ]
+  },
+  {
+    "id": "prod-dh-255",
+    "name": "Karuppu Ulundhu Idli Powder (Black Urad Dal Idli Podi)",
+    "tamilName": "கிராமத்து மசாலா டீ மிக்ஸ்",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 55,
+    "badge": "Aromatic Spice",
+    "image": "/images/products/karuppu-ulundhu-idli-powder-black-urad-dal-idli-podi.jpg",
+    "description": "Warm whole spice blend for chai lovers featuring crushed ceylon cinnamon, green cardamom, star anise, and cloves.",
+    "ingredients": [
+      "Cardamom",
+      "Cinnamon",
+      "Cloves",
+      "Ginger",
+      "Star Anise",
+      "Fennel Seeds"
+    ]
+  },
+  {
+    "id": "prod-dh-254",
+    "name": "Indian Pennywort Idli Powder (Vallarai Idli Podi)",
+    "tamilName": "இயற்கை பீட்ரூட் மால்ட் (ஹீமோமால்ட்)",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 42,
+    "badge": "Iron Booster",
+    "image": "/images/products/indian-pennywort-idli-powder-vallarai-idli-podi.jpg",
+    "description": "Nutritious beverage blend of sun-dehydrated fresh beetroot, sprouted wheat malt, roasted cashews, and palm jaggery. Boosts hemoglobin naturally.",
+    "ingredients": [
+      "Fresh Beetroot Concentrate",
+      "Almonds",
+      "Cashews",
+      "Sprouted Wheat",
+      "Country Jaggery",
+      "Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-253",
+    "name": "White Sesame Seed Idli Podi (Vellai Ellu Idli Powder)",
+    "tamilName": "மணமணக்கும் புதினா இட்லி பொடி",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 60,
+    "rating": 4.8,
+    "reviewsCount": 29,
+    "badge": "Fresh Mint",
+    "image": "/images/products/white-sesame-seed-idli-podi-vellai-ellu-idli-powder.jpg",
+    "description": "Aromatic idli podi crafted with sun-dried garden mint leaves, roasted urad dal, chana dal, and red chillies. Superb with hot idlis and sesame oil.",
+    "ingredients": [
+      "Dried Mint Leaves",
+      "Urad Dal",
+      "Chana Dal",
+      "Red Chillies",
+      "White Sesame",
+      "Asafoetida",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-252",
+    "name": "Garlic Idli Podi (Poondu Idli Powder)",
+    "tamilName": "காரசார இட்லி பொடி (ஸ்பெஷல்)",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 61,
+    "badge": "Spicy Gunpowder",
+    "image": "/images/products/garlic-idli-podi-poondu-idli-powder.jpg",
+    "description": "Spicy Chettinad-style gunpowder roasted with Guntur red chillies, fragrant garlic flakes, curry leaves, and split black lentils.",
+    "ingredients": [
+      "Urad Dal",
+      "Chana Dal",
+      "Guntur Red Chillies",
+      "Garlic",
+      "Curry Leaves",
+      "Asafoetida",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-251",
+    "name": "Climbing Brinjal Idli Podi (Thuthuvalai Idli Powder)",
+    "tamilName": "பாரம்பரிய பிரண்டை இட்லி பொடி",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 40,
+    "rating": 4.9,
+    "reviewsCount": 48,
+    "badge": "Joint Health",
+    "image": "/images/products/climbing-brinjal-idli-podi-thuthuvalai-idli-powder.jpg",
+    "description": "Medicinal Veld Grape (Pirandai) slow-roasted in cold-pressed sesame oil to eliminate itching and blended with spiced lentils. Relieves joint pain.",
+    "ingredients": [
+      "Roasted Pirandai (Cissus Quadrangularis)",
+      "Urad Dal",
+      "Chana Dal",
+      "Red Chillies",
+      "Sesame",
+      "Rock Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-250",
+    "name": "Paruppu Podi (Lentil Spice Powder)",
+    "tamilName": "முடக்கத்தான் கீரை இட்லி பொடி",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 35,
+    "badge": "Anti-Inflammatory",
+    "image": "/images/products/paruppu-podi-lentil-spice-powder.jpg",
+    "description": "Balloon Vine greens revered in Siddha medicine for alleviating joint stiffness and arthritis, roasted into a delectable daily tiffin podi.",
+    "ingredients": [
+      "Mudakathan Keerai (Balloon Vine)",
+      "Urad Dal",
+      "Chana Dal",
+      "Cumin",
+      "Red Chillies",
+      "Asafoetida",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-249",
+    "name": "Flax Seed Dal Rice Mix (Aali Vidhai Paruppu Sadha Podi)",
+    "tamilName": "முருங்கைக்கீரை சத்து இட்லி பொடி",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 67,
+    "badge": "Iron & Calcium",
+    "image": "/images/products/flax-seed-dal-rice-mix-aali-vidhai-paruppu-sadha-podi.jpg",
+    "description": "Nutrient-packed drumstick leaves sun-dried and pounded with roasted lentils, garlic, and cumin. Natural multivitamin seasoning.",
+    "ingredients": [
+      "Moringa (Drumstick) Leaves",
+      "Split Urad Dal",
+      "Bengal Gram",
+      "Red Chillies",
+      "Garlic",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-248",
+    "name": "Turmeric Powder",
+    "tamilName": "மணக்கும் கருவேப்பிலை இட்லி பொடி",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 30,
+    "originalPrice": 35,
+    "weight": "50g",
+    "stock": 40,
+    "rating": 4.9,
+    "reviewsCount": 54,
+    "badge": "Hair & Eye Care",
+    "image": "/images/products/turmeric-powder.jpg",
+    "description": "Fresh country curry leaves slow-roasted with black sesame, pepper, and lentils. Promotes hair shine, gut digestion, and eye wellness.",
+    "ingredients": [
+      "Farm Fresh Curry Leaves",
+      "Urad Dal",
+      "Black Sesame Seeds",
+      "Black Pepper",
+      "Red Chillies",
+      "Asafoetida"
+    ]
+  },
+  {
+    "id": "prod-dh-247",
+    "name": "Sukku Podi (Dry Ginger Powder)",
+    "tamilName": "பூங்கார் அரிசி புட்டு மாவு",
+    "category": "heritage-podis",
+    "categoryName": "Heritage Podis & Masalas",
+    "price": 60,
+    "originalPrice": 69,
+    "weight": "50g",
+    "stock": 40,
+    "rating": 4.8,
+    "reviewsCount": 41,
+    "badge": "Nutrient Rich",
+    "image": "/images/products/sukku-podi-dry-ginger-powder.jpg",
+    "description": "Coarse ground roasted Poongar rice meal designed for aromatic, crumbly traditional puttu layered with freshly grated coconut.",
+    "ingredients": [
+      "Roasted Poongar Rice Flour",
+      "Cardamom Hint"
+    ]
+  },
+  {
+    "id": "prod-dh-245",
+    "name": "BLACK URAD DHALL TRADITIONAL RICE KANJI MIX",
+    "tamilName": "சிவப்பு அரிசி புட்டு மாவு",
+    "category": "kanji-mix",
+    "categoryName": "Traditional Kanji & Porridge",
+    "price": 110,
+    "originalPrice": 120,
+    "weight": "250g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 60,
+    "badge": "Fiber Loaded",
+    "image": "/images/products/black-urad-dhall-traditional-rice-kanji-mix.jpg",
+    "description": "Wholesome red bran rice flour steam-roasted to perfection. Mix with warm water and ghee for wholesome morning tiffin.",
+    "ingredients": [
+      "Native Red Rice Flour"
+    ]
+  },
+  {
+    "id": "prod-dh-244",
+    "name": "Venthayakali 500gms",
+    "tamilName": "கருப்பு கவுனி அரிசி புட்டு மாவு",
+    "category": "kali-mix",
+    "categoryName": "Traditional Kali Mixes",
+    "price": 160,
+    "originalPrice": 170,
+    "weight": "500g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 47,
+    "badge": "Chettinad Special",
+    "image": "/images/products/venthayakali-500gms.jpg",
+    "description": "Exotic nutty black rice puttu flour that steams into a deep purple festive delicacy naturally rich in bio-antioxidants.",
+    "ingredients": [
+      "Karuppu Kavuni Black Rice",
+      "Aromatic Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-243",
+    "name": "venthayakali 250gms",
+    "tamilName": "கருப்பு உளுந்து இட்லி பொடி (தோல் உளுந்து)",
+    "category": "kali-mix",
+    "categoryName": "Traditional Kali Mixes",
+    "price": 80,
+    "originalPrice": 100,
+    "weight": "250g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 34,
+    "badge": "Spine & Bone Strength",
+    "image": "/images/products/venthayakali-250gms.jpg",
+    "description": "Whole unpolished black urad dal with nutritious skin intact, dry-roasted with red chillies and asafoetida. Excellent for back strength.",
+    "ingredients": [
+      "Whole Black Gram (Karuppu Ulundhu)",
+      "Chana Dal",
+      "Red Chillies",
+      "Curry Leaves",
+      "Asafoetida",
+      "Rock Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-242",
+    "name": "ULUTHANKALI (500GMS)",
+    "tamilName": "வல்லாரை கீரை இட்லி பொடி",
+    "category": "kali-mix",
+    "categoryName": "Traditional Kali Mixes",
+    "price": 160,
+    "originalPrice": 184,
+    "weight": "500g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 66,
+    "badge": "Memory Booster",
+    "image": "/images/products/uluthankali-500gms.jpg",
+    "description": "Memory-enhancing Indian Pennywort (Brahmi/Vallarai) leaves gently roasted and combined with spiced dal for sharp focus and calm mind.",
+    "ingredients": [
+      "Vallarai Leaves (Centella Asiatica)",
+      "Urad Dal",
+      "Chana Dal",
+      "Dry Red Chillies",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-241",
+    "name": "Ulundhu Kali",
+    "tamilName": "வெள்ளை எள்ளு இட்லி பொடி",
+    "category": "kali-mix",
+    "categoryName": "Traditional Kali Mixes",
+    "price": 80,
+    "originalPrice": 100,
+    "weight": "250g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 53,
+    "badge": "Calcium Rich",
+    "image": "/images/products/ulundhu-kali.jpg",
+    "description": "Calcium-dense white sesame seeds toasted until nutty and fragrant, blended with spiced lentils for an authentic Tanjore-style idli podi.",
+    "ingredients": [
+      "White Sesame Seeds (Vellai Ellu)",
+      "Urad Dal",
+      "Chana Dal",
+      "Dry Chillies",
+      "Asafoetida",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-240",
+    "name": "Shikakai Powder (Natural Herbal Hair Cleanser)",
+    "tamilName": "நாட்டு பூண்டு இட்லி பொடி",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 40,
+    "badge": "Aroma Special",
+    "image": "/images/products/shikakai-powder-natural-herbal-hair-cleanser.jpg",
+    "description": "Roasted hill garlic cloves crushed with spicy lentils and red chillies. Stimulates appetite, supports healthy cholesterol and digestion.",
+    "ingredients": [
+      "Native Country Garlic (Poondu)",
+      "Urad Dal",
+      "Chana Dal",
+      "Red Chillies",
+      "Curry Leaves",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-239",
+    "name": "Papaya Face Pack (Natural Skin Brightening Pack)",
+    "tamilName": "தூதுவளை மூலிகை இட்லி பொடி",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 180,
+    "originalPrice": 200,
+    "weight": "100g",
+    "stock": 51,
+    "rating": 4.9,
+    "reviewsCount": 27,
+    "badge": "Cold Relief",
+    "image": "/images/products/papaya-face-pack-natural-skin-brightening-pack.jpg",
+    "description": "Climbing Brinjal (Thuthuvalai) medicinal leaves celebrated in Tamil home remedies for clear throat, respiratory comfort, and immunity.",
+    "ingredients": [
+      "Thuthuvalai Leaves",
+      "Urad Dal",
+      "Black Peppercorns",
+      "Cumin",
+      "Red Chillies",
+      "Asafoetida",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-238",
+    "name": "Kasthuri Manjal Powder (Wild Turmeric Powder)",
+    "tamilName": "பாரம்பரிய பருப்பு சாத பொடி",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "100g",
+    "stock": 51,
+    "rating": 4.8,
+    "reviewsCount": 59,
+    "badge": "Comfort Food",
+    "image": "/images/products/kasthuri-manjal-powder-wild-turmeric-powder.jpg",
+    "description": "Classic roasted toor dal and roasted gram powder seasoned with cumin and black pepper. Stir into hot steamed rice with a dollop of ghee.",
+    "ingredients": [
+      "Toor Dal",
+      "Roasted Gram (Pottukadalai)",
+      "Cumin Seeds",
+      "Black Peppercorns",
+      "Red Chillies",
+      "Asafoetida",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-237",
+    "name": "Nalangu Maavu (Herbal Bath Powder)",
+    "tamilName": "ஆளி விதை பருப்பு சாத பொடி (Flaxseed)",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "100g",
+    "stock": 51,
+    "rating": 4.7,
+    "reviewsCount": 46,
+    "badge": "Omega-3 Rich",
+    "image": "/images/products/nalangu-maavu-herbal-bath-powder.jpg",
+    "description": "Heart-healthy golden roasted flaxseeds blended with aromatic lentils and mild spices to accompany steaming hot rice and ghee.",
+    "ingredients": [
+      "Golden Flaxseeds (Aali Vidhai)",
+      "Toor Dal",
+      "Chana Dal",
+      "Pepper",
+      "Cumin",
+      "Red Chillies",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-236",
+    "name": "Natural Cleanser (Herbal Face &amp; Skin Cleanser Powder)",
+    "tamilName": "தூய சேலம் மஞ்சள் தூள்",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 80,
+    "originalPrice": 90,
+    "weight": "100g",
+    "stock": 51,
+    "rating": 4.9,
+    "reviewsCount": 33,
+    "badge": "Curcumin 5%",
+    "image": "/images/products/natural-cleanser-herbal-face-skin-cleanser-powder.jpg",
+    "description": "High-curcumin unpolished Salem farm turmeric fingers ground to fine golden powder without artificial colors or lead chromate.",
+    "ingredients": [
+      "100% Pure Salem Turmeric Roots"
+    ]
+  },
+  {
+    "id": "prod-dh-235",
+    "name": "Multani Mitti (Fuller’s Earth Face Pack Powder)",
+    "tamilName": "நாட்டு சுக்கு பொடி (சுக்கு தூள்)",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 99,
+    "originalPrice": 120,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 65,
+    "badge": "Digestive Aid",
+    "image": "/images/products/multani-mitti-fullers-earth-face-pack-powder.jpg",
+    "description": "Sun-dried natural ginger root powder. Mix with warm water, honey, or milk to soothe upset stomach, nausea, and morning heaviness.",
+    "ingredients": [
+      "100% Sun-Dried Ginger (Sukku)"
+    ]
+  },
+  {
+    "id": "prod-dh-234",
+    "name": "Orange Face Pack (Natural Skin Care Powder)",
+    "tamilName": "கருப்பு உளுந்து பாரம்பரிய அரிசி கஞ்சி மிக்ஸ்",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 180,
+    "originalPrice": 200,
+    "weight": "100g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 52,
+    "badge": "Postpartum Care",
+    "image": "/images/products/orange-face-pack-natural-skin-care-powder.jpg",
+    "description": "Nourishing porridge blend of unpolished whole black gram, garlic flakes, fenugreek, and native rice. Legendary Tamil strengthening kanji.",
+    "ingredients": [
+      "Whole Black Urad Dal",
+      "Native Rice",
+      "Fenugreek Seeds",
+      "Dry Ginger",
+      "Garlic Flakes",
+      "Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-233",
+    "name": "Poongar Puttu",
+    "tamilName": "நாட்டு வெந்தயக்களி மிக்ஸ் (500g)",
+    "category": "puttu-mix",
+    "categoryName": "Puttu & Kozhukattai Flours",
+    "price": 80,
+    "originalPrice": 92,
+    "weight": "300g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 39,
+    "badge": "Cooling Delicacy",
+    "image": "/images/products/poongar-puttu.jpg",
+    "description": "Authentic cooling fenugreek porridge flour mix. Cook with sesame oil and palm jaggery for traditional weekly body heat relief.",
+    "ingredients": [
+      "Raw Rice Flour",
+      "Fenugreek (Vendhayam)",
+      "Urad Dal",
+      "Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-232",
+    "name": "Mappilai Samba Puttu",
+    "tamilName": "நாட்டு வெந்தயக்களி மிக்ஸ் (250g)",
+    "category": "puttu-mix",
+    "categoryName": "Puttu & Kozhukattai Flours",
+    "price": 70,
+    "originalPrice": 80,
+    "weight": "250g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 26,
+    "badge": "Cooling Delicacy",
+    "image": "/images/products/mappilai-samba-puttu.jpg",
+    "description": "Convenient 250g pack of traditional Vendhaya Kali flour for authentic South Indian sweet porridge. Balances pitta and relieves internal heat.",
+    "ingredients": [
+      "Raw Rice Flour",
+      "Fenugreek (Vendhayam)",
+      "Urad Dal",
+      "Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-231",
+    "name": "Red Rice Puttu maavu",
+    "tamilName": "கருப்பு உளுந்தங்களி மிக்ஸ் (500g)",
+    "category": "puttu-mix",
+    "categoryName": "Puttu & Kozhukattai Flours",
+    "price": 50,
+    "originalPrice": 80,
+    "weight": "250g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 58,
+    "badge": "Bone Strengthening",
+    "image": "/images/products/red-rice-puttu-maavu.jpg",
+    "description": "Classic Chettinad Ulunthangali mix featuring roasted black gram and raw rice. Prepared with cold-pressed gingelly oil and palm karupatti.",
+    "ingredients": [
+      "Roasted Whole Black Gram",
+      "Raw Rice",
+      "Cardamom",
+      "Dry Ginger"
+    ]
+  },
+  {
+    "id": "prod-dh-230",
+    "name": "Karuppu Kavuni Puttu Maavu",
+    "tamilName": "கருப்பு உளுந்தங்களி மிக்ஸ் (250g)",
+    "category": "puttu-mix",
+    "categoryName": "Puttu & Kozhukattai Flours",
+    "price": 130,
+    "originalPrice": 150,
+    "weight": "300g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 45,
+    "badge": "Bone Strengthening",
+    "image": "/images/products/karuppu-kavuni-puttu-maavu.jpg",
+    "description": "250g authentic black lentil pudding mix. Renowned across Tamil Nadu for bone density, lower back wellness, and growing teenagers.",
+    "ingredients": [
+      "Roasted Whole Black Gram",
+      "Raw Rice",
+      "Cardamom",
+      "Dry Ginger"
+    ]
+  },
+  {
+    "id": "prod-dh-229",
+    "name": "Poongar Kanji",
+    "tamilName": "Poongar Kanji",
+    "category": "kanji-mix",
+    "categoryName": "Traditional Kanji & Porridge",
+    "price": 110,
+    "originalPrice": 130,
+    "weight": "250g",
+    "stock": 40,
+    "rating": 4.8,
+    "reviewsCount": 32,
+    "badge": "100% Traditional",
+    "image": "/images/products/poongar-kanji.jpg",
+    "description": "Pure authentic Poongar Kanji prepared in traditional South Indian style with zero chemical preservatives and native sourcing.",
+    "ingredients": [
+      "Natural Farm-Grown Ingredients",
+      "Traditional Spices"
+    ]
+  },
+  {
+    "id": "prod-dh-228",
+    "name": "Kattuyanam Kanji",
+    "tamilName": "Kattuyanam Kanji",
+    "category": "kanji-mix",
+    "categoryName": "Traditional Kanji & Porridge",
+    "price": 110,
+    "originalPrice": 130,
+    "weight": "250g",
+    "stock": 40,
+    "rating": 4.7,
+    "reviewsCount": 64,
+    "badge": "100% Traditional",
+    "image": "/images/products/kattuyanam-kanji.jpg",
+    "description": "Pure authentic Kattuyanam Kanji prepared in traditional South Indian style with zero chemical preservatives and native sourcing.",
+    "ingredients": [
+      "Natural Farm-Grown Ingredients",
+      "Traditional Spices"
+    ]
+  },
+  {
+    "id": "prod-dh-227",
+    "name": "Barley Kanji",
+    "tamilName": "Barley Kanji",
+    "category": "kanji-mix",
+    "categoryName": "Traditional Kanji & Porridge",
+    "price": 110,
+    "originalPrice": 120,
+    "weight": "250g",
+    "stock": 40,
+    "rating": 4.9,
+    "reviewsCount": 51,
+    "badge": "100% Traditional",
+    "image": "/images/products/barley-kanji.jpg",
+    "description": "Pure authentic Barley Kanji prepared in traditional South Indian style with zero chemical preservatives and native sourcing.",
+    "ingredients": [
+      "Natural Farm-Grown Ingredients",
+      "Traditional Spices"
+    ]
+  },
+  {
+    "id": "prod-dh-226",
+    "name": "Mappilai Samba Kanji",
+    "tamilName": "Mappilai Samba Kanji",
+    "category": "kanji-mix",
+    "categoryName": "Traditional Kanji & Porridge",
+    "price": 110,
+    "originalPrice": 130,
+    "weight": "250g",
+    "stock": 40,
+    "rating": 4.8,
+    "reviewsCount": 38,
+    "badge": "100% Traditional",
+    "image": "/images/products/mappilai-samba-kanji.jpg",
+    "description": "Pure authentic Mappilai Samba Kanji prepared in traditional South Indian style with zero chemical preservatives and native sourcing.",
+    "ingredients": [
+      "Natural Farm-Grown Ingredients",
+      "Traditional Spices"
+    ]
+  },
+  {
+    "id": "prod-dh-225",
+    "name": "Karuppu Kavuni Kanji",
+    "tamilName": "Karuppu Kavuni Kanji",
+    "category": "kanji-mix",
+    "categoryName": "Traditional Kanji & Porridge",
+    "price": 180,
+    "originalPrice": 200,
+    "weight": "250g",
+    "stock": 40,
+    "rating": 4.7,
+    "reviewsCount": 25,
+    "badge": "100% Traditional",
+    "image": "/images/products/karuppu-kavuni-kanji.jpg",
+    "description": "Pure authentic Karuppu Kavuni Kanji prepared in traditional South Indian style with zero chemical preservatives and native sourcing.",
+    "ingredients": [
+      "Natural Farm-Grown Ingredients",
+      "Traditional Spices"
+    ]
+  },
+  {
+    "id": "prod-dh-224",
+    "name": "Chola Milagu Dosa Mix (Sorghum Pepper Dosa Mix)",
+    "tamilName": "Chola Milagu Dosa Mix (Sorghum Pepper Dosa Mix)",
+    "category": "dosa-mix",
+    "categoryName": "Traditional Dosa & Adai Mixes",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "200g",
+    "stock": 30,
+    "rating": 4.9,
+    "reviewsCount": 57,
+    "badge": "100% Traditional",
+    "image": "/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg",
+    "description": "Pure authentic Chola Milagu Dosa Mix (Sorghum Pepper Dosa Mix) prepared in traditional South Indian style with zero chemical preservatives and native sourcing.",
+    "ingredients": [
+      "Natural Farm-Grown Ingredients",
+      "Traditional Spices"
+    ]
+  },
+  {
+    "id": "prod-dh-223",
+    "name": "Palathaniya Adai Mix (Multi Grain Adai Mix)",
+    "tamilName": "சோள மிளகு கார தோசை மிக்ஸ்",
+    "category": "dosa-mix",
+    "categoryName": "Traditional Dosa & Adai Mixes",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "200g",
+    "stock": 30,
+    "rating": 4.8,
+    "reviewsCount": 44,
+    "badge": "Sorghum Special",
+    "image": "/images/products/palathaniya-adai-mix-multi-grain-adai-mix.jpg",
+    "description": "Crispy wholesome dosa mix blending whole sorghum (cholam) with crushed black pepper and cumin. Naturally gluten-friendly and satisfying.",
+    "ingredients": [
+      "Sorghum (Cholam) Flour",
+      "Rice Flour",
+      "Urad Dal",
+      "Cracked Black Pepper",
+      "Cumin Seeds",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-222",
+    "name": "Kuthiravali Murungai Dosa (Barnyard Millet with Drumstick Leaves)",
+    "tamilName": "பாரம்பரிய பலதானிய அடை மிக்ஸ்",
+    "category": "dosa-mix",
+    "categoryName": "Traditional Dosa & Adai Mixes",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "200g",
+    "stock": 30,
+    "rating": 4.7,
+    "reviewsCount": 31,
+    "badge": "Protein Powerhouse",
+    "image": "/images/products/kuthiravali-murungai-dosa-barnyard-millet-with-drumstick-leaves.jpg",
+    "description": "Thick, crunchy traditional South Indian Adai mix combining four wholesome lentils, native millets, dried red chillies, and asafoetida.",
+    "ingredients": [
+      "Toor Dal",
+      "Chana Dal",
+      "Urad Dal",
+      "Moong Dal",
+      "Raw Rice",
+      "Red Chillies",
+      "Fennel",
+      "Asafoetida",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-221",
+    "name": "Varagu Mudakkathan Dosa (Kodo Millet with Mudakkathan)",
+    "tamilName": "குதிரைவாலி முருங்கைக்கீரை தோசை மிக்ஸ்",
+    "category": "dosa-mix",
+    "categoryName": "Traditional Dosa & Adai Mixes",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "200g",
+    "stock": 30,
+    "rating": 4.9,
+    "reviewsCount": 63,
+    "badge": "Iron Boost",
+    "image": "/images/products/varagu-mudakkathan-dosa-kodo-millet-with-mudakkathan.jpg",
+    "description": "Barnyard millet infused with fresh drumstick greens (moringa). Flips into crispy golden dosas loaded with iron, calcium, and vitamin A.",
+    "ingredients": [
+      "Barnyard Millet (Kuthiravali)",
+      "Dehydrated Moringa Leaves",
+      "Urad Dal",
+      "Rice",
+      "Jeera",
+      "Pepper",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-220",
+    "name": "Samai Vallarai Dosa (Little Millet with Vallarai)",
+    "tamilName": "வரகு முடக்கத்தான் கீரை தோசை மிக்ஸ்",
+    "category": "dosa-mix",
+    "categoryName": "Traditional Dosa & Adai Mixes",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "200g",
+    "stock": 30,
+    "rating": 4.8,
+    "reviewsCount": 50,
+    "badge": "Joint Wellness",
+    "image": "/images/products/samai-vallarai-dosa-little-millet-with-vallarai.jpg",
+    "description": "Kodo millet blended with medicinal balloon vine greens. Promotes flexibility and eases stiff morning joints while tasting remarkably delicious.",
+    "ingredients": [
+      "Kodo Millet (Varagu)",
+      "Mudakathan Keerai",
+      "Urad Dal",
+      "Cumin",
+      "Pepper",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-219",
+    "name": "Keppai Dosai (Ragi Dosa)",
+    "tamilName": "சாமை வல்லாரை கீரை தோசை மிக்ஸ்",
+    "category": "dosa-mix",
+    "categoryName": "Traditional Dosa & Adai Mixes",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "200g",
+    "stock": 30,
+    "rating": 4.7,
+    "reviewsCount": 37,
+    "badge": "Brain Booster",
+    "image": "/images/products/keppai-dosai-ragi-dosa.jpg",
+    "description": "Delicate Little Millet combined with memory-enhancing Vallarai (Brahmi). Delicious golden dosas that kids and elders love alike.",
+    "ingredients": [
+      "Little Millet (Samai)",
+      "Vallarai Leaf Powder",
+      "Urad Dal",
+      "Rice Flour",
+      "Cumin",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-218",
+    "name": "Kambu Dosa (Pearl Millet Dosa)",
+    "tamilName": "கேப்பை பாரம்பரிய தோசை மிக்ஸ் (ராகி தோசை)",
+    "category": "dosa-mix",
+    "categoryName": "Traditional Dosa & Adai Mixes",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "200g",
+    "stock": 30,
+    "rating": 4.9,
+    "reviewsCount": 69,
+    "badge": "Calcium Champ",
+    "image": "/images/products/kambu-dosa-pearl-millet-dosa.jpg",
+    "description": "Calcium-dense finger millet (ragi) dosa mix that crisps up beautifully on cast iron tawas with a spoonful of cold-pressed sesame oil.",
+    "ingredients": [
+      "Finger Millet (Ragi / Keppai) Flour",
+      "Rice Flour",
+      "Urad Dal",
+      "Cumin Seeds",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-217",
+    "name": "Poongar Nutrition Mix",
+    "tamilName": "கம்பு பாரம்பரிய தோசை மிக்ஸ் (முத்து சோளம்)",
+    "category": "health-mix",
+    "categoryName": "Health & Nutrition Mixes",
+    "price": 320,
+    "originalPrice": 350,
+    "weight": "500g",
+    "stock": 40,
+    "rating": 4.8,
+    "reviewsCount": 56,
+    "badge": "Iron Rich",
+    "image": "/images/products/poongar-nutrition-mix.jpg",
+    "description": "Rustic pearl millet (kambu) flour mixed with lentils and whole spices for hearty, gut-friendly dosas full of iron and clean minerals.",
+    "ingredients": [
+      "Pearl Millet (Kambu) Flour",
+      "Rice Flour",
+      "Split Black Gram",
+      "Cumin",
+      "Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-216",
+    "name": "Navathaniya Nutrition Mix",
+    "tamilName": "பூங்கார் பாரம்பரிய அரிசி கஞ்சி",
+    "category": "health-mix",
+    "categoryName": "Health & Nutrition Mixes",
+    "price": 220,
+    "originalPrice": 250,
+    "weight": "500g",
+    "stock": 30,
+    "rating": 4.7,
+    "reviewsCount": 43,
+    "badge": "Women’s Health",
+    "image": "/images/products/navathaniya-nutrition-mix.jpg",
+    "description": "Easily digestible healing kanji prepared from heirloom Poongar rice and cumin. Ideal for nursing mothers and revitalizing convalescents.",
+    "ingredients": [
+      "Poongar Heritage Rice",
+      "Cumin Seeds",
+      "Garlic",
+      "Fenugreek",
+      "Himalayan Salt"
+    ]
+  },
+  {
+    "id": "prod-dh-215",
+    "name": "Multi Millet Nutrition Mix",
+    "tamilName": "காட்டுயானம் பாரம்பரிய அரிசி கஞ்சி",
+    "category": "health-mix",
+    "categoryName": "Health & Nutrition Mixes",
+    "price": 280,
+    "originalPrice": 300,
+    "weight": "500g",
+    "stock": 30,
+    "rating": 4.9,
+    "reviewsCount": 30,
+    "badge": "Wild Rice",
+    "image": "/images/products/multi-millet-nutrition-mix.jpg",
+    "description": "Ancient giant rice variety Kattuyanam (so tall it conceals an elephant) packed with anti-diabetic micronutrients and slow-burning complex carbs.",
+    "ingredients": [
+      "Kattuyanam Wild Rice Grain",
+      "Roasted Moong Dal",
+      "Black Peppercorns",
+      "Cumin"
+    ]
+  },
+  {
+    "id": "prod-dh-213",
+    "name": "Karupu Kavuni Nutrition Mix",
+    "tamilName": "மாப்பிள்ளை சம்பா சத்து கஞ்சி",
+    "category": "health-mix",
+    "categoryName": "Health & Nutrition Mixes",
+    "price": 320,
+    "originalPrice": 350,
+    "weight": "500g",
+    "stock": 50,
+    "rating": 4.7,
+    "reviewsCount": 49,
+    "badge": "Energy Boost",
+    "image": "/images/products/karupu-kavuni-nutrition-mix.jpg",
+    "description": "Hearty restorative porridge crafted from red Mappillai Samba rice and roasted pulses. Builds natural core stamina and nerve strength.",
+    "ingredients": [
+      "Mappillai Samba Rice",
+      "Green Gram",
+      "Cracked Pepper",
+      "Garlic",
+      "Salt"
+    ]
   }
 ];
 
-// Initialize in-memory seed products
-const initializeProducts = () => {
-  SEED_CATALOG.forEach((item) => {
-    const product = {
-      ...item,
-      isActive: true,
-      inStock: (item.stock || 0) > 0,
-      images: item.images || [item.image, '/images/hero-banner.jpg', '/images/our-story.jpg'],
-      createdAt: new Date('2026-10-01T00:00:00.000Z').toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    memoryProducts.set(product.id, product);
-  });
-};
-
-initializeProducts();
-
-// Helper to determine next available product ID
-const getNextProductId = () => {
-  let maxNum = 0;
-  for (const id of memoryProducts.keys()) {
-    const match = id.match(/^prod-(\d+)$/);
-    if (match) {
-      const num = parseInt(match[1], 10);
-      if (num > maxNum) maxNum = num;
-    }
-  }
-  const nextNum = maxNum + 1;
-  return `prod-${String(nextNum).padStart(3, '0')}`;
-};
-
-// Retrieve all products with optional filters
-export const getAllProductsFromStore = ({
-  includeInactive = false,
-  category = null,
-  search = null,
-  stockStatus = null // 'in-stock', 'low-stock', 'out-of-stock'
-} = {}) => {
-  let list = Array.from(memoryProducts.values());
-
-  if (!includeInactive) {
-    list = list.filter((p) => p.isActive !== false);
-  }
-
-  if (category && category !== 'all' && category !== 'ALL') {
-    list = list.filter((p) => (p.category || '').toLowerCase() === category.toLowerCase());
-  }
-
-  if (search && search.trim()) {
-    const q = search.trim().toLowerCase();
-    list = list.filter((p) =>
-      (p.name || '').toLowerCase().includes(q) ||
-      (p.tamilName || '').toLowerCase().includes(q) ||
-      (p.categoryName || '').toLowerCase().includes(q) ||
-      (p.description || '').toLowerCase().includes(q) ||
-      (p.id || '').toLowerCase().includes(q)
-    );
-  }
-
-  if (stockStatus) {
-    if (stockStatus === 'in-stock') {
-      list = list.filter((p) => p.stock > 5);
-    } else if (stockStatus === 'low-stock') {
-      list = list.filter((p) => p.stock > 0 && p.stock <= 5);
-    } else if (stockStatus === 'out-of-stock') {
-      list = list.filter((p) => p.stock <= 0);
-    }
-  }
-
-  return list.map((p) => ({ ...p }));
-};
-
-// Retrieve single product
-export const getProductByIdFromStore = (id) => {
-  if (!id) return null;
-  const found = memoryProducts.get(id);
-  return found ? { ...found } : null;
-};
-
-// Add new product
-export const createProductInStore = (productData) => {
-  const id = productData.id && !memoryProducts.has(productData.id)
-    ? productData.id
-    : getNextProductId();
-
-  const stock = Math.max(0, parseInt(productData.stock, 10) || 0);
-  const price = Math.max(1, parseFloat(productData.price) || 0);
-  const originalPrice = productData.originalPrice ? parseFloat(productData.originalPrice) : null;
-
-  const newProduct = {
-    id,
-    name: (productData.name || '').trim(),
-    tamilName: (productData.tamilName || '').trim(),
-    category: (productData.category || 'traditional-snacks').trim(),
-    categoryName: (productData.categoryName || '').trim(),
-    price,
-    originalPrice: originalPrice && originalPrice > price ? originalPrice : null,
-    weight: (productData.weight || 'Standard Pack').trim(),
-    stock,
-    inStock: stock > 0,
-    isActive: productData.isActive !== false,
-    badge: (productData.badge || '').trim(),
-    image: productData.image || '/images/cat-snacks.jpg',
-    images: Array.isArray(productData.images) && productData.images.length > 0
-      ? productData.images
-      : [productData.image || '/images/cat-snacks.jpg', '/images/hero-banner.jpg'],
-    description: (productData.description || '').trim(),
-    ingredients: Array.isArray(productData.ingredients)
-      ? productData.ingredients
-      : (typeof productData.ingredients === 'string'
-          ? productData.ingredients.split(',').map((s) => s.trim()).filter(Boolean)
-          : []),
-    rating: typeof productData.rating === 'number' ? productData.rating : 5.0,
-    reviewsCount: typeof productData.reviewsCount === 'number' ? productData.reviewsCount : 1,
+SEED_CATALOG.forEach((item) => {
+  memoryProducts.set(item.id, {
+    ...item,
+    isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString()
-  };
+  });
+});
 
-  memoryProducts.set(id, newProduct);
-  if (isMySQLConnected()) {
-    mysqlSaveProduct(newProduct).catch((err) => console.warn('⚠️ [MySQL] createProduct notice:', err.message));
-  }
-  return { ...newProduct };
+export const getAllProductsFromStore = (includeInactive = false) => {
+  const all = Array.from(memoryProducts.values());
+  if (includeInactive) return all;
+  return all.filter((p) => p.isActive !== false);
 };
 
-// Edit existing product
-export const updateProductInStore = (id, updates) => {
-  const existing = memoryProducts.get(id);
-  if (!existing) return null;
+export const getProductByIdFromStore = (id) => {
+  const product = memoryProducts.get(id);
+  return product && product.isActive !== false ? product : null;
+};
 
-  const updatedStock = updates.stock !== undefined
-    ? Math.max(0, parseInt(updates.stock, 10) || 0)
-    : existing.stock;
+export const saveProductInStore = async (productData) => {
+  const now = new Date().toISOString();
+  const id = productData.id || `prod-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`;
 
-  const updatedPrice = updates.price !== undefined
-    ? Math.max(1, parseFloat(updates.price) || existing.price)
-    : existing.price;
-
-  const updatedOriginalPrice = updates.originalPrice !== undefined
-    ? (updates.originalPrice ? parseFloat(updates.originalPrice) : null)
-    : existing.originalPrice;
-
-  const updatedIngredients = updates.ingredients !== undefined
-    ? (Array.isArray(updates.ingredients)
-        ? updates.ingredients
-        : String(updates.ingredients).split(',').map((s) => s.trim()).filter(Boolean))
-    : existing.ingredients;
-
-  const updated = {
+  const existing = memoryProducts.get(id) || {};
+  const merged = {
     ...existing,
-    ...updates,
-    id: existing.id, // ID cannot be overwritten
-    price: updatedPrice,
-    originalPrice: updatedOriginalPrice,
-    stock: updatedStock,
-    inStock: updatedStock > 0,
-    ingredients: updatedIngredients,
-    updatedAt: new Date().toISOString()
+    ...productData,
+    id,
+    isActive: productData.isActive !== undefined ? Boolean(productData.isActive) : true,
+    rating: Number(productData.rating || existing.rating || 4.8),
+    reviewsCount: Number(productData.reviewsCount || existing.reviewsCount || 0),
+    stock: Number(productData.stock !== undefined ? productData.stock : (existing.stock || 0)),
+    price: Number(productData.price || existing.price || 0),
+    originalPrice: productData.originalPrice ? Number(productData.originalPrice) : null,
+    createdAt: existing.createdAt || now,
+    updatedAt: now
   };
 
-  if (updates.isActive !== undefined) {
-    updated.isActive = Boolean(updates.isActive);
-  }
+  memoryProducts.set(id, merged);
 
-  memoryProducts.set(id, updated);
   if (isMySQLConnected()) {
-    mysqlSaveProduct(updated).catch((err) => console.warn('⚠️ [MySQL] updateProduct notice:', err.message));
+    try {
+      await mysqlSaveProduct(merged);
+    } catch (err) {
+      console.warn('⚠️ [MySQL] Failed to persist product to database:', err.message);
+    }
   }
-  return { ...updated };
+
+  return merged;
 };
 
-// Quick adjust stock
-export const adjustProductStockInStore = (id, delta) => {
-  const existing = memoryProducts.get(id);
-  if (!existing) return null;
+export const updateProductStockInStore = async (id, newStock) => {
+  const product = memoryProducts.get(id);
+  if (!product) return null;
 
-  const change = parseInt(delta, 10) || 0;
-  const newStock = Math.max(0, existing.stock + change);
+  const validStock = Math.max(0, Number(newStock));
+  product.stock = validStock;
+  product.updatedAt = new Date().toISOString();
+  memoryProducts.set(id, product);
 
-  existing.stock = newStock;
-  existing.inStock = newStock > 0;
-  existing.updatedAt = new Date().toISOString();
-
-  memoryProducts.set(id, existing);
   if (isMySQLConnected()) {
-    mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] adjustStock notice:', err.message));
+    try {
+      await mysqlUpdateProductStock(id, validStock);
+    } catch (err) {
+      console.warn('⚠️ [MySQL] Failed to update product stock:', err.message);
+    }
   }
-  return { ...existing };
+
+  return product;
 };
 
-// Set absolute stock
-export const setProductStockInStore = (id, targetStock) => {
-  const existing = memoryProducts.get(id);
-  if (!existing) return null;
+export const deactivateProductInStore = async (id) => {
+  const product = memoryProducts.get(id);
+  if (!product) return false;
 
-  const newStock = Math.max(0, parseInt(targetStock, 10) || 0);
-  existing.stock = newStock;
-  existing.inStock = newStock > 0;
-  existing.updatedAt = new Date().toISOString();
+  product.isActive = false;
+  product.updatedAt = new Date().toISOString();
+  memoryProducts.set(id, product);
 
-  memoryProducts.set(id, existing);
   if (isMySQLConnected()) {
-    mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] setStock notice:', err.message));
+    try {
+      await mysqlDeactivateProduct(id);
+    } catch (err) {
+      console.warn('⚠️ [MySQL] Failed to deactivate product:', err.message);
+    }
   }
-  return { ...existing };
+
+  return true;
 };
 
-// Deactivate or safe-delete product
-// If product has been part of past customer orders, we soft-deactivate it so receipts & order tracking stay 100% intact!
-export const deactivateOrDeleteProductInStore = (id, hasOrderHistory = false) => {
-  const existing = memoryProducts.get(id);
-  if (!existing) return null;
+export const deductStockForOrder = async (items) => {
+  for (const item of items) {
+    const product = memoryProducts.get(item.productId);
+    if (!product || product.stock < item.quantity) {
+      return {
+        success: false,
+        failedItem: item.name || item.productId,
+        available: product ? product.stock : 0,
+        requested: item.quantity
+      };
+    }
+  }
 
-  if (hasOrderHistory) {
-    // Preserve customer order integrity by soft-deactivating
-    existing.isActive = false;
-    existing.updatedAt = new Date().toISOString();
-    memoryProducts.set(id, existing);
+  for (const item of items) {
+    const product = memoryProducts.get(item.productId);
+    product.stock = Math.max(0, product.stock - item.quantity);
+    product.updatedAt = new Date().toISOString();
+    memoryProducts.set(item.productId, product);
+
     if (isMySQLConnected()) {
-      mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
-    }
-    return {
-      action: 'deactivated',
-      product: { ...existing },
-      message: `Product "${existing.name}" is referenced in past customer orders and has been safely deactivated to preserve customer receipts and tracking.`
-    };
-  } else {
-    // No past orders reference this product; clean removal is safe
-    memoryProducts.delete(id);
-    if (isMySQLConnected()) {
-      mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
-    }
-    return {
-      action: 'deleted',
-      product: { ...existing },
-      message: `Product "${existing.name}" has been permanently deleted.`
-    };
-  }
-};
-
-// ATOMIC STOCK CHECK & DEDUCTION FOR ORDERS
-// Validates ALL items before modifying any stock.
-// If any item has insufficient stock, throws an error with item-specific details.
-export const deductStockForOrderItemsInStore = (orderItems) => {
-  if (!Array.isArray(orderItems) || orderItems.length === 0) {
-    return { success: true };
-  }
-
-  // 1. Validate availability & stock for ALL items first
-  for (const item of orderItems) {
-    const prodId = item.productId || item.id;
-    const prod = memoryProducts.get(prodId);
-
-    if (!prod) {
-      throw new Error(`Product "${prodId}" does not exist in our catalog.`);
-    }
-
-    if (!prod.isActive) {
-      throw new Error(`Item "${prod.name}" is currently not available for purchase.`);
-    }
-
-    const requestedQty = parseInt(item.quantity, 10);
-    if (isNaN(requestedQty) || requestedQty <= 0) {
-      throw new Error(`Invalid quantity for item "${prod.name}".`);
-    }
-
-    if (prod.stock < requestedQty) {
-      throw new Error(
-        `Insufficient stock for "${prod.name}". Available: ${prod.stock} units (Requested: ${requestedQty}). Please adjust your cart.`
-      );
+      mysqlUpdateProductStock(item.productId, product.stock).catch((err) => {
+        console.warn(`⚠️ [MySQL] Async stock deduction failed for ${item.productId}:`, err.message);
+      });
     }
   }
 
-  // 2. Perform atomic deduction
-  const deducted = [];
-  for (const item of orderItems) {
-    const prodId = item.productId || item.id;
-    const prod = memoryProducts.get(prodId);
-    const requestedQty = parseInt(item.quantity, 10);
-
-    prod.stock = Math.max(0, prod.stock - requestedQty);
-    prod.inStock = prod.stock > 0;
-    prod.updatedAt = new Date().toISOString();
-
-    memoryProducts.set(prodId, prod);
-    if (isMySQLConnected()) {
-      mysqlUpdateProductStock(prodId, prod.stock).catch((err) => console.warn('⚠️ [MySQL] deduct notice:', err.message));
-    }
-    deducted.push({
-      id: prod.id,
-      name: prod.name,
-      remainingStock: prod.stock,
-      inStock: prod.inStock
-    });
-  }
-
-  return { success: true, deducted };
-};
-
-// RESTORE STOCK (e.g. When an order is Cancelled)
-export const restoreStockForOrderItemsInStore = (orderItems) => {
-  if (!Array.isArray(orderItems) || orderItems.length === 0) {
-    return;
-  }
-
-  for (const item of orderItems) {
-    const prodId = item.productId || item.id;
-    const prod = memoryProducts.get(prodId);
-    if (prod) {
-      const returnQty = parseInt(item.quantity, 10) || 0;
-      prod.stock = prod.stock + returnQty;
-      prod.inStock = prod.stock > 0;
-      prod.updatedAt = new Date().toISOString();
-      memoryProducts.set(prodId, prod);
-      if (isMySQLConnected()) {
-        mysqlUpdateProductStock(prodId, prod.stock).catch((err) => console.warn('⚠️ [MySQL] restore notice:', err.message));
-      }
-    }
-  }
+  return { success: true };
 };

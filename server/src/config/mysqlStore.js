@@ -77,7 +77,7 @@ export const initMySQL = async () => {
       )
     `);
 
-    // 3. Ensure categories table exists
+    // 3. Ensure categories table exists & sync all categories
     await connection.query(`
       CREATE TABLE IF NOT EXISTS categories (
         id VARCHAR(64) PRIMARY KEY,
@@ -91,60 +91,45 @@ export const initMySQL = async () => {
       )
     `);
 
-    const [catCountRows] = await connection.query('SELECT COUNT(*) as count FROM categories');
-    if (catCountRows[0].count === 0) {
-      const { DEFAULT_CATEGORIES } = await import('../data/mockCategoryStore.js');
-      for (const c of DEFAULT_CATEGORIES) {
-        await connection.query(
-          `INSERT INTO categories (id, name, tamilName, icon, image, description)
-           VALUES (?, ?, ?, ?, ?, ?)`,
-          [c.id, c.name, c.tamilName || '', c.icon || '✨', c.image || '', c.description || '']
-        );
-      }
-      console.log('📂 [Database] Seeded categories into TiDB MySQL.');
+    const { DEFAULT_CATEGORIES } = await import('../data/mockCategoryStore.js');
+    for (const c of DEFAULT_CATEGORIES) {
+      await connection.query(
+        `INSERT INTO categories (id, name, tamilName, icon, image, description)
+         VALUES (?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE name=VALUES(name), tamilName=VALUES(tamilName), icon=VALUES(icon), image=VALUES(image), description=VALUES(description)`,
+        [c.id, c.name, c.tamilName || '', c.icon || '✨', c.image || '', c.description || '']
+      );
     }
+    console.log(`📂 [Database] Synced ${DEFAULT_CATEGORIES.length} categories in TiDB MySQL.`);
 
-    // 4. Seed initial products if table is empty
-    const [countRows] = await connection.query('SELECT COUNT(*) as count FROM products');
-    if (countRows[0].count === 0) {
-      const { SEED_CATALOG } = await import('../data/mockProductStore.js');
-      for (const p of SEED_CATALOG) {
-        await connection.query(
-          `INSERT INTO products (id, name, tamilName, category, categoryName, price, originalPrice, weight, stock, rating, reviewsCount, badge, image, description, ingredients, isActive)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-          [
-            p.id,
-            p.name,
-            p.tamilName || '',
-            p.category || '',
-            p.categoryName || '',
-            p.price,
-            p.originalPrice || null,
-            p.weight || '250g',
-            p.stock || 20,
-            p.rating || 4.8,
-            p.reviewsCount || 0,
-            p.badge || '',
-            p.image || '',
-            p.description || '',
-            JSON.stringify(p.ingredients || []),
-            1
-          ]
-        );
-      }
-      console.log('🌱 [Database] Seeded 18 products into TiDB MySQL.');
-    } else {
-      // Ensure existing database records have distinct product images
-      const { SEED_CATALOG } = await import('../data/mockProductStore.js');
-      for (const p of SEED_CATALOG) {
-        if (p.image && p.image.startsWith('/images/products/')) {
-          await connection.query(
-            'UPDATE products SET image = ? WHERE id = ? AND (image LIKE "/images/cat-%" OR image = "/images/prod-podi.jpg" OR image = "/images/prod-laddu.jpg")',
-            [p.image, p.id]
-          );
-        }
-      }
+    // 4. Seed / upsert catalog products
+    const { SEED_CATALOG } = await import('../data/mockProductStore.js');
+    for (const p of SEED_CATALOG) {
+      await connection.query(
+        `INSERT INTO products (id, name, tamilName, category, categoryName, price, originalPrice, weight, stock, rating, reviewsCount, badge, image, description, ingredients, isActive)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE name=VALUES(name), tamilName=VALUES(tamilName), category=VALUES(category), categoryName=VALUES(categoryName), price=VALUES(price), originalPrice=VALUES(originalPrice), weight=VALUES(weight), badge=VALUES(badge), image=VALUES(image), description=VALUES(description), ingredients=VALUES(ingredients)`,
+        [
+          p.id,
+          p.name,
+          p.tamilName || '',
+          p.category || '',
+          p.categoryName || '',
+          p.price,
+          p.originalPrice || null,
+          p.weight || '250g',
+          p.stock || 25,
+          p.rating || 4.8,
+          p.reviewsCount || 0,
+          p.badge || '',
+          p.image || '',
+          p.description || '',
+          JSON.stringify(p.ingredients || []),
+          1
+        ]
+      );
     }
+    console.log(`🌱 [Database] Synced ${SEED_CATALOG.length} products in TiDB MySQL.`);
 
     connection.release();
     return true;

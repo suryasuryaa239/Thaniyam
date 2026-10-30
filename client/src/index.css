@@ -889,7 +889,7 @@ h1, h2, h3, h4 {
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background-color: var(--color-bg-alt);
+  background-color: #ffffff;
   cursor: pointer;
 }
 
@@ -1495,7 +1495,7 @@ h1, h2, h3, h4 {
   border-radius: var(--radius-md);
   overflow: hidden;
   aspect-ratio: 1 / 1;
-  background-color: var(--color-bg-alt);
+  background-color: #ffffff;
 }
 
 .modal-img {
@@ -2196,7 +2196,7 @@ h1, h2, h3, h4 {
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background-color: var(--color-bg-alt);
+  background-color: #ffffff;
   cursor: pointer;
 }
 
@@ -2796,7 +2796,7 @@ h1, h2, h3, h4 {
   position: relative;
   border-radius: var(--radius-sm);
   overflow: hidden;
-  background-color: var(--color-bg-alt);
+  background-color: #ffffff;
   cursor: pointer;
 }
 
@@ -3043,7 +3043,7 @@ h1, h2, h3, h4 {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  background-color: var(--color-bg-alt);
+  background-color: #ffffff;
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--color-border);
@@ -9572,6 +9572,22 @@ h1, h2, h3, h4 {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  max-height: 440px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.nav-dropdown-list::-webkit-scrollbar {
+  width: 5px;
+}
+
+.nav-dropdown-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.nav-dropdown-list::-webkit-scrollbar-thumb {
+  background: rgba(217, 119, 6, 0.25);
+  border-radius: 4px;
 }
 
 .nav-cat-item-btn {

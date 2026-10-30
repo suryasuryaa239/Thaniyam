@@ -8,11 +8,21 @@ import { apiUrl } from '../config/api';
 import { useProducts } from '../context/ProductContext';
 
 const CATEGORY_OPTIONS = [
+  { id: 'dosa-mix', name: 'Traditional Dosa & Adai Mixes', tamilName: 'பாரம்பரிய தோசை & அடை' },
+  { id: 'puttu-mix', name: 'Puttu & Kozhukattai Flours', tamilName: 'புட்டு & கொழுக்கட்டை மாவு' },
+  { id: 'kanji-mix', name: 'Traditional Kanji & Porridge', tamilName: 'பாரம்பரிய கஞ்சி வகைகள்' },
+  { id: 'health-mix', name: 'Health & Nutrition Mixes', tamilName: 'பாரம்பரிய சத்து மாவு' },
+  { id: 'heritage-podis', name: 'Heritage Podis & Masalas', tamilName: 'பாரம்பரிய பொடிகள்' },
+  { id: 'pongal-mix', name: 'Millet Pongal Mixes', tamilName: 'சிறு தானிய பொங்கல்' },
   { id: 'traditional-snacks', name: 'Traditional Savory Snacks', tamilName: 'பாரம்பரிய நொறுக்குத்தீனிகள்' },
   { id: 'wood-pressed-oils', name: 'Wood-Pressed Oils (Marachekku)', tamilName: 'மரச்செக்கு எண்ணெய்' },
   { id: 'natural-sweeteners', name: 'Natural Palm Sweeteners', tamilName: 'உடன்குடி பனைக்கருப்பட்டி' },
+  { id: 'kali-mix', name: 'Traditional Kali Mixes', tamilName: 'பாரம்பரிய களி வகைகள்' },
+  { id: 'tea-mix', name: 'Herbal Teas & Beverages', tamilName: 'மூலிகை டீ & காபி' },
+  { id: 'daily-needs', name: 'Natural Pantry & Salts', tamilName: 'இயற்கை மளிகை & உப்பு' },
+  { id: 'beauty-care', name: 'Natural Herbal Beauty & Hair Care', tamilName: 'இயற்கை அழகு & நலங்கு மாவு' },
+  { id: 'chapati-mix', name: 'Millet Chapati & Roti Mixes', tamilName: 'தானிய சப்பாத்தி மாவு' },
   { id: 'millets-grains', name: 'Native Millets & Grains', tamilName: 'சிறு தானியங்கள்' },
-  { id: 'heritage-podis', name: 'Heritage Podis & Masalas', tamilName: 'பாரம்பரிய பொடிகள்' },
   { id: 'millet-sweets', name: 'Millet Sweets & Delights', tamilName: 'தானிய இனிப்புகள்' }
 ];
 

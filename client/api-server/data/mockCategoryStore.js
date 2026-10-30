@@ -6,13 +6,142 @@ import {
 } from '../config/mysqlStore.js';
 
 export const DEFAULT_CATEGORIES = [
-  { id: 'all', name: 'All Products', tamilName: 'அனைத்து பொருட்கள்', icon: '✨', image: '/images/hero-banner.jpg', description: 'Complete traditional pantry collection' },
-  { id: 'millets-grains', name: 'Native Millets & Grains', tamilName: 'சிறு தானியங்கள்', icon: '🌾', image: '/images/cat-millets.jpg', description: 'Unpolished native grains rich in dietary fiber' },
-  { id: 'traditional-snacks', name: 'Traditional Savory Snacks', tamilName: 'பாரம்பரிய நொறுக்குத்தீனிகள்', icon: '🥨', image: '/images/cat-snacks.jpg', description: 'Wood-pressed oil fried crunchy snacks' },
-  { id: 'wood-pressed-oils', name: 'Wood-Pressed Oils', tamilName: 'மரச்செக்கு எண்ணெய்', icon: '🫒', image: '/images/cat-oils.jpg', description: 'Vaagai Marachekku cold-pressed unrefined oils' },
-  { id: 'natural-sweeteners', name: 'Natural Palm Sweeteners', tamilName: 'உடன்குடி பனைக்கருப்பட்டி', icon: '🍯', image: '/images/cat-jaggery.jpg', description: 'Authentic Udangudi Karupatti & Panang Karkandu' },
-  { id: 'heritage-podis', name: 'Heritage Podis & Masalas', tamilName: 'பாரம்பரிய பொடிகள்', icon: '🌶️', image: '/images/prod-podi.jpg', description: 'Stone-pounded aromatic lentil idli podis' },
-  { id: 'millet-sweets', name: 'Millet Sweets & Delights', tamilName: 'தானிய இனிப்புகள்', icon: '🍬', image: '/images/prod-laddu.jpg', description: 'Jaggery-sweetened festive traditional sweets' }
+  {
+    "id": "all",
+    "name": "All Products",
+    "tamilName": "அனைத்து பொருட்கள்",
+    "icon": "✨",
+    "image": "/images/hero-banner.jpg",
+    "description": "Complete traditional heritage collection"
+  },
+  {
+    "id": "dosa-mix",
+    "name": "Traditional Dosa & Adai Mixes",
+    "tamilName": "பாரம்பரிய தோசை & அடை",
+    "icon": "🥞",
+    "image": "/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg",
+    "description": "Millet dosas, ragi dosa, and protein-packed adai mixes"
+  },
+  {
+    "id": "puttu-mix",
+    "name": "Puttu & Kozhukattai Flours",
+    "tamilName": "புட்டு & கொழுக்கட்டை மாவு",
+    "icon": "🍚",
+    "image": "/images/products/poongar-rice-kozhukattai-idiyappam-flour.jpg",
+    "description": "Poongar, Mappillai Samba, and Red Rice flours"
+  },
+  {
+    "id": "kanji-mix",
+    "name": "Traditional Kanji & Porridge",
+    "tamilName": "பாரம்பரிய கஞ்சி வகைகள்",
+    "icon": "🥣",
+    "image": "/images/products/karuppu-kavuni-kanji.jpg",
+    "description": "Heirloom rice kanji and nourishing porridge mixes"
+  },
+  {
+    "id": "health-mix",
+    "name": "Health & Nutrition Mixes",
+    "tamilName": "பாரம்பரிய சத்து மாவு",
+    "icon": "🥛",
+    "image": "/images/products/karuppu-kavuni-nutrition-mix.jpg",
+    "description": "Sprouted multigrain and black kavuni nutrition mixes"
+  },
+  {
+    "id": "heritage-podis",
+    "name": "Heritage Podis & Masalas",
+    "tamilName": "பாரம்பரிய பொடிகள்",
+    "icon": "🌶️",
+    "image": "/images/products/paruppu-podi-lentil-spice-powder.jpg",
+    "description": "Stone-pounded herbal & lentil idli podis"
+  },
+  {
+    "id": "pongal-mix",
+    "name": "Millet Pongal Mixes",
+    "tamilName": "சிறு தானிய பொங்கல்",
+    "icon": "🍲",
+    "image": "/images/products/siruthaniya-pongal-mix-multi-millet-pongal-mix.jpg",
+    "description": "Quick-cook nutritious millet ven pongal mixes"
+  },
+  {
+    "id": "traditional-snacks",
+    "name": "Traditional Savory Snacks",
+    "tamilName": "பாரம்பரிய நொறுக்குத்தீனிகள்",
+    "icon": "🥨",
+    "image": "/images/cat-snacks.jpg",
+    "description": "Wood-pressed oil fried crunchy snacks"
+  },
+  {
+    "id": "wood-pressed-oils",
+    "name": "Wood-Pressed Oils",
+    "tamilName": "மரச்செக்கு எண்ணெய்",
+    "icon": "🫒",
+    "image": "/images/cat-oils.jpg",
+    "description": "Vaagai Marachekku cold-pressed unrefined oils"
+  },
+  {
+    "id": "natural-sweeteners",
+    "name": "Natural Palm Sweeteners",
+    "tamilName": "உடன்குடி பனைக்கருப்பட்டி",
+    "icon": "🍯",
+    "image": "/images/cat-jaggery.jpg",
+    "description": "Authentic Udangudi Karupatti & Panang Karkandu"
+  },
+  {
+    "id": "kali-mix",
+    "name": "Traditional Kali Mixes",
+    "tamilName": "பாரம்பரிய களி வகைகள்",
+    "icon": "🍯",
+    "image": "/images/products/ulundhu-kali.jpg",
+    "description": "Cooling Venthaya Kali & bone-strengthening Ulunthangali"
+  },
+  {
+    "id": "tea-mix",
+    "name": "Herbal Teas & Beverages",
+    "tamilName": "மூலிகை டீ & காபி",
+    "icon": "☕",
+    "image": "/images/products/sukku-malli-coffee-herbal-coffee-mix.jpg",
+    "description": "Sukku Malli Coffee, Masala Chai, and Beetroot Malt"
+  },
+  {
+    "id": "daily-needs",
+    "name": "Natural Pantry & Salts",
+    "tamilName": "இயற்கை மளிகை & உப்பு",
+    "icon": "🧂",
+    "image": "/images/products/himalayan-rock-crtstals.jpg",
+    "description": "Himalayan pink rock salt, aval, and palm sugars"
+  },
+  {
+    "id": "beauty-care",
+    "name": "Natural Herbal Beauty & Hair Care",
+    "tamilName": "இயற்கை அழகு & நலங்கு மாவு",
+    "icon": "🌿",
+    "image": "/images/products/nalangu-maavu-herbal-bath-powder.jpg",
+    "description": "Nalangu Maavu, Shikakai, and pure botanical face packs"
+  },
+  {
+    "id": "chapati-mix",
+    "name": "Millet Chapati & Roti Mixes",
+    "tamilName": "தானிய சப்பாத்தி மாவு",
+    "icon": "🫓",
+    "image": "/images/products/multi-millet-chapati-mix.jpg",
+    "description": "High-fiber multi millet and bamboo rice chapati flours"
+  },
+  {
+    "id": "millets-grains",
+    "name": "Native Millets & Grains",
+    "tamilName": "சிறு தானியங்கள்",
+    "icon": "🌾",
+    "image": "/images/cat-millets.jpg",
+    "description": "Unpolished native grains rich in dietary fiber"
+  },
+  {
+    "id": "millet-sweets",
+    "name": "Millet Sweets & Delights",
+    "tamilName": "தானிய இனிப்புகள்",
+    "icon": "🍬",
+    "image": "/images/prod-laddu.jpg",
+    "description": "Jaggery-sweetened festive traditional sweets"
+  }
 ];
 
 const memoryCategories = new Map();
@@ -48,7 +177,7 @@ export const saveCategoryInStore = async (catData) => {
     name: catData.name,
     tamilName: catData.tamilName || '',
     icon: catData.icon || '✨',
-    image: catData.image || '/images/cat-snacks.jpg',
+    image: catData.image || '/images/hero-banner.jpg',
     description: catData.description || ''
   };
 
@@ -57,8 +186,8 @@ export const saveCategoryInStore = async (catData) => {
   if (isMySQLConnected()) {
     try {
       await mysqlSaveCategory(category);
-    } catch (e) {
-      console.warn('⚠️ [MySQL] Error persisting category:', e.message);
+    } catch (err) {
+      console.warn('⚠️ [MySQL] Failed to persist category:', err.message);
     }
   }
 
@@ -66,17 +195,16 @@ export const saveCategoryInStore = async (catData) => {
 };
 
 export const deleteCategoryFromStore = async (id) => {
-  if (id === 'all') return false; // Never delete 'all'
-  const existed = memoryCategories.delete(id);
+  const existed = memoryCategories.has(id);
+  memoryCategories.delete(id);
 
   if (isMySQLConnected()) {
     try {
       await mysqlDeleteCategory(id);
-    } catch (e) {
-      console.warn('⚠️ [MySQL] Error deleting category from MySQL:', e.message);
+    } catch (err) {
+      console.warn('⚠️ [MySQL] Failed to delete category:', err.message);
     }
   }
 
   return existed;
 };
-
