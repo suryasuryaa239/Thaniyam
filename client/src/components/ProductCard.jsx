@@ -22,7 +22,7 @@ export default function ProductCard({ prod, onOpen, onAddToCart }) {
           <span className="pbadge pbadge-muted">{t('soldOut')}</span>
         ) : (
           <>
-            <span className="pbadge pbadge-green">{prod.badge ? prod.badge.toUpperCase() : t('featured')}</span>
+            {prod.badge && <span className="pbadge pbadge-green">{prod.badge.toUpperCase()}</span>}
             {isLowStock && <span className="pbadge pbadge-amber">Only {prod.stock} left!</span>}
             {onSale && <span className="pbadge pbadge-red">{t('sale')}</span>}
           </>

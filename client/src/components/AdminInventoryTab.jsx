@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   Package, Search, Plus, Edit2, Trash2, CheckCircle2, AlertCircle,
   RefreshCw, IndianRupee, Check, X,
-  ShieldCheck, AlertTriangle, Archive, Power
+  ShieldCheck, AlertTriangle, Archive, Power, Tag, Percent, Sparkles
 } from 'lucide-react';
 import { apiUrl } from '../config/api';
 import { useProducts } from '../context/ProductContext';
@@ -102,6 +102,14 @@ export default function AdminInventoryTab({
   // Quick stock adjusting ID tracker
   const [adjustingStockId, setAdjustingStockId] = useState(null);
 
+  // Quick Offer & Promotion Modal States
+  const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
+  const [offerProduct, setOfferProduct] = useState(null);
+  const [offerPrice, setOfferPrice] = useState('');
+  const [offerOriginalPrice, setOfferOriginalPrice] = useState('');
+  const [offerBadge, setOfferBadge] = useState('');
+  const [isSavingOffer, setIsSavingOffer] = useState(false);
+
   // Fetch Inventory Products from Server
   const fetchInventory = useCallback(async () => {
     if (!authToken) return;
@@ -139,11 +147,19 @@ export default function AdminInventoryTab({
         return false;
       }
 
-      // Stock status filter
+      // Stock status & Offer filter
       if (stockStatusFilter === 'in-stock' && prod.stock <= 5) return false;
       if (stockStatusFilter === 'low-stock' && (prod.stock <= 0 || prod.stock > 5)) return false;
       if (stockStatusFilter === 'out-of-stock' && prod.stock > 0) return false;
       if (stockStatusFilter === 'inactive' && prod.isActive !== false) return false;
+      if (stockStatusFilter === 'offers-only') {
+        const hasOffer = Boolean(prod.badge || (prod.originalPrice && Number(prod.originalPrice) > Number(prod.price)));
+        if (!hasOffer) return false;
+      }
+      if (stockStatusFilter === 'no-offers') {
+        const hasOffer = Boolean(prod.badge || (prod.originalPrice && Number(prod.originalPrice) > Number(prod.price)));
+        if (hasOffer) return false;
+      }
 
       // Search query
       if (searchQuery.trim()) {
@@ -324,6 +340,112 @@ export default function AdminInventoryTab({
       });
     } finally {
       setAdjustingStockId(null);
+    }
+  };
+
+  // Quick Offer & Promotion modal handlers
+  const handleOpenOfferModal = (product) => {
+    setOfferProduct(product);
+    setOfferPrice(product.price ? String(product.price) : '');
+    setOfferOriginalPrice(product.originalPrice ? String(product.originalPrice) : '');
+    setOfferBadge(product.badge || '');
+    setIsOfferModalOpen(true);
+  };
+
+  const handleApplyOfferPreset = (pct, badgeLabel) => {
+    if (!offerProduct) return;
+    const currentPrice = Number(offerProduct.price) || 100;
+    if (pct > 0) {
+      const calculatedMrp = Math.round(currentPrice / (1 - pct / 100));
+      setOfferPrice(String(currentPrice));
+      setOfferOriginalPrice(String(calculatedMrp));
+      setOfferBadge(badgeLabel);
+    } else {
+      setOfferPrice(String(currentPrice));
+      setOfferOriginalPrice('');
+      setOfferBadge(badgeLabel);
+    }
+  };
+
+  const handleClearOfferInputs = () => {
+    if (!offerProduct) return;
+    setOfferBadge('');
+    setOfferOriginalPrice('');
+    setOfferPrice(String(offerProduct.price));
+  };
+
+  const handleSaveOffer = async () => {
+    if (!offerProduct || !authToken) return;
+    setIsSavingOffer(true);
+    try {
+      const payload = {
+        price: parseFloat(offerPrice) || offerProduct.price,
+        originalPrice: offerOriginalPrice ? parseFloat(offerOriginalPrice) : null,
+        badge: (offerBadge || '').trim()
+      };
+
+      const res = await fetch(apiUrl(`/api/products/${offerProduct.id}`), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to update offer');
+      }
+
+      setFeedback({
+        type: 'success',
+        message: `Offer updated for "${offerProduct.name}"! Badge: ${payload.badge || 'None'}`
+      });
+      setIsOfferModalOpen(false);
+      fetchInventory();
+      if (onProductChange) onProductChange();
+    } catch (err) {
+      setFeedback({
+        type: 'error',
+        message: err.message || 'Error saving offer.'
+      });
+    } finally {
+      setIsSavingOffer(false);
+    }
+  };
+
+  const handleQuickRemoveOffer = async (product) => {
+    if (!product || !authToken) return;
+    try {
+      const payload = {
+        originalPrice: null,
+        badge: ''
+      };
+      const res = await fetch(apiUrl(`/api/products/${product.id}`), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`
+        },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.message || 'Failed to clear offer');
+      }
+
+      setFeedback({
+        type: 'success',
+        message: `Cleared offer & badge from "${product.name}".`
+      });
+      if (isOfferModalOpen) setIsOfferModalOpen(false);
+      fetchInventory();
+      if (onProductChange) onProductChange();
+    } catch (err) {
+      setFeedback({
+        type: 'error',
+        message: err.message || 'Error removing offer.'
+      });
     }
   };
 
@@ -539,7 +661,7 @@ export default function AdminInventoryTab({
             </select>
           </div>
 
-          {/* Stock Status Filter */}
+          {/* Stock & Offer Status Filter */}
           <div className="admin-filter-group">
             <select
               className="admin-select"
@@ -547,7 +669,9 @@ export default function AdminInventoryTab({
               onChange={(e) => setStockStatusFilter(e.target.value)}
               id="select-inventory-stock-status"
             >
-              <option value="all">All Stock Statuses</option>
+              <option value="all">All Products (Stock &amp; Offers)</option>
+              <option value="offers-only">🏷️ Active Offers Only</option>
+              <option value="no-offers">Clean Products (No Offers)</option>
               <option value="in-stock">In Stock (&gt; 5)</option>
               <option value="low-stock">Low Stock (1-5)</option>
               <option value="out-of-stock">Out of Stock (0)</option>
@@ -615,6 +739,7 @@ export default function AdminInventoryTab({
                   <th>Category</th>
                   <th>Pack Size</th>
                   <th>Price</th>
+                  <th>Offer / Badge</th>
                   <th style={{ textAlign: 'center' }}>Stock &amp; Adjustment</th>
                   <th>Status</th>
                   <th style={{ textAlign: 'right' }}>Actions</th>
@@ -669,6 +794,48 @@ export default function AdminInventoryTab({
                             <span className="inv-slashed-price">₹{prod.originalPrice}</span>
                           )}
                         </div>
+                      </td>
+
+                      {/* Offer / Badge Column */}
+                      <td>
+                        {prod.badge || (prod.originalPrice && Number(prod.originalPrice) > Number(prod.price)) ? (
+                          <div className="inv-offer-active-box">
+                            <span className="inv-offer-badge">
+                              <Tag size={12} />
+                              <span>
+                                {prod.badge || `${Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100)}% OFF`}
+                              </span>
+                            </span>
+                            <div className="inv-offer-actions">
+                              <button
+                                type="button"
+                                className="btn-offer-mini-edit"
+                                onClick={() => handleOpenOfferModal(prod)}
+                                title="Edit this offer"
+                              >
+                                <Edit2 size={11} />
+                              </button>
+                              <button
+                                type="button"
+                                className="btn-offer-mini-clear"
+                                onClick={() => handleQuickRemoveOffer(prod)}
+                                title="Remove offer"
+                              >
+                                <X size={11} />
+                              </button>
+                            </div>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            className="btn-set-offer-quick"
+                            onClick={() => handleOpenOfferModal(prod)}
+                            title="Set a special offer or promotional badge"
+                          >
+                            <Plus size={12} />
+                            <span>Set Offer</span>
+                          </button>
+                        )}
                       </td>
 
                       {/* Stock Stepper */}
@@ -924,10 +1091,11 @@ export default function AdminInventoryTab({
                   />
                 </div>
 
-                {/* Badge */}
+                {/* Badge & Offer Settings */}
                 <div className="form-group">
                   <label className="form-label" htmlFor="prod-badge">
-                    Marketing Badge
+                    <Tag size={13} style={{ marginRight: 5, verticalAlign: 'middle', color: '#059669' }} />
+                    <span>Special Offer / Promo Badge</span>
                   </label>
                   <input
                     id="prod-badge"
@@ -935,8 +1103,18 @@ export default function AdminInventoryTab({
                     className="form-input"
                     value={formData.badge}
                     onChange={(e) => setFormData({ ...formData, badge: e.target.value })}
-                    placeholder="e.g. Bestseller, Pure Ghee"
+                    placeholder="e.g. 10% OFF, Diwali Offer, Bestseller (leave empty for no badge)"
                   />
+                  <div className="badge-preset-pills-row">
+                    <span className="preset-hint">Presets:</span>
+                    <button type="button" className="badge-preset-pill" onClick={() => setFormData({ ...formData, badge: '5% OFF' })}>5% OFF</button>
+                    <button type="button" className="badge-preset-pill" onClick={() => setFormData({ ...formData, badge: '10% OFF' })}>10% OFF</button>
+                    <button type="button" className="badge-preset-pill" onClick={() => setFormData({ ...formData, badge: '15% OFF' })}>15% OFF</button>
+                    <button type="button" className="badge-preset-pill" onClick={() => setFormData({ ...formData, badge: '20% OFF' })}>20% OFF</button>
+                    <button type="button" className="badge-preset-pill" onClick={() => setFormData({ ...formData, badge: 'Diwali Special' })}>Diwali</button>
+                    <button type="button" className="badge-preset-pill" onClick={() => setFormData({ ...formData, badge: 'Bestseller' })}>Bestseller</button>
+                    <button type="button" className="badge-preset-pill clear" onClick={() => setFormData({ ...formData, badge: '' })}>Clear</button>
+                  </div>
                 </div>
               </div>
 
@@ -1071,6 +1249,226 @@ export default function AdminInventoryTab({
               >
                 {isDeleting ? 'Processing...' : 'Confirm Safe Removal'}
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 7. QUICK OFFER & PROMOTION MANAGEMENT MODAL */}
+      {isOfferModalOpen && offerProduct && (
+        <div className="modal-backdrop" onClick={() => !isSavingOffer && setIsOfferModalOpen(false)} role="dialog" aria-modal="true">
+          <div className="modal-container offer-manager-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid #e5e7eb', paddingBottom: '14px', marginBottom: '16px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ width: 38, height: 38, borderRadius: '50%', background: '#ecfdf5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Tag size={20} color="#059669" />
+                </div>
+                <div>
+                  <h3 className="modal-title" style={{ margin: 0, fontSize: '1.2rem', color: '#064e3b' }}>Product Offer &amp; Promotion Manager</h3>
+                  <p className="modal-subtitle" style={{ margin: '2px 0 0', fontSize: '0.85rem', color: '#6b7280' }}>
+                    Set discounts &amp; promo badges for: <strong>{offerProduct.name}</strong>
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-modal-close"
+                onClick={() => setIsOfferModalOpen(false)}
+                disabled={isSavingOffer}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="modal-body">
+              {/* Quick Presets Strip */}
+              <div className="offer-preset-section">
+                <label className="form-label" style={{ fontWeight: 700, fontSize: '0.85rem', color: '#374151', display: 'block', marginBottom: '8px' }}>
+                  <Sparkles size={14} style={{ color: '#d97706', marginRight: 5, verticalAlign: 'middle' }} />
+                  <span>1-Click Offer Presets (விரைவான சலுகை தேர்வுகள்)</span>
+                </label>
+                <div className="offer-presets-strip">
+                  <button
+                    type="button"
+                    className={`preset-offer-chip ${offerBadge === '5% OFF' ? 'active' : ''}`}
+                    onClick={() => handleApplyOfferPreset(5, '5% OFF')}
+                  >
+                    🏷️ 5% OFF
+                  </button>
+                  <button
+                    type="button"
+                    className={`preset-offer-chip ${offerBadge === '10% OFF' ? 'active' : ''}`}
+                    onClick={() => handleApplyOfferPreset(10, '10% OFF')}
+                  >
+                    🏷️ 10% OFF
+                  </button>
+                  <button
+                    type="button"
+                    className={`preset-offer-chip ${offerBadge === '15% OFF' ? 'active' : ''}`}
+                    onClick={() => handleApplyOfferPreset(15, '15% OFF')}
+                  >
+                    🏷️ 15% OFF
+                  </button>
+                  <button
+                    type="button"
+                    className={`preset-offer-chip ${offerBadge === '20% OFF' ? 'active' : ''}`}
+                    onClick={() => handleApplyOfferPreset(20, '20% OFF')}
+                  >
+                    🏷️ 20% OFF
+                  </button>
+                  <button
+                    type="button"
+                    className={`preset-offer-chip ${offerBadge === '25% OFF' ? 'active' : ''}`}
+                    onClick={() => handleApplyOfferPreset(25, '25% OFF')}
+                  >
+                    🏷️ 25% OFF
+                  </button>
+                  <button
+                    type="button"
+                    className={`preset-offer-chip ${offerBadge === 'Diwali Special' ? 'active' : ''}`}
+                    onClick={() => handleApplyOfferPreset(10, 'Diwali Special')}
+                  >
+                    ✨ Diwali Special
+                  </button>
+                  <button
+                    type="button"
+                    className={`preset-offer-chip ${offerBadge === 'Weekend Deal' ? 'active' : ''}`}
+                    onClick={() => handleApplyOfferPreset(15, 'Weekend Deal')}
+                  >
+                    ⚡ Weekend Deal
+                  </button>
+                  <button
+                    type="button"
+                    className={`preset-offer-chip ${offerBadge === 'Bestseller' ? 'active' : ''}`}
+                    onClick={() => handleApplyOfferPreset(0, 'Bestseller')}
+                  >
+                    🔥 Bestseller
+                  </button>
+                  <button
+                    type="button"
+                    className="preset-offer-chip clear-chip"
+                    onClick={handleClearOfferInputs}
+                  >
+                    ❌ Clear Offer
+                  </button>
+                </div>
+              </div>
+
+              {/* Pricing & Badge Custom Inputs */}
+              <div className="form-grid-three" style={{ marginTop: '16px' }}>
+                <div className="form-group">
+                  <label className="form-label" htmlFor="offer-selling-price">
+                    Selling Price (₹) <span className="req">*</span>
+                  </label>
+                  <input
+                    id="offer-selling-price"
+                    type="number"
+                    min="1"
+                    step="1"
+                    className="form-input"
+                    value={offerPrice}
+                    onChange={(e) => setOfferPrice(e.target.value)}
+                    placeholder="e.g. 180"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="offer-orig-price">
+                    MRP / Original Price (₹)
+                  </label>
+                  <input
+                    id="offer-orig-price"
+                    type="number"
+                    min="1"
+                    step="1"
+                    className="form-input"
+                    value={offerOriginalPrice}
+                    onChange={(e) => setOfferOriginalPrice(e.target.value)}
+                    placeholder="e.g. 200 (optional)"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label" htmlFor="offer-badge-input">
+                    Offer Badge Text (பேட்ஜ்)
+                  </label>
+                  <input
+                    id="offer-badge-input"
+                    type="text"
+                    className="form-input"
+                    value={offerBadge}
+                    onChange={(e) => setOfferBadge(e.target.value)}
+                    placeholder="e.g. 10% OFF, Diwali Offer"
+                  />
+                </div>
+              </div>
+
+              {/* Live Customer Preview */}
+              <div className="offer-preview-banner">
+                <span className="preview-label">CUSTOMER STOREFRONT PREVIEW:</span>
+                <div className="preview-card-chip">
+                  {offerBadge ? (
+                    <span className="preview-badge-pill">{offerBadge}</span>
+                  ) : offerOriginalPrice && Number(offerOriginalPrice) > Number(offerPrice) ? (
+                    <span className="preview-badge-pill">
+                      {Math.round(((Number(offerOriginalPrice) - Number(offerPrice)) / Number(offerOriginalPrice)) * 100)}% OFF
+                    </span>
+                  ) : (
+                    <span className="preview-no-badge">No Offer Badge (Clean Product Card)</span>
+                  )}
+                  <div className="preview-pricing">
+                    <span className="preview-current-price">₹{offerPrice || offerProduct.price}</span>
+                    {offerOriginalPrice && Number(offerOriginalPrice) > Number(offerPrice || offerProduct.price) && (
+                      <span className="preview-slashed-price">₹{offerOriginalPrice}</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-actions-bar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', paddingTop: '14px', borderTop: '1px solid #e5e7eb' }}>
+              <div>
+                {(offerProduct.badge || offerProduct.originalPrice) && (
+                  <button
+                    type="button"
+                    className="btn-delete"
+                    style={{ color: '#dc2626', fontWeight: 600, fontSize: '0.85rem' }}
+                    onClick={() => handleQuickRemoveOffer(offerProduct)}
+                    disabled={isSavingOffer}
+                  >
+                    Remove Current Offer
+                  </button>
+                )}
+              </div>
+              <div style={{ display: 'flex', gap: 10 }}>
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={() => setIsOfferModalOpen(false)}
+                  disabled={isSavingOffer}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={handleSaveOffer}
+                  disabled={isSavingOffer}
+                >
+                  {isSavingOffer ? (
+                    <>
+                      <RefreshCw size={15} className="spinner" />
+                      <span>Saving Offer...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Check size={15} />
+                      <span>Save &amp; Publish Offer</span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>

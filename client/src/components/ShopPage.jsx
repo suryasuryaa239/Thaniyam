@@ -502,15 +502,14 @@ export default function ShopPage({
                     className="shop-list-image-wrap"
                     onClick={() => onViewProduct ? onViewProduct(prod.id) : onQuickView(prod)}
                   >
-                    {discountPct && (
-                      <span className="badge-discount">{discountPct}% OFF</span>
-                    )}
                     {isOutOfStock ? (
                       <span className="product-badge badge-out-of-stock">Sold Out</span>
                     ) : isLowStock ? (
                       <span className="product-badge badge-low-stock">Only {prod.stock} left!</span>
                     ) : prod.badge ? (
                       <span className="product-badge">{prod.badge}</span>
+                    ) : discountPct ? (
+                      <span className="badge-discount">{discountPct}% OFF</span>
                     ) : null}
 
                     {imageErrors[prod.id] ? (
@@ -653,15 +652,14 @@ export default function ShopPage({
                 <article key={prod.id} className={`shop-product-card ${isOutOfStock ? 'card-out-of-stock' : ''}`}>
                   {/* Badges */}
                   <div className="product-card-badges">
-                    {discountPct && (
-                      <span className="badge-discount">{discountPct}% OFF</span>
-                    )}
                     {isOutOfStock ? (
                       <span className="product-badge badge-out-of-stock">Sold Out</span>
                     ) : isLowStock ? (
                       <span className="product-badge badge-low-stock">Only {prod.stock} left!</span>
                     ) : prod.badge ? (
                       <span className="product-badge">{prod.badge}</span>
+                    ) : discountPct ? (
+                      <span className="badge-discount">{discountPct}% OFF</span>
                     ) : null}
                   </div>
 
