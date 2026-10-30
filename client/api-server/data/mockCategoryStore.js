@@ -11,7 +11,7 @@ export const DEFAULT_CATEGORIES = [
     "name": "All Products",
     "tamilName": "அனைத்து பொருட்கள்",
     "icon": "✨",
-    "image": "/images/hero-banner.jpg",
+    "image": "/images/products/karuppu-kavuni-nutrition-mix.jpg",
     "description": "Complete traditional heritage collection"
   },
   {
@@ -51,7 +51,7 @@ export const DEFAULT_CATEGORIES = [
     "name": "Heritage Podis & Masalas",
     "tamilName": "பாரம்பரிய பொடிகள்",
     "icon": "🌶️",
-    "image": "/images/products/paruppu-podi-lentil-spice-powder.jpg",
+    "image": "/images/products/pudina-idli-podi-mint-idli-powder.jpg",
     "description": "Stone-pounded herbal & lentil idli podis"
   },
   {
@@ -61,30 +61,6 @@ export const DEFAULT_CATEGORIES = [
     "icon": "🍲",
     "image": "/images/products/siruthaniya-pongal-mix-multi-millet-pongal-mix.jpg",
     "description": "Quick-cook nutritious millet ven pongal mixes"
-  },
-  {
-    "id": "traditional-snacks",
-    "name": "Traditional Savory Snacks",
-    "tamilName": "பாரம்பரிய நொறுக்குத்தீனிகள்",
-    "icon": "🥨",
-    "image": "/images/cat-snacks.jpg",
-    "description": "Wood-pressed oil fried crunchy snacks"
-  },
-  {
-    "id": "wood-pressed-oils",
-    "name": "Wood-Pressed Oils",
-    "tamilName": "மரச்செக்கு எண்ணெய்",
-    "icon": "🫒",
-    "image": "/images/cat-oils.jpg",
-    "description": "Vaagai Marachekku cold-pressed unrefined oils"
-  },
-  {
-    "id": "natural-sweeteners",
-    "name": "Natural Palm Sweeteners",
-    "tamilName": "உடன்குடி பனைக்கருப்பட்டி",
-    "icon": "🍯",
-    "image": "/images/cat-jaggery.jpg",
-    "description": "Authentic Udangudi Karupatti & Panang Karkandu"
   },
   {
     "id": "kali-mix",
@@ -104,7 +80,7 @@ export const DEFAULT_CATEGORIES = [
   },
   {
     "id": "daily-needs",
-    "name": "Natural Pantry & Salts",
+    "name": "Natural Pantry & Daily Needs",
     "tamilName": "இயற்கை மளிகை & உப்பு",
     "icon": "🧂",
     "image": "/images/products/himalayan-rock-crtstals.jpg",
@@ -125,22 +101,6 @@ export const DEFAULT_CATEGORIES = [
     "icon": "🫓",
     "image": "/images/products/multi-millet-chapati-mix.jpg",
     "description": "High-fiber multi millet and bamboo rice chapati flours"
-  },
-  {
-    "id": "millets-grains",
-    "name": "Native Millets & Grains",
-    "tamilName": "சிறு தானியங்கள்",
-    "icon": "🌾",
-    "image": "/images/cat-millets.jpg",
-    "description": "Unpolished native grains rich in dietary fiber"
-  },
-  {
-    "id": "millet-sweets",
-    "name": "Millet Sweets & Delights",
-    "tamilName": "தானிய இனிப்புகள்",
-    "icon": "🍬",
-    "image": "/images/prod-laddu.jpg",
-    "description": "Jaggery-sweetened festive traditional sweets"
   }
 ];
 

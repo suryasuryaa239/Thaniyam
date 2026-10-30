@@ -13,18 +13,13 @@ const CATEGORY_IMAGE_MAP = {
   'puttu-mix': '/images/products/poongar-rice-kozhukattai-idiyappam-flour.jpg',
   'kanji-mix': '/images/products/karuppu-kavuni-kanji.jpg',
   'health-mix': '/images/products/karuppu-kavuni-nutrition-mix.jpg',
-  'heritage-podis': '/images/products/paruppu-podi-lentil-spice-powder.jpg',
+  'heritage-podis': '/images/products/pudina-idli-podi-mint-idli-powder.jpg',
   'pongal-mix': '/images/products/siruthaniya-pongal-mix-multi-millet-pongal-mix.jpg',
-  'traditional-snacks': '/images/cat-snacks.jpg',
-  'wood-pressed-oils': '/images/cat-oils.jpg',
-  'natural-sweeteners': '/images/cat-jaggery.jpg',
   'kali-mix': '/images/products/ulundhu-kali.jpg',
   'tea-mix': '/images/products/sukku-malli-coffee-herbal-coffee-mix.jpg',
   'daily-needs': '/images/products/himalayan-rock-crtstals.jpg',
   'beauty-care': '/images/products/nalangu-maavu-herbal-bath-powder.jpg',
   'chapati-mix': '/images/products/multi-millet-chapati-mix.jpg',
-  'millets-grains': '/images/cat-millets.jpg',
-  'millet-sweets': '/images/prod-laddu.jpg',
 };
 
 const CATEGORY_ICON_MAP = {
@@ -34,16 +29,11 @@ const CATEGORY_ICON_MAP = {
   'health-mix': '🥛',
   'heritage-podis': '🌶️',
   'pongal-mix': '🍲',
-  'traditional-snacks': '🥨',
-  'wood-pressed-oils': '🫒',
-  'natural-sweeteners': '🍯',
   'kali-mix': '🍯',
   'tea-mix': '☕',
   'daily-needs': '🧂',
   'beauty-care': '🌿',
   'chapati-mix': '🫓',
-  'millets-grains': '🌾',
-  'millet-sweets': '🍬',
 };
 
 const CATEGORY_TAG_MAP = {
@@ -53,16 +43,11 @@ const CATEGORY_TAG_MAP = {
   'health-mix': 'Sprouted Multigrain',
   'heritage-podis': 'Stone-Ground Blends',
   'pongal-mix': 'Comforting Breakfast',
-  'traditional-snacks': 'Wood-Pressed Crisp',
-  'wood-pressed-oils': 'Cold-Pressed Vaagai',
-  'natural-sweeteners': 'Pure Udangudi Karupatti',
   'kali-mix': 'Cooling & Strengthening',
   'tea-mix': 'Herbal Wellness Brew',
   'daily-needs': 'Pure Mineral & Sweet',
   'beauty-care': 'Chemical-Free Herbal',
   'chapati-mix': 'High-Fiber Rotis',
-  'millets-grains': 'Unpolished & Native',
-  'millet-sweets': 'Palm Jaggery Delights',
 };
 
 export default function Navbar({

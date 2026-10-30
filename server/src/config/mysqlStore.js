@@ -131,6 +131,10 @@ export const initMySQL = async () => {
     }
     console.log(`🌱 [Database] Synced ${SEED_CATALOG.length} products in TiDB MySQL.`);
 
+    // Clean up legacy mock products (prod-001 through prod-018) from previous test seed
+    await connection.query('DELETE FROM products WHERE id LIKE "prod-0%" OR id IN ("prod-001","prod-002","prod-003","prod-004","prod-005","prod-006","prod-007","prod-008","prod-009","prod-010","prod-011","prod-012","prod-013","prod-014","prod-015","prod-016","prod-017","prod-018")');
+    await connection.query('DELETE FROM categories WHERE id IN ("traditional-snacks", "wood-pressed-oils", "natural-sweeteners", "millets-grains", "millet-sweets")');
+
     connection.release();
     return true;
   } catch (err) {

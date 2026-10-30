@@ -1,5 +1,5 @@
 // Sample data for Thaniyam Treats MVP Landing Page
-// Authentic South Indian food catalog with 92 authentic products
+// Authentic South Indian food catalog with 74 products with white background
 
 export const CATEGORIES = [
   {
@@ -39,8 +39,8 @@ export const CATEGORIES = [
     "name": "Heritage Podis & Masalas",
     "tamilName": "பாரம்பரிய பொடிகள்",
     "description": "Stone-pounded herbal & lentil idli podis",
-    "itemCount": "17 Products",
-    "image": "/images/products/paruppu-podi-lentil-spice-powder.jpg"
+    "itemCount": "15 Products",
+    "image": "/images/products/pudina-idli-podi-mint-idli-powder.jpg"
   },
   {
     "id": "pongal-mix",
@@ -49,30 +49,6 @@ export const CATEGORIES = [
     "description": "Quick-cook nutritious millet ven pongal mixes",
     "itemCount": "5 Products",
     "image": "/images/products/siruthaniya-pongal-mix-multi-millet-pongal-mix.jpg"
-  },
-  {
-    "id": "traditional-snacks",
-    "name": "Traditional Savory Snacks",
-    "tamilName": "பாரம்பரிய நொறுக்குத்தீனிகள்",
-    "description": "Wood-pressed oil fried crunchy snacks",
-    "itemCount": "4 Products",
-    "image": "/images/cat-snacks.jpg"
-  },
-  {
-    "id": "wood-pressed-oils",
-    "name": "Wood-Pressed Oils",
-    "tamilName": "மரச்செக்கு எண்ணெய்",
-    "description": "Vaagai Marachekku cold-pressed unrefined oils",
-    "itemCount": "3 Products",
-    "image": "/images/cat-oils.jpg"
-  },
-  {
-    "id": "natural-sweeteners",
-    "name": "Natural Palm Sweeteners",
-    "tamilName": "உடன்குடி பனைக்கருப்பட்டி",
-    "description": "Authentic Udangudi Karupatti & Panang Karkandu",
-    "itemCount": "3 Products",
-    "image": "/images/cat-jaggery.jpg"
   },
   {
     "id": "kali-mix",
@@ -92,7 +68,7 @@ export const CATEGORIES = [
   },
   {
     "id": "daily-needs",
-    "name": "Natural Pantry & Salts",
+    "name": "Natural Pantry & Daily Needs",
     "tamilName": "இயற்கை மளிகை & உப்பு",
     "description": "Himalayan pink rock salt, aval, and palm sugars",
     "itemCount": "9 Products",
@@ -113,95 +89,10 @@ export const CATEGORIES = [
     "description": "High-fiber multi millet and bamboo rice chapati flours",
     "itemCount": "2 Products",
     "image": "/images/products/multi-millet-chapati-mix.jpg"
-  },
-  {
-    "id": "millets-grains",
-    "name": "Native Millets & Grains",
-    "tamilName": "சிறு தானியங்கள்",
-    "description": "Unpolished native grains rich in dietary fiber",
-    "itemCount": "4 Products",
-    "image": "/images/cat-millets.jpg"
-  },
-  {
-    "id": "millet-sweets",
-    "name": "Millet Sweets & Delights",
-    "tamilName": "தானிய இனிப்புகள்",
-    "description": "Jaggery-sweetened festive traditional sweets",
-    "itemCount": "2 Products",
-    "image": "/images/prod-laddu.jpg"
   }
 ];
 
 export const FEATURED_PRODUCTS = [
-  {
-    "id": "prod-001",
-    "name": "Handcrafted Kai Murukku",
-    "tamilName": "பாரம்பரிய கை முறுக்கு",
-    "category": "traditional-snacks",
-    "categoryName": "Traditional Savory Snacks",
-    "price": 140,
-    "originalPrice": 160,
-    "weight": "250g",
-    "stock": 25,
-    "rating": 4.9,
-    "reviewsCount": 64,
-    "badge": "Bestseller",
-    "highlight": "Pure Butter & Wood-Pressed Oil",
-    "image": "/images/products/kai-murukku.jpg",
-    "description": "Authentic hand-pressed spiral murukku prepared with premium rice flour, roasted urad dal, cumin seeds, and a hint of asafoetida. Deep fried in pure wood-pressed groundnut oil for signature crunch.",
-    "ingredients": [
-      "Raw Rice Flour",
-      "Roasted Urad Dal Flour",
-      "Butter",
-      "Cumin Seeds",
-      "Asafoetida",
-      "Salt",
-      "Wood-Pressed Groundnut Oil"
-    ]
-  },
-  {
-    "id": "prod-005",
-    "name": "Marachekku Sesame Oil (Gingelly)",
-    "tamilName": "மரச்செக்கு நல்லெண்ணெய்",
-    "category": "wood-pressed-oils",
-    "categoryName": "Wood-Pressed Oils",
-    "price": 290,
-    "originalPrice": 320,
-    "weight": "500ml",
-    "stock": 30,
-    "rating": 5,
-    "reviewsCount": 88,
-    "badge": "Pure Wood-Pressed",
-    "highlight": "Vaagai Wood Cold Pressed",
-    "image": "/images/products/sesame-oil.jpg",
-    "description": "Extracted slowly using traditional Vaagai wood cold press (Marachekku). Preserves all natural aroma, golden color, and nutrients without refining, bleaching, or chemical de-odorizing.",
-    "ingredients": [
-      "100% Native Black Sesame Seeds",
-      "Pure Palm Jaggery (as natural processing aid)"
-    ]
-  },
-  {
-    "id": "prod-008",
-    "name": "Authentic Udangudi Palm Jaggery (Karupatti)",
-    "tamilName": "உடன்குடி பனைக்கருப்பட்டி",
-    "category": "natural-sweeteners",
-    "categoryName": "Natural Palm Sweeteners",
-    "price": 260,
-    "originalPrice": 280,
-    "weight": "500g",
-    "stock": 35,
-    "rating": 4.8,
-    "reviewsCount": 52,
-    "badge": "Heritage Sourced",
-    "highlight": "No Added White Sugar",
-    "image": "/images/products/palm-jaggery.jpg",
-    "description": "Handcrafted solid blocks of genuine Karupatti boiled from fresh palmyra palm sap in Udangudi. Free from white sugar adulteration, sodium bicarbonate, or artificial clarifying agents.",
-    "ingredients": [
-      "100% Clarified Palmyra Palm Sap",
-      "Dry Ginger",
-      "Cardamom"
-    ]
-  },
   {
     "id": "prod-dh-310",
     "name": "Mint Face Pack (Natural Skin Care Powder)",
@@ -223,6 +114,28 @@ export const FEATURED_PRODUCTS = [
       "Multani Mitti",
       "Neem Leaf Extracts",
       "Rose Petal Powder"
+    ]
+  },
+  {
+    "id": "prod-dh-309",
+    "name": "Rose Face Pack (Natural Skin Care Powder)",
+    "tamilName": "பாரம்பரிய ரோஸ் ஃபேஸ் பேக்",
+    "category": "beauty-care",
+    "categoryName": "Natural Beauty & Hair Care",
+    "price": 180,
+    "originalPrice": 200,
+    "weight": "100g",
+    "stock": 10,
+    "rating": 4.7,
+    "reviewsCount": 37,
+    "badge": "Natural Glow",
+    "image": "/images/products/rose-face-pack-natural-skin-care-powder.jpg",
+    "description": "Aromatic steam-dried organic damask rose petals ground into a gentle skin rejuvenating powder that restores natural radiance and softness.",
+    "ingredients": [
+      "Damask Rose Petal Powder",
+      "Sandalwood Powder",
+      "Multani Mitti",
+      "Aloe Vera Leaf Powder"
     ]
   },
   {
@@ -360,47 +273,96 @@ export const FEATURED_PRODUCTS = [
     ]
   },
   {
-    "id": "prod-dh-239",
-    "name": "Papaya Face Pack (Natural Skin Brightening Pack)",
-    "tamilName": "தூதுவளை மூலிகை இட்லி பொடி",
-    "category": "beauty-care",
-    "categoryName": "Natural Beauty & Hair Care",
-    "price": 180,
-    "originalPrice": 200,
-    "weight": "100g",
-    "stock": 51,
-    "rating": 4.9,
-    "reviewsCount": 27,
-    "badge": "Cold Relief",
-    "image": "/images/products/papaya-face-pack-natural-skin-brightening-pack.jpg",
-    "description": "Climbing Brinjal (Thuthuvalai) medicinal leaves celebrated in Tamil home remedies for clear throat, respiratory comfort, and immunity.",
+    "id": "prod-dh-241",
+    "name": "Ulundhu Kali",
+    "tamilName": "வெள்ளை எள்ளு இட்லி பொடி",
+    "category": "kali-mix",
+    "categoryName": "Traditional Kali Mixes",
+    "price": 80,
+    "originalPrice": 100,
+    "weight": "250g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 53,
+    "badge": "Calcium Rich",
+    "image": "/images/products/ulundhu-kali.jpg",
+    "description": "Calcium-dense white sesame seeds toasted until nutty and fragrant, blended with spiced lentils for an authentic Tanjore-style idli podi.",
     "ingredients": [
-      "Thuthuvalai Leaves",
+      "White Sesame Seeds (Vellai Ellu)",
       "Urad Dal",
-      "Black Peppercorns",
-      "Cumin",
-      "Red Chillies",
+      "Chana Dal",
+      "Dry Chillies",
       "Asafoetida",
       "Salt"
     ]
   },
   {
-    "id": "prod-dh-236",
-    "name": "Natural Cleanser (Herbal Face &amp; Skin Cleanser Powder)",
-    "tamilName": "தூய சேலம் மஞ்சள் தூள்",
-    "category": "beauty-care",
-    "categoryName": "Natural Beauty & Hair Care",
-    "price": 80,
-    "originalPrice": 90,
-    "weight": "100g",
-    "stock": 51,
+    "id": "prod-dh-224",
+    "name": "Chola Milagu Dosa Mix (Sorghum Pepper Dosa Mix)",
+    "tamilName": "Chola Milagu Dosa Mix (Sorghum Pepper Dosa Mix)",
+    "category": "dosa-mix",
+    "categoryName": "Traditional Dosa & Adai Mixes",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "200g",
+    "stock": 30,
     "rating": 4.9,
-    "reviewsCount": 33,
-    "badge": "Curcumin 5%",
-    "image": "/images/products/natural-cleanser-herbal-face-skin-cleanser-powder.jpg",
-    "description": "High-curcumin unpolished Salem farm turmeric fingers ground to fine golden powder without artificial colors or lead chromate.",
+    "reviewsCount": 57,
+    "badge": "100% Traditional",
+    "image": "/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg",
+    "description": "Pure authentic Chola Milagu Dosa Mix (Sorghum Pepper Dosa Mix) prepared in traditional South Indian style with zero chemical preservatives and native sourcing.",
     "ingredients": [
-      "100% Pure Salem Turmeric Roots"
+      "Natural Farm-Grown Ingredients",
+      "Traditional Spices"
+    ]
+  },
+  {
+    "id": "prod-dh-233",
+    "name": "Poongar Puttu",
+    "tamilName": "நாட்டு வெந்தயக்களி மிக்ஸ் (500g)",
+    "category": "puttu-mix",
+    "categoryName": "Puttu & Kozhukattai Flours",
+    "price": 80,
+    "originalPrice": 92,
+    "weight": "300g",
+    "stock": 50,
+    "rating": 4.9,
+    "reviewsCount": 39,
+    "badge": "Cooling Delicacy",
+    "image": "/images/products/poongar-puttu.jpg",
+    "description": "Authentic cooling fenugreek porridge flour mix. Cook with sesame oil and palm jaggery for traditional weekly body heat relief.",
+    "ingredients": [
+      "Raw Rice Flour",
+      "Fenugreek (Vendhayam)",
+      "Urad Dal",
+      "Cardamom"
+    ]
+  },
+  {
+    "id": "prod-dh-265",
+    "name": "Sukku Malli Coffee (Herbal Coffee Mix)",
+    "tamilName": "சிறு தானிய நல்வாழ்வு சத்து மாவு",
+    "category": "tea-mix",
+    "categoryName": "Herbal Teas & Beverages",
+    "price": 60,
+    "originalPrice": 70,
+    "weight": "50g",
+    "stock": 50,
+    "rating": 4.8,
+    "reviewsCount": 50,
+    "badge": "Zero Sugar",
+    "image": "/images/products/sukku-malli-coffee-herbal-coffee-mix.jpg",
+    "description": "Wholesome porridge blend of five unpolished native millets and dry fruits, delivering low-glycemic sustained daily stamina.",
+    "ingredients": [
+      "Thinai",
+      "Samai",
+      "Varagu",
+      "Kuthiravali",
+      "Kambu",
+      "Ragi",
+      "Almonds",
+      "Dry Ginger",
+      "Cardamom"
     ]
   }
 ];
