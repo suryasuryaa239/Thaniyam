@@ -329,6 +329,7 @@ function AppContent() {
               onQuickView={(prod) => setQuickViewProduct(prod)}
               onViewProduct={(id) => navigateTo('product', null, 'all', id)}
               onAddToCart={addToCart}
+              onViewAllShop={() => navigateTo('shop', null, 'all')}
               searchQuery={searchQuery}
             />
 
