@@ -1,7 +1,13 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import Product from '../models/Product.js';
 import Order from '../models/Order.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import {
   getAllProductsFromStore,
   getProductByIdFromStore,
@@ -223,6 +229,77 @@ router.get('/admin/all', requireAdminAuth, async (req, res) => {
       success: false,
       message: 'Failed to retrieve inventory data.'
     });
+  }
+});
+
+// POST /api/products/upload-image — Upload product image file (base64)
+router.post('/upload-image', requireAdminAuth, async (req, res) => {
+  try {
+    const { image, filename } = req.body || {};
+    if (!image || typeof image !== 'string') {
+      return res.status(400).json({ success: false, message: 'Image data is required.' });
+    }
+
+    const matches = image.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    if (!matches || matches.length !== 3) {
+      return res.json({ success: true, url: image });
+    }
+
+    const mimeType = matches[1];
+    const base64Data = matches[2];
+    const buffer = Buffer.from(base64Data, 'base64');
+
+    let ext = '.jpg';
+    if (mimeType.includes('png')) ext = '.png';
+    else if (mimeType.includes('webp')) ext = '.webp';
+    else if (mimeType.includes('gif')) ext = '.gif';
+    else if (mimeType.includes('svg')) ext = '.svg';
+
+    const safeBaseName = (filename || 'product')
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .slice(0, 40);
+
+    const newFilename = `upload-${Date.now()}-${safeBaseName}${ext}`;
+
+    const candidateDirs = [
+      path.resolve(__dirname, '../../client/public/images/products'),
+      path.resolve(__dirname, '../../../client/public/images/products'),
+      path.resolve(__dirname, '../../public/images/products'),
+      path.resolve(process.cwd(), 'client/public/images/products'),
+      path.resolve(process.cwd(), 'public/images/products')
+    ];
+
+    let targetDir = candidateDirs.find((d) => fs.existsSync(d));
+    if (!targetDir) {
+      targetDir = candidateDirs[0];
+      try {
+        fs.mkdirSync(targetDir, { recursive: true });
+      } catch (e) {
+        // ignore fallback
+      }
+    }
+
+    let savedUrl = null;
+    try {
+      if (targetDir && fs.existsSync(targetDir)) {
+        fs.writeFileSync(path.join(targetDir, newFilename), buffer);
+        savedUrl = `/images/products/${newFilename}`;
+      }
+    } catch (fsErr) {
+      console.warn('⚠️ [Product Upload] Could not write to disk, using data URL:', fsErr.message);
+    }
+
+    return res.json({
+      success: true,
+      url: savedUrl || image,
+      filename: newFilename,
+      message: 'Image uploaded successfully.'
+    });
+  } catch (err) {
+    console.error('❌ [Product Upload] Error processing upload:', err);
+    return res.status(500).json({ success: false, message: 'Failed to process image upload.' });
   }
 });
 

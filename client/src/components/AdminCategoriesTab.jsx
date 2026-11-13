@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import {
   FolderTree, Plus, Edit2, Trash2, CheckCircle2, AlertCircle,
   RefreshCw, Check, X, Image as ImageIcon, Sparkles, Layers,
-  ExternalLink
+  ExternalLink, UploadCloud, Link as LinkIcon
 } from 'lucide-react';
 import { apiUrl } from '../config/api';
 import { useProducts } from '../context/ProductContext';
@@ -50,6 +50,95 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
     description: ''
   });
 
+  // Image Upload State
+  const [imageInputMode, setImageInputMode] = useState('upload'); // 'upload' | 'url' | 'presets'
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isDraggingImage, setIsDraggingImage] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
+  const [uploadedFileName, setUploadedFileName] = useState('');
+  const fileInputRef = useRef(null);
+
+  // Compress image before storage
+  const compressImage = (file, maxWidth = 900, maxHeight = 900, quality = 0.88) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxWidth || height > maxHeight) {
+            if (width > height) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxHeight) / height);
+              height = maxHeight;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          const dataUrl = canvas.toDataURL(file.type === 'image/png' ? 'image/png' : 'image/jpeg', quality);
+          resolve(dataUrl);
+        };
+        img.onerror = () => reject(new Error('Failed to load image file.'));
+        img.src = event.target.result;
+      };
+      reader.onerror = () => reject(new Error('Failed to read image file.'));
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleImageFileSelect = async (file) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      setUploadError('Please select a valid image file (JPG, PNG, WebP).');
+      return;
+    }
+
+    if (file.size > 15 * 1024 * 1024) {
+      setUploadError('Image file is too large (max 15MB).');
+      return;
+    }
+
+    setIsUploadingImage(true);
+    setUploadError(null);
+
+    try {
+      const compressedDataUrl = await compressImage(file);
+      setFormData((prev) => ({ ...prev, image: compressedDataUrl }));
+      setUploadedFileName(file.name);
+
+      if (authToken) {
+        try {
+          const res = await fetch(apiUrl('/api/products/upload-image'), {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${authToken}`
+            },
+            body: JSON.stringify({
+              image: compressedDataUrl,
+              filename: file.name
+            })
+          });
+          const data = await res.json();
+          if (res.ok && data.success && data.url) {
+            setFormData((prev) => ({ ...prev, image: data.url }));
+          }
+        } catch (netErr) {
+          console.warn('Backend image save notice, using optimized client data URL:', netErr.message);
+        }
+      }
+    } catch (err) {
+      setUploadError(err.message || 'Failed to process image file.');
+    } finally {
+      setIsUploadingImage(false);
+    }
+  };
+
   const fetchCategoriesList = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -82,6 +171,9 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
   // Open Add Modal
   const handleOpenAdd = () => {
     setModalMode('add');
+    setImageInputMode('upload');
+    setUploadError(null);
+    setUploadedFileName('');
     setFormData({
       id: '',
       name: '',
@@ -97,12 +189,25 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
   // Open Edit Modal
   const handleOpenEdit = (cat) => {
     setModalMode('edit');
+    setUploadError(null);
+    setUploadedFileName('');
+
+    const img = cat.image || '/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg';
+    if (img.startsWith('data:') || img.includes('/upload-')) {
+      setImageInputMode('upload');
+      setUploadedFileName(img.startsWith('data:') ? 'Custom Uploaded Image' : img.split('/').pop());
+    } else if (PRESET_CATEGORY_IMAGES.some((p) => p.url === img)) {
+      setImageInputMode('presets');
+    } else {
+      setImageInputMode('url');
+    }
+
     setFormData({
       id: cat.id,
       name: cat.name,
       tamilName: cat.tamilName || '',
       icon: cat.icon || '✨',
-      image: cat.image || '/images/cat-snacks.jpg',
+      image: img,
       description: cat.description || ''
     });
     setModalErrors({});
@@ -439,39 +544,199 @@ export default function AdminCategoriesTab({ authToken, onCategoryChange }) {
                   </div>
                 </div>
 
-                {/* Category Image */}
+                {/* Category Image Section: Device Upload / Custom URL / Catalog Presets */}
                 <div className="form-group">
-                  <label className="form-label">Category Image Preset or URL</label>
-                  <div className="preset-images-strip">
-                    {PRESET_CATEGORY_IMAGES.map((preset) => (
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                    <label className="form-label" style={{ margin: 0 }}>
+                      Category Image
+                    </label>
+                    <div className="image-mode-tabs">
                       <button
-                        key={preset.url}
                         type="button"
-                        className={`preset-thumb-btn ${formData.image === preset.url ? 'active' : ''}`}
-                        onClick={() => setFormData({ ...formData, image: preset.url })}
+                        className={`image-mode-tab-btn ${imageInputMode === 'upload' ? 'active' : ''}`}
+                        onClick={() => setImageInputMode('upload')}
                       >
-                        <img src={preset.url} alt={preset.label} />
-                        <span>{preset.label}</span>
+                        <UploadCloud size={14} />
+                        <span>Upload from Device</span>
                       </button>
-                    ))}
+                      <button
+                        type="button"
+                        className={`image-mode-tab-btn ${imageInputMode === 'url' ? 'active' : ''}`}
+                        onClick={() => setImageInputMode('url')}
+                      >
+                        <LinkIcon size={14} />
+                        <span>Image URL</span>
+                      </button>
+                      <button
+                        type="button"
+                        className={`image-mode-tab-btn ${imageInputMode === 'presets' ? 'active' : ''}`}
+                        onClick={() => setImageInputMode('presets')}
+                      >
+                        <ImageIcon size={14} />
+                        <span>Presets ({PRESET_CATEGORY_IMAGES.length})</span>
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Custom URL Input & Live Preview */}
-                  <div className="image-url-preview-row">
-                    <input
-                      type="text"
-                      className="form-input"
-                      value={formData.image}
-                      onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                      placeholder="/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg or https://..."
-                    />
-                    {formData.image && (
-                      <div className="live-preview-box">
-                        <img src={formData.image} alt="Live Preview" onError={(e) => { e.target.src = '/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg'; }} />
-                        <span>Preview</span>
+                  {uploadError && (
+                    <div className="form-error-banner mb-2" style={{ padding: '8px 12px', fontSize: '0.85rem' }}>
+                      <AlertCircle size={15} />
+                      <span>{uploadError}</span>
+                    </div>
+                  )}
+
+                  {/* 1. UPLOAD FROM DEVICE */}
+                  {imageInputMode === 'upload' && (
+                    <div className="image-upload-wrapper">
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{ display: 'none' }}
+                        accept="image/png, image/jpeg, image/jpg, image/webp, image/avif"
+                        onChange={(e) => {
+                          if (e.target.files && e.target.files[0]) {
+                            handleImageFileSelect(e.target.files[0]);
+                          }
+                        }}
+                      />
+
+                      {formData.image ? (
+                        <div className="uploaded-image-card">
+                          <div className="uploaded-thumb-frame">
+                            <img
+                              src={formData.image}
+                              alt="Uploaded Preview"
+                              onError={(e) => { e.target.src = '/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg'; }}
+                            />
+                          </div>
+                          <div className="uploaded-info-col">
+                            <span className="uploaded-file-name">
+                              {uploadedFileName || 'Selected Category Banner'}
+                            </span>
+                            <span className="uploaded-status-badge">
+                              <CheckCircle2 size={13} color="#15803d" />
+                              {isUploadingImage ? 'Optimizing & uploading...' : 'Image ready for category'}
+                            </span>
+                            <div className="uploaded-actions-row">
+                              <button
+                                type="button"
+                                className="btn-change-image"
+                                onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                                disabled={isUploadingImage}
+                              >
+                                <UploadCloud size={13} style={{ marginRight: 4 }} />
+                                Change Image
+                              </button>
+                              <button
+                                type="button"
+                                className="btn-remove-image"
+                                onClick={() => {
+                                  setFormData({ ...formData, image: '' });
+                                  setUploadedFileName('');
+                                }}
+                                disabled={isUploadingImage}
+                              >
+                                <X size={13} style={{ marginRight: 2 }} />
+                                Remove
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div
+                          className={`image-dropzone ${isDraggingImage ? 'dragging' : ''}`}
+                          onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                          onDragOver={(e) => {
+                            e.preventDefault();
+                            setIsDraggingImage(true);
+                          }}
+                          onDragLeave={() => setIsDraggingImage(false)}
+                          onDrop={(e) => {
+                            e.preventDefault();
+                            setIsDraggingImage(false);
+                            if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                              handleImageFileSelect(e.dataTransfer.files[0]);
+                            }
+                          }}
+                        >
+                          <div className="image-dropzone-icon-box">
+                            {isUploadingImage ? (
+                              <RefreshCw size={22} className="animate-spin" />
+                            ) : (
+                              <UploadCloud size={24} />
+                            )}
+                          </div>
+                          <h4 className="image-dropzone-title">
+                            {isUploadingImage ? 'Uploading & Optimizing...' : 'Click to Browse or Drag & Drop Image'}
+                          </h4>
+                          <p className="image-dropzone-sub">
+                            Supports JPG, PNG, WEBP, AVIF (Auto-optimized for storefront speed)
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 2. CUSTOM URL */}
+                  {imageInputMode === 'url' && (
+                    <div className="image-url-preview-row">
+                      <input
+                        type="text"
+                        className="form-input"
+                        value={formData.image}
+                        onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                        placeholder="/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg or https://..."
+                      />
+                      {formData.image && (
+                        <div className="live-preview-box">
+                          <img
+                            src={formData.image}
+                            alt="Live Preview"
+                            onError={(e) => { e.target.src = '/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg'; }}
+                          />
+                          <span>Preview</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* 3. CATALOG PRESETS */}
+                  {imageInputMode === 'presets' && (
+                    <div>
+                      <div className="preset-images-strip">
+                        {PRESET_CATEGORY_IMAGES.map((preset) => (
+                          <button
+                            key={preset.url}
+                            type="button"
+                            className={`preset-thumb-btn ${formData.image === preset.url ? 'active' : ''}`}
+                            onClick={() => setFormData({ ...formData, image: preset.url })}
+                          >
+                            <img src={preset.url} alt={preset.label} />
+                            <span>{preset.label}</span>
+                          </button>
+                        ))}
                       </div>
-                    )}
-                  </div>
+                      {formData.image && (
+                        <div className="image-url-preview-row mt-2">
+                          <input
+                            type="text"
+                            className="form-input"
+                            value={formData.image}
+                            onChange={(e) => setFormData({ ...formData, image: e.target.value })}
+                            placeholder="/images/products/..."
+                          />
+                          <div className="live-preview-box">
+                            <img
+                              src={formData.image}
+                              alt="Live Preview"
+                              onError={(e) => { e.target.src = '/images/products/chola-milagu-dosa-mix-sorghum-pepper-dosa-mix.jpg'; }}
+                            />
+                            <span>Preview</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {/* Description */}
