@@ -4,12 +4,22 @@ import {
   Phone, ArrowLeft, RefreshCw, ShieldCheck, ChevronRight,
   ChevronLeft, MapPin, Calendar, X, Eye, Lock, LogOut,
   Copy, Check, ExternalLink, IndianRupee, Sparkles, Filter,
-  User, Mail, SlidersHorizontal, FolderTree
+  User, Mail, SlidersHorizontal, FolderTree, Printer
 } from 'lucide-react';
 import { ALL_PRODUCTS } from '../data/productsCatalog';
 import AdminInventoryTab from './AdminInventoryTab';
 import AdminCategoriesTab from './AdminCategoriesTab';
+import InvoiceModal from './InvoiceModal';
+import { openWhatsAppBill } from '../utils/billUtils';
 import { apiUrl } from '../config/api';
+
+function WhatsAppIcon({ size = 15, color = '#25d366' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden="true" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+      <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3 .78.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.25-.12-1.46-.72-1.69-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.78.96-.14.17-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.22-1.46-1.37-1.7-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.41-.55-.42h-.47c-.16 0-.43.06-.65.31-.22.25-.86.84-.86 2.05s.88 2.38 1 2.54c.12.17 1.73 2.64 4.2 3.7.59.25 1.05.4 1.4.52.59.19 1.13.16 1.55.1.47-.07 1.46-.6 1.66-1.17.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z" />
+    </svg>
+  );
+}
 
 const STATUS_OPTIONS = [
   'Order Placed',
@@ -51,6 +61,7 @@ export default function AdminOrdersPage({
 
   // Selected order for detailed modal
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [invoiceOrder, setInvoiceOrder] = useState(null);
   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   const [newStatusSelection, setNewStatusSelection] = useState('');
   const [actionFeedback, setActionFeedback] = useState(null);
@@ -911,20 +922,42 @@ export default function AdminOrdersPage({
                           </select>
                         </td>
 
-                        {/* Action: Open Modal */}
+                        {/* Action: Open Modal, Print & WhatsApp */}
                         <td className="cell-actions text-right">
-                          <button
-                            type="button"
-                            className="btn-view-order"
-                            onClick={() => {
-                              setSelectedOrder(order);
-                              setNewStatusSelection(order.orderStatus || 'Placed');
-                            }}
-                            title="Inspect order details and shipping address"
-                          >
-                            <Eye size={15} />
-                            <span>View Details</span>
-                          </button>
+                          <div className="table-actions-group">
+                            <button
+                              type="button"
+                              className="btn-view-order"
+                              onClick={() => {
+                                setSelectedOrder(order);
+                                setNewStatusSelection(order.orderStatus || 'Placed');
+                              }}
+                              title="Inspect order details and shipping address"
+                            >
+                              <Eye size={15} />
+                              <span>View Details</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn-print-order-table"
+                              onClick={() => setInvoiceOrder(order)}
+                              title="Print bill / invoice for packing and dispatch"
+                            >
+                              <Printer size={15} />
+                              <span>Print Bill</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn-wa-order-table"
+                              onClick={() => openWhatsAppBill(order, order.customer?.mobile)}
+                              title="Send order bill directly to customer's WhatsApp"
+                              aria-label="WhatsApp Bill"
+                            >
+                              <WhatsAppIcon size={15} color="#15803d" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -1251,6 +1284,28 @@ export default function AdminOrdersPage({
 
             {/* Modal Footer */}
             <div className="admin-modal-footer">
+              <div className="admin-modal-footer-left">
+                <button
+                  type="button"
+                  className="btn-primary btn-print-modal-trigger"
+                  onClick={() => setInvoiceOrder(selectedOrder)}
+                  title="Open official printable tax invoice & receipt"
+                >
+                  <Printer size={16} />
+                  <span>Print Invoice / Bill</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-whatsapp-action"
+                  onClick={() => openWhatsAppBill(selectedOrder, selectedOrder.customer?.mobile)}
+                  title="Send bill to customer via WhatsApp"
+                >
+                  <WhatsAppIcon size={16} color="#ffffff" />
+                  <span>WhatsApp Bill to Customer</span>
+                </button>
+              </div>
+
               <button
                 type="button"
                 className="btn-secondary"
@@ -1261,6 +1316,16 @@ export default function AdminOrdersPage({
             </div>
           </div>
         </div>
+      )}
+
+      {/* Invoice Modal for Printing & WhatsApp Sharing */}
+      {invoiceOrder && (
+        <InvoiceModal
+          order={invoiceOrder}
+          isOpen={!!invoiceOrder}
+          onClose={() => setInvoiceOrder(null)}
+          isAdmin={true}
+        />
       )}
     </div>
   );

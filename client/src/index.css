@@ -10798,3 +10798,760 @@ h1, h2, h3, h4 {
   color: var(--color-text-subtle);
   flex-shrink: 0;
 }
+
+/* ==========================================================================
+   Invoice Modal & Print Styles (Tax Invoice / Cash Bill & WhatsApp Sharing)
+   ========================================================================== */
+
+.invoice-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(15, 41, 30, 0.75);
+  backdrop-filter: blur(4px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.invoice-modal-container {
+  background-color: #ffffff;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 860px;
+  max-height: 94vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  animation: modalFadeIn 0.25s ease-out;
+}
+
+.invoice-modal-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #0d281e 0%, #1b4332 100%);
+  color: #ffffff;
+  gap: 1rem;
+  flex-wrap: wrap;
+  border-bottom: 2px solid #2d6a4f;
+}
+
+.invoice-header-title-box {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.invoice-icon-accent {
+  color: #10b981;
+}
+
+.invoice-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.invoice-subtitle {
+  font-size: 0.75rem;
+  color: #a7f3d0;
+  display: block;
+}
+
+.invoice-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.btn-invoice-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.btn-invoice-action.btn-print-now {
+  background-color: #ffffff;
+  color: #1b4332;
+}
+
+.btn-invoice-action.btn-print-now:hover {
+  background-color: #f1f5f9;
+}
+
+.btn-invoice-action.btn-wa-send {
+  background-color: #25d366;
+  color: #ffffff;
+}
+
+.btn-invoice-action.btn-wa-send:hover {
+  background-color: #20ba59;
+}
+
+.btn-invoice-action.btn-copy-bill {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-invoice-action.btn-copy-bill:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-invoice-close {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  padding: 0.4rem;
+  cursor: pointer;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-invoice-close:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Printable Paper Layout */
+.invoice-paper-wrapper {
+  padding: 2.25rem 2.5rem;
+  background-color: #ffffff;
+  color: #0f172a;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  overflow-y: auto;
+  line-height: 1.45;
+}
+
+.inv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.inv-brand-left {
+  flex: 1;
+  min-width: 280px;
+}
+
+.inv-logo-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inv-logo-symbol {
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.inv-store-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1b4332;
+  letter-spacing: -0.01em;
+}
+
+.inv-tamil-name {
+  font-size: 0.88rem;
+  color: #d97706;
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+
+.inv-tagline {
+  font-size: 0.8rem;
+  color: #475569;
+  margin: 0.25rem 0 0.5rem 0;
+}
+
+.inv-address-line,
+.inv-contact-line {
+  font-size: 0.78rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.inv-meta-right {
+  text-align: right;
+  min-width: 240px;
+}
+
+.inv-badge-bill {
+  display: inline-block;
+  background-color: #1b4332;
+  color: #ffffff;
+  padding: 0.35rem 0.85rem;
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.75rem;
+}
+
+.inv-meta-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+}
+
+.inv-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.inv-meta-label {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.inv-meta-val {
+  color: #0f172a;
+}
+
+.inv-order-id {
+  color: #1b4332;
+  font-weight: 700;
+}
+
+.inv-status-chip {
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.inv-status-chip.paid {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.inv-status-chip.pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.inv-order-status-tag {
+  background-color: #e0f2fe;
+  color: #0369a1;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.inv-divider-thick {
+  height: 2px;
+  background-color: #1b4332;
+  margin: 1.25rem 0;
+}
+
+/* Customer & Shipping */
+.inv-customer-box {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1rem 1.25rem;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 1.25rem;
+}
+
+.inv-cust-col {
+  flex: 1;
+}
+
+.inv-section-title {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #64748b;
+  display: block;
+  margin-bottom: 0.35rem;
+}
+
+.inv-cust-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.inv-cust-detail,
+.inv-cust-address {
+  font-size: 0.82rem;
+  color: #334155;
+  margin-bottom: 0.2rem;
+}
+
+.inv-notes-col {
+  flex: 1;
+  border-left: 1px dashed #cbd5e1;
+  padding-left: 1.25rem;
+}
+
+.inv-notes-text {
+  font-size: 0.82rem;
+  font-style: italic;
+  color: #475569;
+}
+
+/* Invoice Table */
+.inv-table-wrap {
+  margin-bottom: 1.25rem;
+}
+
+.inv-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.inv-table th {
+  background-color: #f1f5f9;
+  color: #1b4332;
+  padding: 0.65rem 0.75rem;
+  text-align: left;
+  font-weight: 700;
+  border-top: 1.5px solid #cbd5e1;
+  border-bottom: 1.5px solid #cbd5e1;
+}
+
+.inv-table td {
+  padding: 0.7rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+
+.inv-item-name {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.inv-item-tamil {
+  font-size: 0.75rem;
+  color: #d97706;
+}
+
+.th-sno, .td-sno { width: 45px; text-align: center; }
+.th-qty, .td-qty { width: 50px; text-align: center; }
+.th-weight, .td-weight { width: 100px; }
+.th-rate, .td-rate { width: 90px; }
+.th-amount, .td-amount { width: 110px; }
+
+/* Bottom Section */
+.inv-bottom-section {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+.inv-bottom-left {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.inv-amount-words {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.words-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.words-text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #1b4332;
+  margin: 0.2rem 0 0 0;
+}
+
+.inv-declaration-box {
+  font-size: 0.72rem;
+  color: #64748b;
+  border-top: 1px dashed #cbd5e1;
+  padding-top: 0.6rem;
+}
+
+.inv-bottom-right {
+  width: 320px;
+}
+
+.inv-calc-table {
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.inv-calc-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.55rem 0.85rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.inv-free-tag {
+  color: #15803d;
+  font-weight: 700;
+}
+
+.inv-calc-row.inv-grand-total {
+  background-color: #f0fdf4;
+  border-top: 1.5px solid #16a34a;
+  border-bottom: none;
+  font-size: 0.95rem;
+}
+
+.inv-total-price {
+  font-size: 1.15rem;
+  color: #166534;
+}
+
+.inv-sign-box {
+  text-align: right;
+  padding-top: 2.5rem;
+}
+
+.inv-sign-line {
+  display: inline-block;
+  width: 170px;
+  border-bottom: 1.5px solid #0f172a;
+  margin-bottom: 0.35rem;
+}
+
+.inv-sign-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.inv-sign-brand {
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.inv-footer-note {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.inv-website-hint {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  margin-top: 0.2rem;
+}
+
+/* Action buttons in Table & Admin */
+.table-actions-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+.btn-print-order-table {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.65rem;
+  border-radius: var(--radius-sm);
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-print-order-table:hover {
+  background-color: #e2e8f0;
+  color: #0f172a;
+}
+
+.btn-wa-order-table {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 29px;
+  height: 29px;
+  border-radius: var(--radius-sm);
+  background-color: #dcfce7;
+  border: 1px solid #86efac;
+  color: #15803d;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-wa-order-table:hover {
+  background-color: #22c55e;
+  color: #ffffff;
+}
+
+.admin-modal-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.btn-print-modal-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.btn-whatsapp-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background-color: #25d366;
+  color: #ffffff;
+  border: 1px solid #22c55e;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-whatsapp-action:hover {
+  background-color: #1ebd5a;
+}
+
+/* User Side Confirmation Page WhatsApp Card */
+.conf-whatsapp-banner {
+  display: flex;
+  gap: 1.25rem;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1.5px solid #86efac;
+  border-radius: 14px;
+  padding: 1.25rem 1.5rem;
+  margin: 1.5rem 0 2rem 0;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.08);
+}
+
+.conf-wa-icon-col {
+  flex-shrink: 0;
+  background: #ffffff;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(37, 211, 102, 0.2);
+}
+
+.conf-wa-text-col {
+  flex: 1;
+}
+
+.conf-wa-heading {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #14532d;
+  margin: 0 0 0.35rem 0;
+}
+
+.conf-wa-desc {
+  font-size: 0.85rem;
+  color: #166534;
+  margin: 0 0 0.85rem 0;
+}
+
+.conf-wa-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.btn-wa-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.825rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-wa-pill.primary {
+  background-color: #25d366;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3);
+}
+
+.btn-wa-pill.primary:hover {
+  background-color: #20ba59;
+  transform: translateY(-1px);
+}
+
+.btn-wa-pill.secondary {
+  background-color: #ffffff;
+  color: #1b4332;
+  border: 1px solid #86efac;
+}
+
+.btn-wa-pill.secondary:hover {
+  background-color: #f0fdf4;
+}
+
+.btn-wa-pill.outline {
+  background-color: transparent;
+  color: #166534;
+  border: 1px solid #16a34a;
+}
+
+.btn-wa-pill.outline:hover {
+  background-color: rgba(22, 163, 74, 0.08);
+}
+
+.btn-whatsapp-conf {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: #25d366;
+  color: #ffffff;
+  border: none;
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-whatsapp-conf:hover {
+  background-color: #20ba59;
+}
+
+.btn-outline-wa {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background-color: #ffffff;
+  border: 1.5px solid #22c55e;
+  color: #15803d;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-md);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-outline-wa:hover {
+  background-color: #dcfce7;
+}
+
+/* ==========================================================================
+   Comprehensive @media print rules
+   ========================================================================== */
+@media print {
+  @page {
+    margin: 1cm;
+    size: auto;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Hide regular web shell */
+  .no-print,
+  .site-header,
+  .site-footer,
+  .announcement-bar,
+  .social-rail,
+  .admin-header-banner,
+  .admin-container,
+  .admin-modal-backdrop:not(.invoice-modal-backdrop),
+  .conf-toolbar,
+  .conf-whatsapp-banner,
+  .invoice-modal-header-actions {
+    display: none !important;
+  }
+
+  .invoice-modal-backdrop {
+    position: static !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  .invoice-modal-container {
+    max-width: 100% !important;
+    max-height: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    border: none !important;
+  }
+
+  .invoice-paper-wrapper {
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .inv-customer-box,
+  .inv-table th,
+  .inv-amount-words,
+  .inv-calc-table,
+  .inv-badge-bill {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

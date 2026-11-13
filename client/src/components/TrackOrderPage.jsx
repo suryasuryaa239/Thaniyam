@@ -6,7 +6,16 @@ import {
   XCircle, Sparkles
 } from 'lucide-react';
 import { ALL_PRODUCTS } from '../data/productsCatalog';
+import { openWhatsAppBill } from '../utils/billUtils';
 import { apiUrl } from '../config/api';
+
+function WhatsAppIcon({ size = 15, color = '#25d366' }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} aria-hidden="true" style={{ display: 'inline-block', verticalAlign: 'middle' }}>
+      <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.15l-.3-.18-3 .78.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.25-.12-1.46-.72-1.69-.8-.22-.08-.39-.12-.55.12-.16.25-.63.8-.78.96-.14.17-.29.18-.53.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.22-1.46-1.37-1.7-.14-.25-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.15.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.55-1.33-.76-1.82-.2-.48-.4-.41-.55-.42h-.47c-.16 0-.43.06-.65.31-.22.25-.86.84-.86 2.05s.88 2.38 1 2.54c.12.17 1.73 2.64 4.2 3.7.59.25 1.05.4 1.4.52.59.19 1.13.16 1.55.1.47-.07 1.46-.6 1.66-1.17.2-.58.2-1.07.14-1.18-.06-.1-.22-.16-.47-.28Z" />
+    </svg>
+  );
+}
 
 // Order Status definitions and helper for timeline progression
 const TIMELINE_STEPS = [
@@ -448,6 +457,36 @@ export default function TrackOrderPage({
                 </div>
 
                 <div className="summary-actions no-print">
+                  <button
+                    type="button"
+                    className="btn-outline-wa"
+                    onClick={() => {
+                      const orderObj = {
+                        orderId: orderData.orderId,
+                        createdAt: orderData.createdAt,
+                        orderStatus: orderData.orderStatus,
+                        customer: {
+                          fullName: orderData.recipientName,
+                          mobile: orderData.recipientMobile,
+                          addressLine: orderData.deliveryLocation?.addressLine,
+                          city: orderData.deliveryLocation?.city,
+                          district: orderData.deliveryLocation?.district,
+                          state: orderData.deliveryLocation?.state,
+                          pincode: orderData.deliveryLocation?.pincode,
+                          deliveryNotes: orderData.deliveryNotes
+                        },
+                        items: orderData.items,
+                        pricing: orderData.pricing,
+                        payment: orderData.payment
+                      };
+                      openWhatsAppBill(orderObj, orderData.recipientMobile);
+                    }}
+                    title="Send bill receipt to WhatsApp"
+                  >
+                    <WhatsAppIcon size={15} color="#15803d" />
+                    <span>WhatsApp Bill</span>
+                  </button>
+
                   <button
                     type="button"
                     className="btn-outline-print"
