@@ -229,18 +229,20 @@ function AppContent() {
   return (
     <div className="thaniyam-app">
       {/* 1. Top Announcement Bar */}
-      <AnnouncementBar />
+      {currentView !== 'admin' && <AnnouncementBar />}
 
       {/* 2. Navigation Header */}
-      <Navbar
-        currentView={currentView}
-        cartCount={totalItems}
-        onCartClick={() => navigateTo('cart')}
-        searchQuery={searchQuery}
-        onSearchChange={setSearchQuery}
-        onNavigate={(view, sectionId) => navigateTo(view, sectionId)}
-        onNavigateCategory={(catId) => navigateTo('shop', null, catId)}
-      />
+      {currentView !== 'admin' && (
+        <Navbar
+          currentView={currentView}
+          cartCount={totalItems}
+          onCartClick={() => navigateTo('cart')}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onNavigate={(view, sectionId) => navigateTo(view, sectionId)}
+          onNavigateCategory={(catId) => navigateTo('shop', null, catId)}
+        />
+      )}
 
       {/* 3. Main Content Router */}
       <main>
@@ -345,19 +347,21 @@ function AppContent() {
       </main>
 
       {/* 4. Footer */}
-      <Footer
-        onNavigate={(target) => {
-          if (target === 'shop' || target === 'categories') {
-            navigateTo('shop');
-          } else if (target === 'track-order') {
-            navigateTo('track-order');
-          } else if (target === 'admin') {
-            navigateTo('admin');
-          } else {
-            navigateTo('home', target);
-          }
-        }}
-      />
+      {currentView !== 'admin' && (
+        <Footer
+          onNavigate={(target) => {
+            if (target === 'shop' || target === 'categories') {
+              navigateTo('shop');
+            } else if (target === 'track-order') {
+              navigateTo('track-order');
+            } else if (target === 'admin') {
+              navigateTo('admin');
+            } else {
+              navigateTo('home', target);
+            }
+          }}
+        />
+      )}
 
       {/* 5. Product Quick View Modal */}
       {quickViewProduct && (
@@ -374,7 +378,7 @@ function AppContent() {
       )}
 
       {/* 7. Floating social bar + chat (hidden until links are set in config/social.js) */}
-      <SocialRail />
+      {currentView !== 'admin' && <SocialRail />}
     </div>
   );
 }

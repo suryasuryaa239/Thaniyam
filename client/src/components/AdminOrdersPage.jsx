@@ -488,6 +488,17 @@ export default function AdminOrdersPage({
             </div>
 
             <div className="admin-header-actions">
+              <button
+                type="button"
+                className="btn-admin-action"
+                onClick={onNavigateHome}
+                title="View live customer storefront"
+                id="btn-admin-view-store"
+              >
+                <ExternalLink size={15} />
+                <span>Storefront</span>
+              </button>
+
               {activeAdminTab === 'orders' && (
                 <button
                   type="button"
