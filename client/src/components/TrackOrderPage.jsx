@@ -253,7 +253,7 @@ export default function TrackOrderPage({
             </div>
             <h1 className="track-main-title">Track Your Order</h1>
             <p className="track-subtitle">
-              Verify your Order Reference ID and registered mobile number to follow 
+              Enter your Order ID and the mobile number given during checkout to follow 
               the live progress of your handcrafted traditional snacks and sweets.
             </p>
           </div>
@@ -311,7 +311,7 @@ export default function TrackOrderPage({
               {/* Mobile Number Input */}
               <div className={`form-group ${formErrors.mobile ? 'has-error' : ''}`}>
                 <label htmlFor="track-mobile" className="form-label">
-                  Registered Mobile Number <span className="req">*</span>
+                  Mobile Number (ஆர்டர் செய்த மொபைல் எண்) <span className="req">*</span>
                 </label>
                 <div className="input-with-icon">
                   <span className="input-icon-left">+91</span>

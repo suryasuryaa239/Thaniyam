@@ -146,3 +146,4 @@ export function openWhatsAppBill(order, targetPhone = '') {
 
   window.open(url, '_blank', 'noopener,noreferrer');
 }
+

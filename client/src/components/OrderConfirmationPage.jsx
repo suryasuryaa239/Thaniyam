@@ -242,7 +242,7 @@ export default function OrderConfirmationPage({
                 title="Send bill to your own WhatsApp number"
               >
                 <WhatsAppIcon size={16} color="#ffffff" />
-                <span>Send to My WhatsApp ({customer.mobile || 'Registered'})</span>
+                <span>Send to My WhatsApp{customer.mobile ? ` (${customer.mobile})` : ''}</span>
               </button>
 
               <button

@@ -298,3 +298,4 @@ export default function InvoiceModal({ order, isOpen, onClose, isAdmin = false }
     </div>
   );
 }
+
