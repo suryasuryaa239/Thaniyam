@@ -128,11 +128,11 @@ export default function InvoiceModal({ order, isOpen, onClose, isAdmin = false }
           {/* Top Header Banner */}
           <div className="inv-header">
             <div className="inv-brand-left">
-              <div className="inv-logo-title">
-                <span className="inv-logo-symbol">🌾</span>
-                <span className="inv-store-name">{STORE_INFO.name}</span>
-              </div>
-              <div className="inv-tamil-name">{STORE_INFO.tamilName}</div>
+              <img
+                src="/images/thaniyam-logo-cropped.png"
+                alt="Thaniyam Treats"
+                className="inv-logo-img"
+              />
               <p className="inv-tagline">{STORE_INFO.tagline}</p>
               <div className="inv-address-line">
                 <MapPin size={12} /> {STORE_INFO.address}

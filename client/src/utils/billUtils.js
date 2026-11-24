@@ -3,9 +3,9 @@
  */
 
 export const STORE_INFO = {
-  name: 'Thaniyam Heritage Foods',
-  tamilName: 'தானியம் பாரம்பரிய உணவுப் பொருட்கள்',
-  tagline: 'Authentic Heritage Foods & Wood-Pressed Oils',
+  name: 'Thaniyam Treats',
+  tamilName: 'சிறுதானிய ரெடிமிக்ஸ்',
+  tagline: 'Authentic Traditional South Indian Foods & Millets',
   address: '42, Heritage Bazaar, Coimbatore, Tamil Nadu - 641001, India',
   phone: '+91 94420 00000',
   storeWhatsApp: '919442000000',

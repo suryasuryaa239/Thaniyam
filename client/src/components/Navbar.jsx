@@ -133,12 +133,13 @@ export default function Navbar({
           href="#home"
           className="brand-logo"
           onClick={(e) => { e.preventDefault(); handleNavClick('home', 'home'); }}
+          aria-label="Thaniyam Treats"
         >
-          <div className="logo-symbol"><span>🌿</span></div>
-          <div className="logo-text-group">
-            <span className="logo-title">Thaniyam</span>
-            <span className="logo-subtitle">Heritage Foods</span>
-          </div>
+          <img
+            src="/images/thaniyam-logo-cropped.png"
+            alt="Thaniyam Treats — சிறுதானிய ரெடிமிக்ஸ்"
+            className="brand-logo-img"
+          />
         </a>
 
         <nav className="desktop-nav" aria-label="Main Navigation">

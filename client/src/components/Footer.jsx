@@ -14,8 +14,11 @@ export default function Footer({ onNavigate }) {
           {/* Brand Column */}
           <div className="footer-col brand-col">
             <div className="footer-brand">
-              <span className="footer-logo-icon">🌿</span>
-              <span className="footer-brand-name">Thaniyam Treats</span>
+              <img
+                src="/images/thaniyam-logo-cropped.png"
+                alt="Thaniyam Treats — சிறுதானிய ரெடிமிக்ஸ்"
+                className="footer-brand-logo-img"
+              />
             </div>
             <p className="footer-brand-tagline">
               Dedicated to delivering the pure authenticity of South Indian traditional snacks, 

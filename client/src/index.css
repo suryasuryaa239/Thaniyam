@@ -245,6 +245,41 @@ h1, h2, h3, h4 {
   text-decoration: none;
 }
 
+.brand-logo-img {
+  height: 48px;
+  width: auto;
+  max-width: 250px;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.brand-logo:hover .brand-logo-img {
+  transform: scale(1.02);
+}
+
+.footer-brand-logo-img {
+  height: 52px;
+  width: auto;
+  max-width: 280px;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 0.75rem;
+  background-color: #ffffff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.inv-logo-img {
+  height: 46px;
+  width: auto;
+  max-width: 240px;
+  object-fit: contain;
+  display: block;
+  margin-bottom: 0.6rem;
+}
+
 .logo-symbol {
   width: 42px;
   height: 42px;
@@ -8789,6 +8824,11 @@ h1, h2, h3, h4 {
   .navbar-container {
     padding: 8px 14px;
     gap: 10px;
+  }
+
+  .brand-logo-img {
+    height: 38px;
+    max-width: 190px;
   }
 
   .logo-symbol {
