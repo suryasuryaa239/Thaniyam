@@ -10,6 +10,14 @@ import {
 
 const memoryProducts = new Map();
 
+export const setMemoryProduct = (id, product) => {
+  if (id && product) {
+    memoryProducts.set(id, product);
+  }
+};
+
+export const getMemoryProduct = (id) => memoryProducts.get(id);
+
 export const syncProductsFromMySQL = async () => {
   if (!isMySQLConnected()) return;
   try {

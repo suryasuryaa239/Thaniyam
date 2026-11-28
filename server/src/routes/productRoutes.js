@@ -15,8 +15,14 @@ import {
   updateProductInStore,
   adjustProductStockInStore,
   setProductStockInStore,
-  deactivateOrDeleteProductInStore
+  deactivateOrDeleteProductInStore,
+  setMemoryProduct
 } from '../data/mockProductStore.js';
+import {
+  isMySQLConnected,
+  mysqlGetAllProducts,
+  mysqlGetProductById
+} from '../config/mysqlStore.js';
 import { getAllOrdersFromFallback } from '../data/mockOrderStore.js';
 import { requireAdminAuth } from './orderRoutes.js';
 
@@ -50,11 +56,61 @@ const checkProductHasOrders = async (productId) => {
 // GET /api/products — Retrieve active products for customer storefront
 router.get('/', async (req, res) => {
   try {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     const { category, search, stockStatus } = req.query;
     let products = [];
     const isDbConnected = mongoose.connection.readyState === 1;
 
-    if (isDbConnected) {
+    // 1. Prioritize TiDB MySQL if connected
+    if (isMySQLConnected()) {
+      try {
+        const mysqlList = await mysqlGetAllProducts(false);
+        if (mysqlList && mysqlList.length > 0) {
+          for (const item of mysqlList) {
+            setMemoryProduct(item.id, item);
+          }
+          products = mysqlList;
+          if (category && category !== 'all' && category !== 'ALL') {
+            products = products.filter((p) => (p.category || '').toLowerCase() === category.toLowerCase());
+          }
+          if (search && search.trim()) {
+            const q = search.trim().toLowerCase();
+            products = products.filter((p) =>
+              (p.name || '').toLowerCase().includes(q) ||
+              (p.tamilName || '').toLowerCase().includes(q) ||
+              (p.categoryName || '').toLowerCase().includes(q) ||
+              (p.description || '').toLowerCase().includes(q) ||
+              (p.id || '').toLowerCase().includes(q)
+            );
+          }
+          if (stockStatus === 'in-stock') {
+            products = products.filter((p) => p.stock > 5);
+          } else if (stockStatus === 'low-stock') {
+            products = products.filter((p) => p.stock > 0 && p.stock <= 5);
+          } else if (stockStatus === 'out-of-stock') {
+            products = products.filter((p) => p.stock <= 0);
+          }
+        } else {
+          products = getAllProductsFromStore({
+            includeInactive: false,
+            category,
+            search,
+            stockStatus
+          });
+        }
+      } catch (mysqlErr) {
+        console.warn('⚠️ [Products API] MySQL query warning, using memory store:', mysqlErr.message);
+        products = getAllProductsFromStore({
+          includeInactive: false,
+          category,
+          search,
+          stockStatus
+        });
+      }
+    } else if (isDbConnected) {
       try {
         const query = { isActive: true };
         if (category && category !== 'all' && category !== 'ALL') {
@@ -112,11 +168,26 @@ router.get('/', async (req, res) => {
 // GET /api/products/:id — Single product details
 router.get('/:id', async (req, res) => {
   try {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     const { id } = req.params;
     let product = null;
-    const isDbConnected = mongoose.connection.readyState === 1;
 
-    if (isDbConnected) {
+    if (isMySQLConnected()) {
+      try {
+        product = await mysqlGetProductById(id);
+        if (product) {
+          setMemoryProduct(product.id, product);
+        }
+      } catch (mysqlErr) {
+        console.warn('⚠️ [Products API] MySQL single product lookup warning:', mysqlErr.message);
+      }
+    }
+
+    const isDbConnected = mongoose.connection.readyState === 1;
+    if (!product && isDbConnected) {
       try {
         product = await Product.findOne({ id }).lean();
       } catch (dbErr) {
@@ -155,11 +226,29 @@ router.get('/:id', async (req, res) => {
 // GET /api/products/admin/all — Retrieve all products including inactive & inventory stats
 router.get('/admin/all', requireAdminAuth, async (req, res) => {
   try {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+
     const { category, search, stockStatus } = req.query;
     let products = [];
     const isDbConnected = mongoose.connection.readyState === 1;
 
-    if (isDbConnected) {
+    if (isMySQLConnected()) {
+      try {
+        const mysqlProds = await mysqlGetAllProducts(true);
+        if (mysqlProds && mysqlProds.length > 0) {
+          for (const p of mysqlProds) {
+            setMemoryProduct(p.id, p);
+          }
+          products = mysqlProds;
+        } else {
+          products = getAllProductsFromStore({ includeInactive: true });
+        }
+      } catch (err) {
+        products = getAllProductsFromStore({ includeInactive: true });
+      }
+    } else if (isDbConnected) {
       try {
         products = await Product.find().sort({ createdAt: 1 }).lean();
       } catch (dbErr) {

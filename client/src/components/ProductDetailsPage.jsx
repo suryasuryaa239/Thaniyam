@@ -3,7 +3,8 @@ import {
   ChevronRight, Star, ShoppingBag, ShieldCheck, Check, 
   Truck, Sparkles, ArrowLeft, AlertCircle, RefreshCw, Eye 
 } from 'lucide-react';
-import { getProductById, getRelatedProducts } from '../data/productsCatalog';
+import { getProductById as getStaticProductById, getRelatedProducts as getStaticRelatedProducts } from '../data/productsCatalog';
+import { useProducts } from '../context/ProductContext';
 
 export default function ProductDetailsPage({ 
   productId, 
@@ -13,6 +14,7 @@ export default function ProductDetailsPage({
   onViewProduct, 
   onAddToCart 
 }) {
+  const { getProductById, getRelatedProducts, products } = useProducts();
   const [product, setProduct] = useState(null);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [quantity, setQuantity] = useState(1);
@@ -20,23 +22,18 @@ export default function ProductDetailsPage({
   const [added, setAdded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  // Fetch product data (using mock module with simulated network resilience)
+  // Fetch product data from dynamic ProductContext with static fallback
   useEffect(() => {
     setLoading(true);
     setSelectedImageIndex(0);
     setQuantity(1);
     setImageError(false);
 
-    // Simulated async fetch to reflect realistic loading state
-    const timer = setTimeout(() => {
-      const found = getProductById(productId);
-      setProduct(found);
-      setLoading(false);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 120);
-
-    return () => clearTimeout(timer);
-  }, [productId]);
+    const found = (getProductById && getProductById(productId)) || getStaticProductById(productId);
+    setProduct(found);
+    setLoading(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [productId, products, getProductById]);
 
   const handleAdd = () => {
     if (!product) return;
@@ -110,7 +107,9 @@ export default function ProductDetailsPage({
     : [product.image];
 
   const currentMainImage = galleryImages[selectedImageIndex] || product.image;
-  const relatedProducts = getRelatedProducts(product.id, product.category, 4);
+  const relatedProducts = product
+    ? ((getRelatedProducts && getRelatedProducts(product.id, product.category, 4)) || getStaticRelatedProducts(product.id, product.category, 4))
+    : [];
 
   return (
     <div className="product-details-page">

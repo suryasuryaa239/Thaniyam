@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useProducts } from './ProductContext';
 
 const CartContext = createContext(null);
 
@@ -30,6 +31,41 @@ const loadInitialCart = () => {
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState(loadInitialCart);
   const [toast, setToast] = useState(null);
+  const { products } = useProducts();
+
+  // Sync cart items whenever live product catalog or prices are updated
+  useEffect(() => {
+    if (!products || products.length === 0) return;
+    setCartItems((prevItems) => {
+      let hasChanges = false;
+      const updated = prevItems.map((item) => {
+        const live = products.find((p) => p.id === item.id);
+        if (!live) return item;
+        const livePrice = Number(live.price);
+        const liveOrigPrice = live.originalPrice ? Number(live.originalPrice) : null;
+        const liveStock = typeof live.stock === 'number' ? live.stock : item.stock;
+        if (
+          item.price !== livePrice ||
+          item.originalPrice !== liveOrigPrice ||
+          item.name !== live.name ||
+          item.stock !== liveStock
+        ) {
+          hasChanges = true;
+          return {
+            ...item,
+            name: live.name,
+            tamilName: live.tamilName || item.tamilName,
+            price: livePrice,
+            originalPrice: liveOrigPrice,
+            stock: liveStock,
+            inStock: live.inStock !== false && liveStock > 0
+          };
+        }
+        return item;
+      });
+      return hasChanges ? updated : prevItems;
+    });
+  }, [products]);
 
   // Sync cart to localStorage whenever cartItems updates
   useEffect(() => {

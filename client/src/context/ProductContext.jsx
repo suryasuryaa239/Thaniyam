@@ -14,7 +14,13 @@ export function ProductProvider({ children }) {
     try {
       setIsLoading(true);
       setError(null);
-      const res = await fetch(apiUrl('/api/products'));
+      const res = await fetch(apiUrl(`/api/products?_t=${Date.now()}`), {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          Pragma: 'no-cache'
+        }
+      });
       if (!res.ok) {
         throw new Error(`Server returned ${res.status}`);
       }
@@ -32,7 +38,9 @@ export function ProductProvider({ children }) {
 
   const fetchCategories = useCallback(async () => {
     try {
-      const res = await fetch(apiUrl('/api/categories'));
+      const res = await fetch(apiUrl(`/api/categories?_t=${Date.now()}`), {
+        cache: 'no-store'
+      });
       if (res.ok) {
         const data = await res.json();
         if (data.success && Array.isArray(data.categories) && data.categories.length > 0) {
@@ -50,7 +58,8 @@ export function ProductProvider({ children }) {
   }, [fetchProducts, fetchCategories]);
 
   const getProductById = useCallback((id) => {
-    const found = products.find((p) => p.id === id);
+    if (!id) return null;
+    const found = products.find((p) => p.id === id) || FALLBACK_PRODUCTS.find((p) => p.id === id);
     if (!found) return null;
     return {
       ...found,
@@ -61,7 +70,8 @@ export function ProductProvider({ children }) {
   }, [products]);
 
   const getRelatedProducts = useCallback((currentId, categoryId, limit = 4) => {
-    return products
+    const list = products && products.length > 0 ? products : FALLBACK_PRODUCTS;
+    return list
       .filter((p) => p.category === categoryId && p.id !== currentId && (p.isActive !== false))
       .slice(0, limit);
   }, [products]);

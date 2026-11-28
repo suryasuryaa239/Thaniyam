@@ -54,7 +54,11 @@ export default function AdminInventoryTab({
   authToken,
   onProductChange
 }) {
-  const { categories: contextCategories } = useProducts();
+  const { categories: contextCategories, refreshProducts } = useProducts();
+  const notifyProductChange = useCallback(() => {
+    if (onProductChange) onProductChange();
+    if (refreshProducts) refreshProducts();
+  }, [onProductChange, refreshProducts]);
   const activeCategories = useMemo(() => {
     if (contextCategories && contextCategories.length > 0) {
       return contextCategories.filter((c) => c.id !== 'all');
@@ -402,7 +406,7 @@ export default function AdminInventoryTab({
 
       setIsModalOpen(false);
       await fetchInventory();
-      if (onProductChange) onProductChange();
+      notifyProductChange();
     } catch (err) {
       setFeedback({
         type: 'error',
@@ -438,7 +442,7 @@ export default function AdminInventoryTab({
 
       // Re-fetch stats in background
       fetchInventory();
-      if (onProductChange) onProductChange();
+      notifyProductChange();
     } catch (err) {
       setFeedback({
         type: 'error',
@@ -509,7 +513,7 @@ export default function AdminInventoryTab({
       });
       setIsOfferModalOpen(false);
       fetchInventory();
-      if (onProductChange) onProductChange();
+      notifyProductChange();
     } catch (err) {
       setFeedback({
         type: 'error',
@@ -546,7 +550,7 @@ export default function AdminInventoryTab({
       });
       if (isOfferModalOpen) setIsOfferModalOpen(false);
       fetchInventory();
-      if (onProductChange) onProductChange();
+      notifyProductChange();
     } catch (err) {
       setFeedback({
         type: 'error',
@@ -579,7 +583,7 @@ export default function AdminInventoryTab({
       });
 
       await fetchInventory();
-      if (onProductChange) onProductChange();
+      notifyProductChange();
     } catch (err) {
       setFeedback({
         type: 'error',
@@ -611,7 +615,7 @@ export default function AdminInventoryTab({
 
       setProductToDelete(null);
       await fetchInventory();
-      if (onProductChange) onProductChange();
+      notifyProductChange();
     } catch (err) {
       setFeedback({
         type: 'error',

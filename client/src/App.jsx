@@ -366,7 +366,7 @@ function AppContent() {
       {/* 5. Product Quick View Modal */}
       {quickViewProduct && (
         <ProductQuickViewModal
-          product={quickViewProduct}
+          product={products.find((p) => p.id === quickViewProduct.id) || quickViewProduct}
           onClose={() => setQuickViewProduct(null)}
           onAddToCart={addToCart}
         />

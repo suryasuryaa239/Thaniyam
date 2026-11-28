@@ -102,13 +102,12 @@ export const initMySQL = async () => {
     }
     console.log(`📂 [Database] Synced ${DEFAULT_CATEGORIES.length} categories in TiDB MySQL.`);
 
-    // 4. Seed / upsert catalog products
+    // 4. Seed / upsert catalog products (INSERT IGNORE so admin price edits & customizations are never overwritten on restart)
     const { SEED_CATALOG } = await import('../data/mockProductStore.js');
     for (const p of SEED_CATALOG) {
       await connection.query(
-        `INSERT INTO products (id, name, tamilName, category, categoryName, price, originalPrice, weight, stock, rating, reviewsCount, badge, image, description, ingredients, isActive)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE name=VALUES(name), tamilName=VALUES(tamilName), category=VALUES(category), categoryName=VALUES(categoryName), price=VALUES(price), originalPrice=VALUES(originalPrice), weight=VALUES(weight), badge=VALUES(badge), image=VALUES(image), description=VALUES(description), ingredients=VALUES(ingredients)`,
+        `INSERT IGNORE INTO products (id, name, tamilName, category, categoryName, price, originalPrice, weight, stock, rating, reviewsCount, badge, image, description, ingredients, isActive)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           p.id,
           p.name,
@@ -133,9 +132,6 @@ export const initMySQL = async () => {
 
     // Clean up legacy mock products (prod-001 through prod-018) from previous test seed
     await connection.query('DELETE FROM products WHERE id LIKE "prod-0%" OR id IN ("prod-001","prod-002","prod-003","prod-004","prod-005","prod-006","prod-007","prod-008","prod-009","prod-010","prod-011","prod-012","prod-013","prod-014","prod-015","prod-016","prod-017","prod-018")');
-
-    // Reset default scraped badges and default originalPrices so products are clean until admin sets them
-    await connection.query('UPDATE products SET badge = "", originalPrice = NULL WHERE originalPrice = price OR badge IN ("Immunity Booster", "Zero Sugar", "Protein Powerhouse", "100% Herbal", "Natural Glow", "Energy Boost", "Low Glycemic", "High Fiber", "Sorghum Special", "Fresh Mint")');
     await connection.query('DELETE FROM categories WHERE id IN ("traditional-snacks", "wood-pressed-oils", "natural-sweeteners", "millets-grains", "millet-sweets")');
 
     connection.release();
