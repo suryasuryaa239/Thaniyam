@@ -5,6 +5,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import {
   isMySQLConnected,
+  getMySQLPool,
   mysqlGetAllProducts,
   mysqlSaveProduct,
   mysqlUpdateProductStock,
@@ -51,7 +52,7 @@ export const setMemoryProduct = (id, product) => {
 export const getMemoryProduct = (id) => memoryProducts.get(id);
 
 export const syncProductsFromMySQL = async () => {
-  if (!isMySQLConnected()) return;
+  if (!getMySQLPool()) return;
   try {
     const products = await mysqlGetAllProducts(true);
     if (products && products.length > 0) {
@@ -1855,7 +1856,7 @@ export const createProductInStore = (productData) => {
 
   memoryProducts.set(id, newProduct);
   persistToDisk();
-  if (isMySQLConnected()) {
+  if (getMySQLPool()) {
     mysqlSaveProduct(newProduct).catch((err) => console.warn('⚠️ [MySQL] createProduct notice:', err.message));
   }
   return { ...newProduct };
@@ -1902,7 +1903,7 @@ export const updateProductInStore = (id, updates) => {
 
   memoryProducts.set(id, updated);
   persistToDisk();
-  if (isMySQLConnected()) {
+  if (getMySQLPool()) {
     mysqlSaveProduct(updated).catch((err) => console.warn('⚠️ [MySQL] updateProduct notice:', err.message));
   }
   return { ...updated };
@@ -1922,7 +1923,7 @@ export const adjustProductStockInStore = (id, delta) => {
 
   memoryProducts.set(id, existing);
   persistToDisk();
-  if (isMySQLConnected()) {
+  if (getMySQLPool()) {
     mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] adjustStock notice:', err.message));
   }
   return { ...existing };
@@ -1940,7 +1941,7 @@ export const setProductStockInStore = (id, targetStock) => {
 
   memoryProducts.set(id, existing);
   persistToDisk();
-  if (isMySQLConnected()) {
+  if (getMySQLPool()) {
     mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] setStock notice:', err.message));
   }
   return { ...existing };
@@ -1958,7 +1959,7 @@ export const deactivateOrDeleteProductInStore = (id, hasOrderHistory = false) =>
     existing.updatedAt = new Date().toISOString();
     memoryProducts.set(id, existing);
     persistToDisk();
-    if (isMySQLConnected()) {
+    if (getMySQLPool()) {
       mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
     }
     return {
@@ -1970,7 +1971,7 @@ export const deactivateOrDeleteProductInStore = (id, hasOrderHistory = false) =>
     // No past orders reference this product; clean removal is safe
     memoryProducts.delete(id);
     persistToDisk();
-    if (isMySQLConnected()) {
+    if (getMySQLPool()) {
       mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
     }
     return {
@@ -2026,7 +2027,8 @@ export const deductStockForOrderItemsInStore = (orderItems) => {
     prod.updatedAt = new Date().toISOString();
 
     memoryProducts.set(prodId, prod);
-    if (isMySQLConnected()) {
+    persistToDisk();
+    if (getMySQLPool()) {
       mysqlUpdateProductStock(prodId, prod.stock).catch((err) => console.warn('⚠️ [MySQL] deduct notice:', err.message));
     }
     deducted.push({
@@ -2055,7 +2057,8 @@ export const restoreStockForOrderItemsInStore = (orderItems) => {
       prod.inStock = prod.stock > 0;
       prod.updatedAt = new Date().toISOString();
       memoryProducts.set(prodId, prod);
-      if (isMySQLConnected()) {
+      persistToDisk();
+      if (getMySQLPool()) {
         mysqlUpdateProductStock(prodId, prod.stock).catch((err) => console.warn('⚠️ [MySQL] restore notice:', err.message));
       }
     }

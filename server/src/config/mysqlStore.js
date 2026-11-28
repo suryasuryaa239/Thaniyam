@@ -243,59 +243,57 @@ export const mysqlGetProductById = async (id) => {
 export const mysqlSaveProduct = async (prod) => {
   let p = getMySQLPool();
   if (!p || !prod) return null;
-  
-  const executeSave = async (poolInstance) => {
-    const [existing] = await poolInstance.query('SELECT id FROM products WHERE id = ?', [prod.id]);
-    if (existing && existing.length > 0) {
-      // Update
-      await poolInstance.query(
-        `UPDATE products SET name = ?, tamilName = ?, category = ?, categoryName = ?, price = ?, originalPrice = ?, weight = ?, stock = ?, badge = ?, image = ?, description = ?, ingredients = ?, isActive = ? WHERE id = ?`,
-        [
-          prod.name,
-          prod.tamilName || '',
-          prod.category || '',
-          prod.categoryName || '',
-          prod.price,
-          prod.originalPrice || null,
-          prod.weight || '250g',
-          prod.stock || 0,
-          prod.badge || '',
-          prod.image || '',
-          prod.description || '',
-          JSON.stringify(prod.ingredients || []),
-          prod.isActive !== false ? 1 : 0,
-          prod.id
-        ]
-      );
-    } else {
-      // Insert
-      await poolInstance.query(
-        `INSERT INTO products (id, name, tamilName, category, categoryName, price, originalPrice, weight, stock, rating, reviewsCount, badge, image, description, ingredients, isActive)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [
-          prod.id,
-          prod.name,
-          prod.tamilName || '',
-          prod.category || '',
-          prod.categoryName || '',
-          prod.price,
-          prod.originalPrice || null,
-          prod.weight || '250g',
-          prod.stock || 0,
-          prod.rating || 4.8,
-          prod.reviewsCount || 0,
-          prod.badge || '',
-          prod.image || '',
-          prod.description || '',
-          JSON.stringify(prod.ingredients || []),
-          prod.isActive !== false ? 1 : 0
-        ]
-      );
-    }
-  };
+
+  const numPrice = Number(prod.price) || 0;
+  const numOrigPrice = prod.originalPrice !== null && prod.originalPrice !== undefined && prod.originalPrice !== ''
+    ? Number(prod.originalPrice)
+    : null;
+  const numStock = typeof prod.stock === 'number' ? prod.stock : (parseInt(prod.stock, 10) || 0);
+
+  const sql = `
+    INSERT INTO products (
+      id, name, tamilName, category, categoryName, price, originalPrice,
+      weight, stock, rating, reviewsCount, badge, image, description, ingredients, isActive
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ON DUPLICATE KEY UPDATE
+      name = VALUES(name),
+      tamilName = VALUES(tamilName),
+      category = VALUES(category),
+      categoryName = VALUES(categoryName),
+      price = VALUES(price),
+      originalPrice = VALUES(originalPrice),
+      weight = VALUES(weight),
+      stock = VALUES(stock),
+      badge = VALUES(badge),
+      image = VALUES(image),
+      description = VALUES(description),
+      ingredients = VALUES(ingredients),
+      isActive = VALUES(isActive),
+      updatedAt = CURRENT_TIMESTAMP
+  `;
+
+  const values = [
+    prod.id,
+    prod.name,
+    prod.tamilName || '',
+    prod.category || '',
+    prod.categoryName || '',
+    numPrice,
+    numOrigPrice,
+    prod.weight || '250g',
+    numStock,
+    prod.rating || 4.8,
+    prod.reviewsCount || 0,
+    prod.badge || '',
+    prod.image || '',
+    prod.description || '',
+    JSON.stringify(prod.ingredients || []),
+    prod.isActive !== false ? 1 : 0
+  ];
 
   try {
-    await executeSave(p);
+    await p.query(sql, values);
     return await mysqlGetProductById(prod.id);
   } catch (err) {
     console.warn('⚠️ [MySQL] saveProduct error, attempting reconnect:', err.message);
@@ -303,7 +301,7 @@ export const mysqlSaveProduct = async (prod) => {
       resetMySQLPool();
       p = getMySQLPool();
       if (p) {
-        await executeSave(p);
+        await p.query(sql, values);
         return await mysqlGetProductById(prod.id);
       }
     } catch (retryErr) {
@@ -314,25 +312,46 @@ export const mysqlSaveProduct = async (prod) => {
 };
 
 export const mysqlUpdateProductStock = async (id, newStock) => {
-  const p = getMySQLPool();
+  let p = getMySQLPool();
   if (!p || !id) return null;
+  const numStock = Math.max(0, parseInt(newStock, 10) || 0);
   try {
-    await p.query('UPDATE products SET stock = ? WHERE id = ?', [Math.max(0, newStock), id]);
+    await p.query('UPDATE products SET stock = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?', [numStock, id]);
     return await mysqlGetProductById(id);
   } catch (err) {
-    console.warn('⚠️ [MySQL] updateStock error:', err.message);
+    console.warn('⚠️ [MySQL] updateStock error, reconnecting:', err.message);
+    try {
+      resetMySQLPool();
+      p = getMySQLPool();
+      if (p) {
+        await p.query('UPDATE products SET stock = ?, updatedAt = CURRENT_TIMESTAMP WHERE id = ?', [numStock, id]);
+        return await mysqlGetProductById(id);
+      }
+    } catch (retryErr) {
+      console.warn('⚠️ [MySQL] Retry updateStock failed:', retryErr.message);
+    }
     return null;
   }
 };
 
 export const mysqlDeactivateProduct = async (id) => {
-  const p = getMySQLPool();
+  let p = getMySQLPool();
   if (!p || !id) return null;
   try {
-    await p.query('UPDATE products SET isActive = 0 WHERE id = ?', [id]);
+    await p.query('UPDATE products SET isActive = 0, updatedAt = CURRENT_TIMESTAMP WHERE id = ?', [id]);
     return await mysqlGetProductById(id);
   } catch (err) {
-    console.warn('⚠️ [MySQL] deactivateProduct error:', err.message);
+    console.warn('⚠️ [MySQL] deactivateProduct error, reconnecting:', err.message);
+    try {
+      resetMySQLPool();
+      p = getMySQLPool();
+      if (p) {
+        await p.query('UPDATE products SET isActive = 0, updatedAt = CURRENT_TIMESTAMP WHERE id = ?', [id]);
+        return await mysqlGetProductById(id);
+      }
+    } catch (retryErr) {
+      console.warn('⚠️ [MySQL] Retry deactivateProduct failed:', retryErr.message);
+    }
     return null;
   }
 };

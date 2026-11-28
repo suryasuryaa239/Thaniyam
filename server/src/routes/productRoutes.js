@@ -20,8 +20,12 @@ import {
 } from '../data/mockProductStore.js';
 import {
   isMySQLConnected,
+  getMySQLPool,
   mysqlGetAllProducts,
-  mysqlGetProductById
+  mysqlGetProductById,
+  mysqlSaveProduct,
+  mysqlUpdateProductStock,
+  mysqlDeactivateProduct
 } from '../config/mysqlStore.js';
 import { getAllOrdersFromFallback } from '../data/mockOrderStore.js';
 import { requireAdminAuth } from './orderRoutes.js';
@@ -64,8 +68,8 @@ router.get('/', async (req, res) => {
     let products = [];
     const isDbConnected = mongoose.connection.readyState === 1;
 
-    // 1. Prioritize TiDB MySQL if connected
-    if (isMySQLConnected()) {
+    // 1. Prioritize TiDB MySQL if pool is available
+    if (getMySQLPool()) {
       try {
         const mysqlList = await mysqlGetAllProducts(false);
         if (mysqlList && mysqlList.length > 0) {
@@ -175,7 +179,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     let product = null;
 
-    if (isMySQLConnected()) {
+    if (getMySQLPool()) {
       try {
         product = await mysqlGetProductById(id);
         if (product) {
@@ -234,7 +238,7 @@ router.get('/admin/all', requireAdminAuth, async (req, res) => {
     let products = [];
     const isDbConnected = mongoose.connection.readyState === 1;
 
-    if (isMySQLConnected()) {
+    if (getMySQLPool()) {
       try {
         const mysqlProds = await mysqlGetAllProducts(true);
         if (mysqlProds && mysqlProds.length > 0) {
@@ -468,6 +472,18 @@ router.post('/', requireAdminAuth, async (req, res) => {
     // 3. Save to store
     let createdProduct = createProductInStore(productPayload);
 
+    // 4. Save directly to TiDB Cloud Database
+    try {
+      const dbSaved = await mysqlSaveProduct(createdProduct);
+      if (dbSaved) {
+        createdProduct = dbSaved;
+        setMemoryProduct(dbSaved.id, dbSaved);
+        console.log(`💾 [Database] New product ${createdProduct.id} saved to TiDB MySQL.`);
+      }
+    } catch (dbErr) {
+      console.warn('⚠️ [Admin Products] MySQL product save notice:', dbErr.message);
+    }
+
     // Also persist in MongoDB if available
     const isDbConnected = mongoose.connection.readyState === 1;
     if (isDbConnected) {
@@ -537,22 +553,35 @@ router.put('/:id', requireAdminAuth, async (req, res) => {
       });
     }
 
-    // 3. Update in MongoDB if connected
+    // 3. Save directly to TiDB Cloud Database and await commit
+    let finalProduct = updatedProduct;
+    try {
+      const dbSaved = await mysqlSaveProduct(updatedProduct);
+      if (dbSaved) {
+        finalProduct = dbSaved;
+        setMemoryProduct(dbSaved.id, dbSaved);
+        console.log(`💾 [Database] Product ${id} updated in TiDB MySQL (Price: ₹${dbSaved.price}, Orig: ₹${dbSaved.originalPrice}).`);
+      }
+    } catch (dbErr) {
+      console.warn('⚠️ [Admin Products] MySQL product update notice:', dbErr.message);
+    }
+
+    // 4. Update in MongoDB if connected
     const isDbConnected = mongoose.connection.readyState === 1;
     if (isDbConnected) {
       try {
-        await Product.findOneAndUpdate({ id }, { $set: updatedProduct }, { new: true });
+        await Product.findOneAndUpdate({ id }, { $set: finalProduct }, { new: true });
       } catch (dbErr) {
         console.warn('⚠️ [Admin Products] DB product update error:', dbErr.message);
       }
     }
 
-    console.log(`✏️ [Products] Product updated: ${id} — "${updatedProduct.name}" (Stock: ${updatedProduct.stock})`);
+    console.log(`✏️ [Products] Product updated: ${id} — "${finalProduct.name}" (Stock: ${finalProduct.stock})`);
 
     return res.json({
       success: true,
-      message: `Product "${updatedProduct.name}" updated successfully.`,
-      product: updatedProduct
+      message: `Product "${finalProduct.name}" updated successfully.`,
+      product: finalProduct
     });
   } catch (error) {
     console.error('❌ [Admin Products] Error updating product:', error);
@@ -603,7 +632,18 @@ router.patch('/:id/stock', requireAdminAuth, async (req, res) => {
       });
     }
 
-    // Update in MongoDB
+    // Save stock directly to TiDB Cloud Database
+    try {
+      const dbSaved = await mysqlUpdateProductStock(id, updatedProduct.stock);
+      if (dbSaved) {
+        setMemoryProduct(dbSaved.id, dbSaved);
+        console.log(`💾 [Database] Stock for ${id} saved to TiDB MySQL: ${updatedProduct.stock}`);
+      }
+    } catch (dbErr) {
+      console.warn('⚠️ [Admin Products] MySQL stock save notice:', dbErr.message);
+    }
+
+    // Update in MongoDB if connected
     const isDbConnected = mongoose.connection.readyState === 1;
     if (isDbConnected) {
       try {
@@ -648,6 +688,14 @@ router.delete('/:id', requireAdminAuth, async (req, res) => {
         success: false,
         message: `Product "${id}" was not found.`
       });
+    }
+
+    // Update directly in TiDB Cloud MySQL database
+    try {
+      await mysqlDeactivateProduct(id);
+      console.log(`💾 [Database] Product ${id} deactivated/deleted in TiDB MySQL.`);
+    } catch (dbErr) {
+      console.warn('⚠️ [Admin Products] MySQL delete notice:', dbErr.message);
     }
 
     // Update in MongoDB
