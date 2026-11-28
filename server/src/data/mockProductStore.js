@@ -1,5 +1,8 @@
 // In-memory persistent catalog & inventory store for Thaniyam Treats
 // Ensures resilient operation with full stock tracking, atomic deduction, and safe deactivation
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import {
   isMySQLConnected,
   mysqlGetAllProducts,
@@ -8,11 +11,40 @@ import {
   mysqlDeactivateProduct
 } from '../config/mysqlStore.js';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const PERSISTENCE_FILE = path.join(__dirname, 'persistedCatalog.json');
+
 const memoryProducts = new Map();
+
+export const persistToDisk = () => {
+  try {
+    const list = Array.from(memoryProducts.values());
+    fs.writeFileSync(PERSISTENCE_FILE, JSON.stringify(list, null, 2), 'utf8');
+  } catch (err) {
+    // Graceful catch for read-only environments
+  }
+};
+
+const loadFromDisk = () => {
+  try {
+    if (fs.existsSync(PERSISTENCE_FILE)) {
+      const raw = fs.readFileSync(PERSISTENCE_FILE, 'utf8');
+      const list = JSON.parse(raw);
+      if (Array.isArray(list) && list.length > 0) {
+        return list;
+      }
+    }
+  } catch (err) {
+    // Ignore error
+  }
+  return null;
+};
 
 export const setMemoryProduct = (id, product) => {
   if (id && product) {
     memoryProducts.set(id, product);
+    persistToDisk();
   }
 };
 
@@ -26,6 +58,7 @@ export const syncProductsFromMySQL = async () => {
       for (const p of products) {
         memoryProducts.set(p.id, p);
       }
+      persistToDisk();
       console.log(`📦 [Store] Synced ${products.length} products from TiDB MySQL into cache.`);
     }
   } catch (err) {
@@ -1697,6 +1730,13 @@ export const SEED_CATALOG = [
 
 // Initialize in-memory seed products
 const initializeProducts = () => {
+  const diskProducts = loadFromDisk();
+  if (diskProducts && diskProducts.length > 0) {
+    diskProducts.forEach((p) => memoryProducts.set(p.id, p));
+    console.log(`💾 [Store] Loaded ${diskProducts.length} products from disk cache.`);
+    return;
+  }
+
   SEED_CATALOG.forEach((item) => {
     const product = {
       ...item,
@@ -1814,6 +1854,7 @@ export const createProductInStore = (productData) => {
   };
 
   memoryProducts.set(id, newProduct);
+  persistToDisk();
   if (isMySQLConnected()) {
     mysqlSaveProduct(newProduct).catch((err) => console.warn('⚠️ [MySQL] createProduct notice:', err.message));
   }
@@ -1860,6 +1901,7 @@ export const updateProductInStore = (id, updates) => {
   }
 
   memoryProducts.set(id, updated);
+  persistToDisk();
   if (isMySQLConnected()) {
     mysqlSaveProduct(updated).catch((err) => console.warn('⚠️ [MySQL] updateProduct notice:', err.message));
   }
@@ -1879,6 +1921,7 @@ export const adjustProductStockInStore = (id, delta) => {
   existing.updatedAt = new Date().toISOString();
 
   memoryProducts.set(id, existing);
+  persistToDisk();
   if (isMySQLConnected()) {
     mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] adjustStock notice:', err.message));
   }
@@ -1896,6 +1939,7 @@ export const setProductStockInStore = (id, targetStock) => {
   existing.updatedAt = new Date().toISOString();
 
   memoryProducts.set(id, existing);
+  persistToDisk();
   if (isMySQLConnected()) {
     mysqlUpdateProductStock(id, newStock).catch((err) => console.warn('⚠️ [MySQL] setStock notice:', err.message));
   }
@@ -1913,6 +1957,7 @@ export const deactivateOrDeleteProductInStore = (id, hasOrderHistory = false) =>
     existing.isActive = false;
     existing.updatedAt = new Date().toISOString();
     memoryProducts.set(id, existing);
+    persistToDisk();
     if (isMySQLConnected()) {
       mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
     }
@@ -1924,6 +1969,7 @@ export const deactivateOrDeleteProductInStore = (id, hasOrderHistory = false) =>
   } else {
     // No past orders reference this product; clean removal is safe
     memoryProducts.delete(id);
+    persistToDisk();
     if (isMySQLConnected()) {
       mysqlDeactivateProduct(id).catch((err) => console.warn('⚠️ [MySQL] deactivate notice:', err.message));
     }

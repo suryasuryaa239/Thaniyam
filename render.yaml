@@ -15,5 +15,9 @@ services:
         sync: false
       - key: ADMIN_SECRET
         generateValue: true
+      - key: DATABASE_URL
+        value: mysql://4HnjcQp8BkMrr3m.root:sx2NuvR3HX6RowZl@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/Thaniyam
+      - key: MYSQL_URI
+        value: mysql://4HnjcQp8BkMrr3m.root:sx2NuvR3HX6RowZl@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/Thaniyam
       - key: MONGODB_URI
         sync: false

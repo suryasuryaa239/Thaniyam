@@ -3,8 +3,10 @@ import mysql from 'mysql2/promise';
 let pool = null;
 let isConnected = false;
 
+const DEFAULT_TIDB_URL = 'mysql://4HnjcQp8BkMrr3m.root:sx2NuvR3HX6RowZl@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/Thaniyam';
+
 export const getMySQLPool = () => {
-  const uri = process.env.DATABASE_URL || process.env.MYSQL_URI;
+  const uri = process.env.DATABASE_URL || process.env.MYSQL_URI || DEFAULT_TIDB_URL;
   if (!uri || !uri.startsWith('mysql')) return null;
 
   if (!pool) {
@@ -14,6 +16,10 @@ export const getMySQLPool = () => {
         ssl: { minVersion: 'TLSv1.2', rejectUnauthorized: true },
         waitForConnections: true,
         connectionLimit: 10,
+        maxIdle: 10,
+        idleTimeout: 60000,
+        enableKeepAlive: true,
+        keepAliveInitialDelay: 10000,
         queueLimit: 0
       });
     } catch (e) {
@@ -22,6 +28,16 @@ export const getMySQLPool = () => {
     }
   }
   return pool;
+};
+
+export const resetMySQLPool = () => {
+  if (pool) {
+    try {
+      pool.end().catch(() => {});
+    } catch {}
+    pool = null;
+  }
+  isConnected = false;
 };
 
 export const isMySQLConnected = () => isConnected;
@@ -177,39 +193,62 @@ const formatProductRow = (row) => {
 // MySQL Product Operations
 // ==========================================
 export const mysqlGetAllProducts = async (includeInactive = false) => {
-  const p = getMySQLPool();
+  let p = getMySQLPool();
   if (!p) return null;
+  const sql = includeInactive ? 'SELECT * FROM products ORDER BY id ASC' : 'SELECT * FROM products WHERE isActive = 1 ORDER BY id ASC';
   try {
-    const sql = includeInactive ? 'SELECT * FROM products ORDER BY id ASC' : 'SELECT * FROM products WHERE isActive = 1 ORDER BY id ASC';
     const [rows] = await p.query(sql);
     return rows.map(formatProductRow);
   } catch (err) {
-    console.warn('⚠️ [MySQL] getAllProducts error:', err.message);
+    console.warn('⚠️ [MySQL] getAllProducts error, attempting reconnect:', err.message);
+    try {
+      resetMySQLPool();
+      p = getMySQLPool();
+      if (p) {
+        const [rows] = await p.query(sql);
+        return rows.map(formatProductRow);
+      }
+    } catch (retryErr) {
+      console.warn('⚠️ [MySQL] Retry failed:', retryErr.message);
+    }
     return null;
   }
 };
 
 export const mysqlGetProductById = async (id) => {
-  const p = getMySQLPool();
+  let p = getMySQLPool();
   if (!p || !id) return null;
+  const sql = 'SELECT * FROM products WHERE id = ?';
   try {
-    const [rows] = await p.query('SELECT * FROM products WHERE id = ?', [id]);
+    const [rows] = await p.query(sql, [id]);
     if (!rows || rows.length === 0) return null;
     return formatProductRow(rows[0]);
   } catch (err) {
-    console.warn('⚠️ [MySQL] getProductById error:', err.message);
+    console.warn('⚠️ [MySQL] getProductById error, attempting reconnect:', err.message);
+    try {
+      resetMySQLPool();
+      p = getMySQLPool();
+      if (p) {
+        const [rows] = await p.query(sql, [id]);
+        if (!rows || rows.length === 0) return null;
+        return formatProductRow(rows[0]);
+      }
+    } catch (retryErr) {
+      console.warn('⚠️ [MySQL] Retry getProductById failed:', retryErr.message);
+    }
     return null;
   }
 };
 
 export const mysqlSaveProduct = async (prod) => {
-  const p = getMySQLPool();
+  let p = getMySQLPool();
   if (!p || !prod) return null;
-  try {
-    const [existing] = await p.query('SELECT id FROM products WHERE id = ?', [prod.id]);
+  
+  const executeSave = async (poolInstance) => {
+    const [existing] = await poolInstance.query('SELECT id FROM products WHERE id = ?', [prod.id]);
     if (existing && existing.length > 0) {
       // Update
-      await p.query(
+      await poolInstance.query(
         `UPDATE products SET name = ?, tamilName = ?, category = ?, categoryName = ?, price = ?, originalPrice = ?, weight = ?, stock = ?, badge = ?, image = ?, description = ?, ingredients = ?, isActive = ? WHERE id = ?`,
         [
           prod.name,
@@ -230,7 +269,7 @@ export const mysqlSaveProduct = async (prod) => {
       );
     } else {
       // Insert
-      await p.query(
+      await poolInstance.query(
         `INSERT INTO products (id, name, tamilName, category, categoryName, price, originalPrice, weight, stock, rating, reviewsCount, badge, image, description, ingredients, isActive)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
@@ -253,9 +292,23 @@ export const mysqlSaveProduct = async (prod) => {
         ]
       );
     }
+  };
+
+  try {
+    await executeSave(p);
     return await mysqlGetProductById(prod.id);
   } catch (err) {
-    console.warn('⚠️ [MySQL] saveProduct error:', err.message);
+    console.warn('⚠️ [MySQL] saveProduct error, attempting reconnect:', err.message);
+    try {
+      resetMySQLPool();
+      p = getMySQLPool();
+      if (p) {
+        await executeSave(p);
+        return await mysqlGetProductById(prod.id);
+      }
+    } catch (retryErr) {
+      console.warn('⚠️ [MySQL] Retry saveProduct failed:', retryErr.message);
+    }
     return null;
   }
 };

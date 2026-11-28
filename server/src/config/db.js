@@ -3,8 +3,10 @@ import { initMySQL, isMySQLConnected } from './mysqlStore.js';
 
 let dbStatus = 'disconnected';
 
+const DEFAULT_TIDB_URL = 'mysql://4HnjcQp8BkMrr3m.root:sx2NuvR3HX6RowZl@gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/Thaniyam';
+
 export const connectDB = async () => {
-  const mysqlUri = process.env.DATABASE_URL || process.env.MYSQL_URI;
+  const mysqlUri = process.env.DATABASE_URL || process.env.MYSQL_URI || DEFAULT_TIDB_URL;
   const mongoUri = process.env.MONGODB_URI;
 
   // 1. Prioritize TiDB / MySQL if configured
